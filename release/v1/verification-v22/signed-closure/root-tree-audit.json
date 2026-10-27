@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "files": 86,
+  "resources": 84,
+  "resource_bytes": 395738463,
+  "missing": 0,
+  "extras": 0,
+  "mismatches": 0,
+  "scope": "Coordinator actual separate assembled-tree audit; no installed acceptance."
+}

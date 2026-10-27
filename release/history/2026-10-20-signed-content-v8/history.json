@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "kind": "historical_signed_content_before_coverage_instrumentation_repair",
+  "signed_source_commit": "f0feaac955f71c4cb5f78c2e4b6134034d1df125",
+  "documented_candidate": "e5ecdf653ae7e1239b4af8f7e58c5cd2b2f3ee4a",
+  "actual_pr_merge_checkout": "5d9c89522241eff5285494503289c940a9849d1c",
+  "identical_tree": "a83e414e29c315ac26414f2ef6f8ad552a0ed5a5",
+  "tested_source_commit": "60ab126ba78b51f666e11226669720fdc96b31ed",
+  "production_sha256": "52d0089987d97f0ade79ce839a06fa2a00da3370a1013ba150fab2c19f50a1f6",
+  "review": {
+    "path": "release/v1/public-content-review-v8.json",
+    "bytes": 34034,
+    "sha256": "de39b925336443421d087eac575cfd71a47ff533873348eaa9500812f8daff9d"
+  },
+  "files": {
+    "bundled-content-manifest.json": {
+      "path": "release/history/2026-10-20-signed-content-v8/bundled-content-manifest.json",
+      "bytes": 17183,
+      "sha256": "707eba6680cb9441520776b4ccc0c1f3a13aa1a2507e8b8fc51a63f1a2766b11"
+    },
+    "bundled-content-build-identity.json": {
+      "path": "release/history/2026-10-20-signed-content-v8/bundled-content-build-identity.json",
+      "bytes": 526,
+      "sha256": "35c9e8470cb1adbbe0af0ed6fd518e2c5865bdd5188a535e1735fe68308a00f1"
+    },
+    "bundled-content-receipt.json": {
+      "path": "release/history/2026-10-20-signed-content-v8/bundled-content-receipt.json",
+      "bytes": 1072,
+      "sha256": "fb5f4a4caf2115e28b0616c93658a8767f48bf247bdc2d69a077767b5b01eea3"
+    }
+  },
+  "actual_source_prebuild": {
+    "build_ready": true,
+    "verified_evidence_files": 89,
+    "verified_content_packs": 2,
+    "pending_observations": 9,
+    "publication_allowed": false
+  },
+  "actual_checks": {
+    "ci": {
+      "run_id": 39424037070,
+      "status": "success",
+      "stability": "skipped_on_pull_request_not_passed"
+    },
+    "source_parity": {
+      "run_id": 39424037090,
+      "status": "success_actual_linux_windows_and_comparison"
+    },
+    "coverage": {
+      "run_id": 39424036847,
+      "status": "failed_combined_gate_missing_windows_cli_entrypoint_execution",
+      "missing_files": 0,
+      "below_threshold_files": 0
+    },
+    "package": {
+      "run_id": 39424036854,
+      "status": "in_progress_at_archiving_no_acceptance_inferred"
+    },
+    "owner_smoke": "unverified"
+  },
+  "limitation": "Windows collector passed signed84-resource verification,32native smoke cases and clean-source checks, but combined coverage failed because ordinary bundle cargo commands replaced the instrumented CLI. Canonical nine acceptance rows remain unverified. Package still runs independently; its eventual evidence must retain exact V8 source and installer binding. No stable tag/publication."
+}

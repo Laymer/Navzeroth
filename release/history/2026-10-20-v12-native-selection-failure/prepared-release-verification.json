@@ -1,0 +1,3218 @@
+{
+  "schema_version": 3,
+  "phase": "prepared",
+  "version": "1.0.0",
+  "prerelease": false,
+  "declared_signature": "unsigned",
+  "source_commit": "fdf83a2961eb66ac04021e6de6721cab6a188dba",
+  "checked_at": "2026-10-20T16:56:15.6562050Z",
+  "workflow_run_id": "39454144270",
+  "workflow_run_attempt": "1",
+  "assets": [
+    {
+      "name": "AzerothNavigator-1.0.0-x64-setup.exe",
+      "bytes": 26117754,
+      "sha256": "90866757d5d13154f8e1ad961fe395057dab679f2b1705d292dfe1cd0fc54d11"
+    },
+    {
+      "name": "AzerothNavigator-addon-1.0.0.zip",
+      "bytes": 75445,
+      "sha256": "4f19f03e43952fa02fae52fe5c9e0e07ca7d48b97c6a3aa1cefce6b76af48158"
+    },
+    {
+      "name": "AzerothNavigator-materials-1.0.0.zip",
+      "bytes": 21364775,
+      "sha256": "45797ef66810e2c245318f4f2bc44b96fee0ce78fb813839b863397a052528e7"
+    },
+    {
+      "name": "CANDIDATE_NOTES.md",
+      "bytes": 3270,
+      "sha256": "4375c50a1bb56ee92f6b1210e276b646e98c815354387b753220eef81a81d7f5"
+    },
+    {
+      "name": "RELEASE_ASSETS.json",
+      "bytes": 883,
+      "sha256": "df2f757039d981253dc3b07389d31297b2145aecfb238ce269133cb2918f8608"
+    },
+    {
+      "name": "RELEASE_MATERIALS.json",
+      "bytes": 55727,
+      "sha256": "eb2c285f29555c48c58a7b0c239db6b0325bf95f5c9dcc67485d01da0630560c"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "bytes": 649,
+      "sha256": "d275d1960c6c45f817c26e9ff328b68e69069fba9aea97504b93fcf98c3da15e"
+    },
+    {
+      "name": "SOURCE_COMMIT.txt",
+      "bytes": 41,
+      "sha256": "ab8cf9563bddb0825e396f3675c3e84b6811a21a39fe5a401f957c4b4728ab8a"
+    }
+  ],
+  "installer_signature": "NotSigned",
+  "application_signature": "NotSigned",
+  "installed_display_version": "1.0.0",
+  "product_version": "1.0.0",
+  "file_version": "1.0.0",
+  "installer_product_version": "1.0.0",
+  "installer_file_version": "1.0.0",
+  "installer_numeric_file_version": "1.0.0.0",
+  "application_numeric_file_version": "1.0.0.0",
+  "application_sha256": "99ec111bbc0c2f02320dd964dcc7e87ca5e962100957e14cf916d98d5a165fff",
+  "installed_files": [
+    {
+      "path": "addon/AzerothNavigator/AzerothNavigator.toc",
+      "sha256": "939812484d50cfae9788d1e110af50c1d3763999dd3bc87026f4cc0b8eef4b1e",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/Core/Bootstrap.lua",
+      "sha256": "a955ecabaf21f8b21d4e34e4461bdfd7f6f6de0d9868cf3f09e4d93ca3d38b49",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/Core/Capabilities.lua",
+      "sha256": "eafdd0b4afb907cc1982a9bde3ef7c2aee70c104b3aa8744ba89074c1202daf6",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/Core/Clock.lua",
+      "sha256": "63f29edd08fe0c34ebb428e5177f3dc4cb869cecedd4cfd0cb7b47bb197fa621",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/Core/CopyExport.lua",
+      "sha256": "6ff88589874933b926cc6016d2cb1c915e7577d0fd08d74e7310a7f16d22ac71",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/Core/Decode.lua",
+      "sha256": "1c7e4d71153ba8344b0d40279dc147ca8226093ebb3de292398876b336f243d8",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/Core/Export.lua",
+      "sha256": "2a865415d61c75b03b9d418c5671bc465a144dfece31f60104b8baec39377e08",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/Core/Gear.lua",
+      "sha256": "30b39082755a2dc863c908b28166ffb6c65d11ede64bb4ecde853853a9233cde",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/Core/Gui.lua",
+      "sha256": "0d57e2f29f25be6b57d25190f6407de1ea3150924ae41489db96848901e28893",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/Core/GuiText.lua",
+      "sha256": "0b371f5a59a240fa047048ea68015d266df2f976f54226788ea405a4fcfb42fb",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/Core/GuiWidgets.lua",
+      "sha256": "7304621d521d6dbdf84f16a6aa7ca570db0b669c345a147203f460871f55af37",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/Core/Hud.lua",
+      "sha256": "25eb866db80b30e729fe1994afebf415d04c14ba0dcf2d79361690e822f5f8b9",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/Core/HudAppearance.lua",
+      "sha256": "bfeec74086fb14f56b969b82d4a48049f02ea0059bc4642a03e46bc47ae7b490",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/Core/Json.lua",
+      "sha256": "10b31381cc8457b622889fa37e7a589dead4167789afd6e07c48cfaade73eedc",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/Core/Plan.lua",
+      "sha256": "0077c501889c36fef748bb6c988096c164b0d5c995097f824885d7b379d5a837",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/Core/PlanControls.lua",
+      "sha256": "2011c8356e54d302ea6464036419674b1746b62f822aabd0c9844fc588c39b3d",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/Core/Predicate.lua",
+      "sha256": "7ce3cfcad214eac6d653aec432e3d8a5d7d49bddd5723e42c3399a5871326e08",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/Core/README.md",
+      "sha256": "9b1e5b79d1e0006d4feffebb1db075ffd84337d52211d30c23dcdbeeaad1dc59",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/Core/Session.lua",
+      "sha256": "1d4c32aca553c3e31c4079d0edb353fc93fbfff5e388322d71ae5918e2b1733f",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/Core/Settings.lua",
+      "sha256": "0ee619cf6b5637baee79f5c3634ad110454af8ccca85f9c470969cdc48b52eff",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/Core/Snapshot.lua",
+      "sha256": "c5081ce37b8ec5abf3b11a25ded585a7b2d990d10d21b05ddcaf4a7b66ce4bc6",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/Core/Version.lua",
+      "sha256": "9c3071517ee3892848250344c5a44c43a96c03aba73f6dd890ca60bbd9aac5f1",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/Diagnostics.lua",
+      "sha256": "2204f79ab6ca95d31f3c707140a2b83ff7e77dfcecce09df29a30fb0d106c4f1",
+      "source_verified": true
+    },
+    {
+      "path": "addon/AzerothNavigator/LICENSE",
+      "sha256": "bb8c92b0d88004866778ef0946f1df8d2990c78238454a17b4e6c6941f136b84",
+      "source_verified": true
+    },
+    {
+      "path": "addon/Install-AzerothNavigatorAddon.ps1",
+      "sha256": "04ec11cdf90b103208f5247f1e08700eb1d3a8b74a7543660ea25d3e92813233",
+      "source_verified": true
+    },
+    {
+      "path": "azeroth-desktop.exe",
+      "sha256": "99ec111bbc0c2f02320dd964dcc7e87ca5e962100957e14cf916d98d5a165fff",
+      "source_verified": false
+    },
+    {
+      "path": "bundled-content/content/release-packs/authored-v2/catalog.json",
+      "sha256": "67bb95bce07c80e901963115d546364f605df56c2b3f0295c79cfd72ca384fea",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/release-packs/authored-v2/evidence/authoring-statement.md",
+      "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/release-packs/authored-v2/evidence/role-model-assumptions.md",
+      "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/release-packs/authored-v2/manifest.json",
+      "sha256": "8af2189fa04d5e228cdb65204bc54c22be3371247acb5bb9b8aec1fa19ba62b9",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/release-packs/authored-v2/party-support.json",
+      "sha256": "91341a25dbb41e08330b5f97dc860660c2646cae84cb762cf52ff65aa81c8d37",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/release-packs/authored-v2/procedures/duo-advancement.md",
+      "sha256": "f226cce23ae014f96d74273b628c1e370caa08fafeb52045104f12aaa5ee72d2",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/release-packs/authored-v2/procedures/duo-agreement.md",
+      "sha256": "346c0798c7e37600340bfa7720b0f09fe41d37b3eb84090259239ab866e0f284",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/release-packs/authored-v2/procedures/duo-fairness.md",
+      "sha256": "08fe6ecab8861a12c85a8337cda2fdfe7a145eaecf78461a4e9ab65d7fc1c5b9",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/release-packs/authored-v2/procedures/duo-joint-planning.md",
+      "sha256": "cb28bf5c33ec6099c31270bd3f3f048995ff567599eedc38ebb970dc7c0b682c",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/release-packs/authored-v2/procedures/duo-review.md",
+      "sha256": "781ca47fbaefd814e888fad4bb96605986a20db97b52985e30f0035d0cd3452e",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/release-packs/authored-v2/procedures/duo-sharing.md",
+      "sha256": "e11a6e01c7d749e91b1de48ba9d6cb10ba0a328acd1c96a4baa3e6b796409ecc",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/release-packs/authored-v2/procedures/duo-stale-members.md",
+      "sha256": "6238ab2ed2a0f0e23de6f12e54f9717428ea3e61c75c1665f2a6c6f3c1721e2e",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/release-packs/authored-v2/procedures/duo-unequal-progress.md",
+      "sha256": "8c18cf5a1fa40da2cc3a88227d7ca12e6a30a6556ee58c17d3c3348c9164efb3",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/release-packs/authored-v2/procedures/solo-advancement.md",
+      "sha256": "210fcf88c00e1af5191fbe886e035bb934f92b3dde63d52b56a2babc00c92b3e",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/release-packs/authored-v2/procedures/solo-joint-planning.md",
+      "sha256": "002b87781a737e35ffec2dd1583c51aa570d6e58ece11ffca1547ea382567518",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/release-packs/authored-v2/procedures/solo-review.md",
+      "sha256": "430a72e0cff724eacb5bae30472dc90ea840ff0d89e97de3a1540a6429bb4c3c",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/release-packs/authored-v2/procedures/solo-stale-members.md",
+      "sha256": "c3e71ca4b4cb914964780ba078af4bc3bc78a312f70f51b9100bf763adc6fac0",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/release-packs/authored-v2/sources.json",
+      "sha256": "dd2eed92eeea0d3e1b3971083fadfb375dc63d66c53931c5fd5aa3a17f628c07",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/release-packs/world-v2/catalog.json",
+      "sha256": "0e41ec752aa4e0e9abecb1b2a2f04f708d415db654bda34ccb58452b288eaffe",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/release-packs/world-v2/manifest.json",
+      "sha256": "3c1613de6bb5585180c275dfb892d2c32176ed273275c6b607b4d48722a9c831",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/release-packs/world-v2/sources.json",
+      "sha256": "de912660ecdd2ceb149bc257e3dd6197b7aed857b6e9d186643d667ac36a1c24",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/corresponding-source-index.json",
+      "sha256": "67de5051b5051068313272a36a47dc912b7f3733ebaa5aeced6b1fa3b72c5a20",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/002b87781a737e35ffec2dd1583c51aa570d6e58ece11ffca1547ea382567518",
+      "sha256": "002b87781a737e35ffec2dd1583c51aa570d6e58ece11ffca1547ea382567518",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/03687b4dbe1993e7d61de2c321c73d1f3c47d05c0eb5a7bf5d964ae783d8da6a",
+      "sha256": "03687b4dbe1993e7d61de2c321c73d1f3c47d05c0eb5a7bf5d964ae783d8da6a",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/07222b184a692c0b275ad713bbb30e1a88e8da14e3f2e26d9afb6d6b59e41404",
+      "sha256": "07222b184a692c0b275ad713bbb30e1a88e8da14e3f2e26d9afb6d6b59e41404",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/08abb624e55bd7383eefca9d14a02f5309c44c0012d865a78d01fc45736a25f3",
+      "sha256": "08abb624e55bd7383eefca9d14a02f5309c44c0012d865a78d01fc45736a25f3",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/08fe6ecab8861a12c85a8337cda2fdfe7a145eaecf78461a4e9ab65d7fc1c5b9",
+      "sha256": "08fe6ecab8861a12c85a8337cda2fdfe7a145eaecf78461a4e9ab65d7fc1c5b9",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/1f32c1c7b87bf9b28df520c611ea7cdd27c249de0d77638b8eec75153d785d0a",
+      "sha256": "1f32c1c7b87bf9b28df520c611ea7cdd27c249de0d77638b8eec75153d785d0a",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/1f4aac70eaac015b1d2d0ea0faf6e3d7fb2cf7afdf45e5bb6772d9b80a72346b",
+      "sha256": "1f4aac70eaac015b1d2d0ea0faf6e3d7fb2cf7afdf45e5bb6772d9b80a72346b",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/210fcf88c00e1af5191fbe886e035bb934f92b3dde63d52b56a2babc00c92b3e",
+      "sha256": "210fcf88c00e1af5191fbe886e035bb934f92b3dde63d52b56a2babc00c92b3e",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/27674c6456677b71cdfd50e4193e0db9feea2beb69c15cd5f48906c9ec092d17",
+      "sha256": "27674c6456677b71cdfd50e4193e0db9feea2beb69c15cd5f48906c9ec092d17",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/2b10b13b66b0bb64a3533538ee9613639ee50b9c6d15ccc2558f3daf6f450302",
+      "sha256": "2b10b13b66b0bb64a3533538ee9613639ee50b9c6d15ccc2558f3daf6f450302",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258",
+      "sha256": "2cfb951a671fa7c52539558044a532fc6be1aedca519b695b00697cb02708258",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/2fc77108f68cd7a369f794e57836dbbb8cfbf41995e4e30b4e7c5cf1e9970c41",
+      "sha256": "2fc77108f68cd7a369f794e57836dbbb8cfbf41995e4e30b4e7c5cf1e9970c41",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/346c0798c7e37600340bfa7720b0f09fe41d37b3eb84090259239ab866e0f284",
+      "sha256": "346c0798c7e37600340bfa7720b0f09fe41d37b3eb84090259239ab866e0f284",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/3a93c2441d907a5e5aa003a51036de064fdf6965186acf6ae4e0487cd8e3a937",
+      "sha256": "3a93c2441d907a5e5aa003a51036de064fdf6965186acf6ae4e0487cd8e3a937",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c",
+      "sha256": "3eaa006c97ee3e55ff6e7e296d5283e696a189deb0f7406786fe3869a6faf52c",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/42a865db73a34b45f75b13cf0d01e6b699f3ea7f72cd63826c8124e587b1859c",
+      "sha256": "42a865db73a34b45f75b13cf0d01e6b699f3ea7f72cd63826c8124e587b1859c",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/430a72e0cff724eacb5bae30472dc90ea840ff0d89e97de3a1540a6429bb4c3c",
+      "sha256": "430a72e0cff724eacb5bae30472dc90ea840ff0d89e97de3a1540a6429bb4c3c",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/4f92b73343c9828fdb3d315f5732e6de8d41af6b8e2fc24263fef73cd46681a1",
+      "sha256": "4f92b73343c9828fdb3d315f5732e6de8d41af6b8e2fc24263fef73cd46681a1",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/4f92db520868ab4e566726f68b5b2e380ae781209beaf22237b4f7f04600d0c0",
+      "sha256": "4f92db520868ab4e566726f68b5b2e380ae781209beaf22237b4f7f04600d0c0",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/508f9da55f5cb7d345240e81e14c605345b10e3d5a586fa40332afa2ccf470e9",
+      "sha256": "508f9da55f5cb7d345240e81e14c605345b10e3d5a586fa40332afa2ccf470e9",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/5459cb6fda663a4e3fcd07a6e0c7d065b87e4ebb3e3c8d29fbceab29f445eb8e",
+      "sha256": "5459cb6fda663a4e3fcd07a6e0c7d065b87e4ebb3e3c8d29fbceab29f445eb8e",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/5f2ba338646a454d2420a14cf56da693803267f734893e2b3f5e71250eaa56bf",
+      "sha256": "5f2ba338646a454d2420a14cf56da693803267f734893e2b3f5e71250eaa56bf",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/6238ab2ed2a0f0e23de6f12e54f9717428ea3e61c75c1665f2a6c6f3c1721e2e",
+      "sha256": "6238ab2ed2a0f0e23de6f12e54f9717428ea3e61c75c1665f2a6c6f3c1721e2e",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/623d79e218e2a9b0c365a1e47066abda26bfd019d2e0023e72c422be0f5eeb50",
+      "sha256": "623d79e218e2a9b0c365a1e47066abda26bfd019d2e0023e72c422be0f5eeb50",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/665307a5ff3625380f37c9d42753002d630b414d142e8c61780ff7e8849a6d9a",
+      "sha256": "665307a5ff3625380f37c9d42753002d630b414d142e8c61780ff7e8849a6d9a",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/67bb95bce07c80e901963115d546364f605df56c2b3f0295c79cfd72ca384fea",
+      "sha256": "67bb95bce07c80e901963115d546364f605df56c2b3f0295c79cfd72ca384fea",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/6e3c9c8d9adffca4694f41917fdd0de9f6e9865bf0d444c9de77059c7a8036b0",
+      "sha256": "6e3c9c8d9adffca4694f41917fdd0de9f6e9865bf0d444c9de77059c7a8036b0",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/71be58ee7deb00c43e4075e86d2c76fc13d55362099e70edef8997f99e097735",
+      "sha256": "71be58ee7deb00c43e4075e86d2c76fc13d55362099e70edef8997f99e097735",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/76e73df09998d20f038887329beb2bb90313e19ceab633e3a59cdfae243f0372",
+      "sha256": "76e73df09998d20f038887329beb2bb90313e19ceab633e3a59cdfae243f0372",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/781ca47fbaefd814e888fad4bb96605986a20db97b52985e30f0035d0cd3452e",
+      "sha256": "781ca47fbaefd814e888fad4bb96605986a20db97b52985e30f0035d0cd3452e",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/79267e8be8034e47daab14350411b3acc0b1f64e86efc9d821a217497254ca0a",
+      "sha256": "79267e8be8034e47daab14350411b3acc0b1f64e86efc9d821a217497254ca0a",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/802f4e863a28ff48d63e7e27c5cfb3b2396584aaed56870da90de6a823691aae",
+      "sha256": "802f4e863a28ff48d63e7e27c5cfb3b2396584aaed56870da90de6a823691aae",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/81ba3828fec16cde77759c3c52e707d20653a2f4efc1470a73dcc86efc088211",
+      "sha256": "81ba3828fec16cde77759c3c52e707d20653a2f4efc1470a73dcc86efc088211",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/82d2406c330adb4e4b96795821f79e7c171332008f5827d9ddc6433045477385",
+      "sha256": "82d2406c330adb4e4b96795821f79e7c171332008f5827d9ddc6433045477385",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/8b1ba204bb69a0ade2bfcf65ef294a920f6bb361b317dba43c7ef29d96332b9b",
+      "sha256": "8b1ba204bb69a0ade2bfcf65ef294a920f6bb361b317dba43c7ef29d96332b9b",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/8c18cf5a1fa40da2cc3a88227d7ca12e6a30a6556ee58c17d3c3348c9164efb3",
+      "sha256": "8c18cf5a1fa40da2cc3a88227d7ca12e6a30a6556ee58c17d3c3348c9164efb3",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/91341a25dbb41e08330b5f97dc860660c2646cae84cb762cf52ff65aa81c8d37",
+      "sha256": "91341a25dbb41e08330b5f97dc860660c2646cae84cb762cf52ff65aa81c8d37",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/9539a388c0e697381f7574247488da528f2647099db4c39096bdb2a8695139b9",
+      "sha256": "9539a388c0e697381f7574247488da528f2647099db4c39096bdb2a8695139b9",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/b209bc9a3cb51e6581f7c22361dc04e62670553e1d780e774a0c8d76282eb0d9",
+      "sha256": "b209bc9a3cb51e6581f7c22361dc04e62670553e1d780e774a0c8d76282eb0d9",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/b96a5ef667a17b0a9b551e2d75552d3872a1d0e147fd817d251e1fab415dc81c",
+      "sha256": "b96a5ef667a17b0a9b551e2d75552d3872a1d0e147fd817d251e1fab415dc81c",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/ba59cba0b05b905a5d6af499b6eb604407157bd30b6cbfbec084284932e5971a",
+      "sha256": "ba59cba0b05b905a5d6af499b6eb604407157bd30b6cbfbec084284932e5971a",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/ba5b30228207235fbf64a1e6de265489fb6f5dca1ae92043daa552033487aa15",
+      "sha256": "ba5b30228207235fbf64a1e6de265489fb6f5dca1ae92043daa552033487aa15",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/bb8c92b0d88004866778ef0946f1df8d2990c78238454a17b4e6c6941f136b84",
+      "sha256": "bb8c92b0d88004866778ef0946f1df8d2990c78238454a17b4e6c6941f136b84",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/c3e71ca4b4cb914964780ba078af4bc3bc78a312f70f51b9100bf763adc6fac0",
+      "sha256": "c3e71ca4b4cb914964780ba078af4bc3bc78a312f70f51b9100bf763adc6fac0",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/c8ccd626eed82a6d6bd048222176847c915dcf9e14c02230ae27025c62005be1",
+      "sha256": "c8ccd626eed82a6d6bd048222176847c915dcf9e14c02230ae27025c62005be1",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/cb28bf5c33ec6099c31270bd3f3f048995ff567599eedc38ebb970dc7c0b682c",
+      "sha256": "cb28bf5c33ec6099c31270bd3f3f048995ff567599eedc38ebb970dc7c0b682c",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/cbbd9e6a70be4774dbd8d645db3078e704c24f564ce522a19425c72b8aae0b40",
+      "sha256": "cbbd9e6a70be4774dbd8d645db3078e704c24f564ce522a19425c72b8aae0b40",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/d0025ef40c64eece57bb6bedc4c9f4a33310a8bce5dfd74becd74fefc27c54c6",
+      "sha256": "d0025ef40c64eece57bb6bedc4c9f4a33310a8bce5dfd74becd74fefc27c54c6",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/d7037eba080701c5ac4f5ac9a88624e50f449c2cc9e05f387fc07df09a5adaf8",
+      "sha256": "d7037eba080701c5ac4f5ac9a88624e50f449c2cc9e05f387fc07df09a5adaf8",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/da19f8391c5c6f72fe858d4e35e91ba82d335a53c06530cad6477d28a81cb721",
+      "sha256": "da19f8391c5c6f72fe858d4e35e91ba82d335a53c06530cad6477d28a81cb721",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/e11a6e01c7d749e91b1de48ba9d6cb10ba0a328acd1c96a4baa3e6b796409ecc",
+      "sha256": "e11a6e01c7d749e91b1de48ba9d6cb10ba0a328acd1c96a4baa3e6b796409ecc",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/e3d4833dcb395214c0366d241fdaa4b7d7e2330133bb6db03ed5bfd01f974bea",
+      "sha256": "e3d4833dcb395214c0366d241fdaa4b7d7e2330133bb6db03ed5bfd01f974bea",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/e4a41af2ea8dc344c0c1ce36b26cba741b7f393cb74197e52d9893e6cb223db5",
+      "sha256": "e4a41af2ea8dc344c0c1ce36b26cba741b7f393cb74197e52d9893e6cb223db5",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/e79bc66c053da9499dad75ddc543656d988ede83e9e84cc1e18624f421e9a0e1",
+      "sha256": "e79bc66c053da9499dad75ddc543656d988ede83e9e84cc1e18624f421e9a0e1",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/e7b6167bc682a755c39f4275445ceda590b8365354d932e59fe44eb82d160fdf",
+      "sha256": "e7b6167bc682a755c39f4275445ceda590b8365354d932e59fe44eb82d160fdf",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/e8ff7ef72d106df5b637a5606a149e4331144fd932c1ef2b3776c4900b393b2e",
+      "sha256": "e8ff7ef72d106df5b637a5606a149e4331144fd932c1ef2b3776c4900b393b2e",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/ef5518c5a3aaa7458e074a7e41e87837f8a1c74da00938244019e2e8c0428b4a",
+      "sha256": "ef5518c5a3aaa7458e074a7e41e87837f8a1c74da00938244019e2e8c0428b4a",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/f226cce23ae014f96d74273b628c1e370caa08fafeb52045104f12aaa5ee72d2",
+      "sha256": "f226cce23ae014f96d74273b628c1e370caa08fafeb52045104f12aaa5ee72d2",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/source-materials/objects/f77efcf98808dcf795aa1e695e466dca089690daa924d2296fbaa163622b1858",
+      "sha256": "f77efcf98808dcf795aa1e695e466dca089690daa924d2296fbaa163622b1858",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/content/world/1.60.1.70450/conflicts.json",
+      "sha256": "a56df26dd8359810b9809a625df3569190a504930f9c4bec0492cda11f4022f2",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/manifest.json",
+      "sha256": "0968db00eb41a0735ea6d13b0d1c133b1ad57582bee008dd34fc10f12ac124a2",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/receipt.json",
+      "sha256": "254c39d239f2cdd55352f0c0ea022461bfe6a6e8d2d1a1f095c268977bfb9835",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/release/v1/accepted-origins.json",
+      "sha256": "d58e2e456fc81b35b840ae846a794e1bf1b2ada46e0fff434ad9c063d5b73dd7",
+      "source_verified": true
+    },
+    {
+      "path": "bundled-content/release/v1/public-content-review-v12.json",
+      "sha256": "b22e2dbf570eb5968d64e246a9fb4a47d2e7ec3c51262917850ef230226cd98d",
+      "source_verified": true
+    },
+    {
+      "path": "font-notices/OFL-Cinzel.txt",
+      "sha256": "f2b3029aba64c378bf0963b62945eee15e564fe4330b934c8f2eb058282b5e83",
+      "source_verified": true
+    },
+    {
+      "path": "font-notices/OFL-Inter.txt",
+      "sha256": "262481e844521b326f5ecd053e59b98c8b2da78c8ee1bdbb6e8174305e54935a",
+      "source_verified": true
+    },
+    {
+      "path": "font-notices/THIRD_PARTY.md",
+      "sha256": "4a276eef79044d36e497ae86cc9133a75355da53d20f4d46200919b3e41d89ca",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/CASCLIB-LICENSE.txt",
+      "sha256": "2bcedca5b74c03ddd6492990bc18261cb749c40e85c89b4e54fc3f98cdb6b6bf",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/DEPENDENCIES.json",
+      "sha256": "4a75f29ca4eb61f1bec8e46b75be17252edc0afea6c0ddc2f99059f35ef6fbd1",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/ED25519-LICENSE.txt",
+      "sha256": "7a313964a6e050794d2ad57f4863c11f6bbe055c0ae6ce2cf3b9fc45150bada3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/MD5-NOTICE-AND-SOURCE.txt",
+      "sha256": "ea7433a1b88bd5c9e5445fb95a4f5261a94f57f937306de502c7fd5d306f2fd5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/RFD-LICENSE.txt",
+      "sha256": "65fc947f4bac882a2cd104ef73c246b1b037059df9f2b3a58b7f77f0b9e56071",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/THIRD_PARTY.md",
+      "sha256": "8a387961da30a93ac4fb195684cbec3bde02db5a22741504dd4cb52597ba2253",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/WOWDBDEFS-LICENSE.md",
+      "sha256": "bab6b1d3130b236c5af360ee7bfa00d8757329d054323441ed6a5eb367cd1f32",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/WOWDBDEFS-RS-LICENSE-APACHE.txt",
+      "sha256": "4aa06cef7707edf26cceed00c567f45597e780d44e8ed9198de4f6c91882b767",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/WOWDBDEFS-RS-LICENSE-MIT.txt",
+      "sha256": "6d8cffe77f7525ace5fe58b7bd38cd85c7aab3bc2b5f9132a5d99c23dd70cbbb",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/ZLIB-LICENSE-AND-HEADER.txt",
+      "sha256": "4ddc82b4af931ab55f44d977bde81bfbc4151b5dcdccc03142831a301b5ec3c8",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/js/@tauri-apps_api-2.12.3/LICENSE-APACHE-2.0",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/js/@tauri-apps_api-2.12.3/LICENSE-MIT",
+      "sha256": "9dd42ea92cff2ede5cd477cbfcce051b2d0115c0ac7f368ee88cb545055dff1d",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/js/@tauri-apps_api-2.12.3/LICENSE.spdx",
+      "sha256": "5e834fe9788c524210deda859c46a550ffa5aa0cba9ea0572f0d81120e97c008",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/js/react-19.3.0/LICENSE",
+      "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/js/react-dom-19.3.0/LICENSE",
+      "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/js/scheduler-0.28.0/LICENSE",
+      "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust-stdlib/COPYRIGHT-library.html",
+      "sha256": "5647be074c8edf7339fd863055923a8fc80bc5610a8d4661ec3b767b9d392c27",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust-stdlib/licenses/Apache-2.0.txt",
+      "sha256": "074e6e32c86a4c0ef8b3ed25b721ca23aca83df277cd88106ef7177c354615ff",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust-stdlib/licenses/BSD-2-Clause.txt",
+      "sha256": "f32fb3b417a194167cfad068223fc975ba96c5960513a10f66a3c28720aec1df",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust-stdlib/licenses/CC-BY-SA-4.0.txt",
+      "sha256": "23ee78c8bae49cf08ea2f0c84945c66b987ebe4520881fb51b3dad4fb43d07c2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust-stdlib/licenses/GCC-exception-3.1.txt",
+      "sha256": "a3966c9410ef94a1efbfa9ec04e9c1994026a70623fbf0885ce36737bfba3b54",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust-stdlib/licenses/GPL-2.0-only.txt",
+      "sha256": "54b212ba1f97f6948fa5486239ab505dd820b02e50cbfd296b4062c8609a70af",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust-stdlib/licenses/GPL-3.0-or-later.txt",
+      "sha256": "05315fce6c35f79b8a35454828995fa26336f235895ac64557abc028f4ffcea2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust-stdlib/licenses/ISC.txt",
+      "sha256": "0ff61769b238634e042ab759dddfd104a8e69d091e3600ae3410e401a6164381",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust-stdlib/licenses/LLVM-exception.txt",
+      "sha256": "e34c58338bd89d43e709e226610d8f32b3e3c47f4ad9a99a8dc1d4ac7842488e",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust-stdlib/licenses/MIT.txt",
+      "sha256": "b85dcd3e453d05982552c52b5fc9e0bdd6d23c6f8e844b984a88af32570b0cc0",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust-stdlib/licenses/NCSA.txt",
+      "sha256": "39cb0234065c92b9e6cee3830cbb52b1aa289aa8fe9ba2e66730fec5cf05c630",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust-stdlib/licenses/OFL-1.1.txt",
+      "sha256": "8eea8287e5876b539670cadb82e99f9a7afddec6f6730811be1daf25d2e9bcfd",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust-stdlib/licenses/Unicode-3.0.txt",
+      "sha256": "f5062c9a188d81dfe66b56db4182dcf9e4b17c0d9b0d311a8e20b3a1b075c443",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/adler2-2.0.1/LICENSE-0BSD",
+      "sha256": "861399f8c21c042b110517e76dc6b63a2b334276c8cf17412fc3c8908ca8dc17",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/adler2-2.0.1/LICENSE-APACHE",
+      "sha256": "8ada45cd9f843acf64e4722ae262c622a2b3b3007c7310ef36ac1061a30f6adb",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/adler2-2.0.1/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/aho-corasick-1.1.5/COPYING",
+      "sha256": "01c266bced4a434da0051174d6bee16a4c82cf634e2679b6155d40d75012390f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/aho-corasick-1.1.5/LICENSE-MIT",
+      "sha256": "0f96a83840e146e43c0ec96a22ec1f392e0680e6c1226e6f3ba87e0740af850f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/alloc-no-stdlib-3.0.0/LICENSE",
+      "sha256": "c0c56f26d9c051cac4d200c34c84e7ae9aaa853e01a982a1df08b09931e518ae",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/alloc-stdlib-0.3.0/ALLOC-BSD.txt",
+      "sha256": "c0c56f26d9c051cac4d200c34c84e7ae9aaa853e01a982a1df08b09931e518ae",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/anyhow-1.0.104/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/anyhow-1.0.104/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/autocfg-1.5.1/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/autocfg-1.5.1/LICENSE-MIT",
+      "sha256": "27995d58ad5c1145c1a8cd86244ce844886958a35eb2b78c6b772748669999ac",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/base64-0.23.1/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/base64-0.23.1/LICENSE-MIT",
+      "sha256": "ab499c75a0f0da8e0fe83bf9ba3a27e5c39705310f07107c6c66b69958d2401c",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/base64ct-1.5.3/LICENSE-APACHE",
+      "sha256": "a9040321c3712d8fd0b09cf52b17445de04a23a10165049ae187cd39e5c86be5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/base64ct-1.5.3/LICENSE-MIT",
+      "sha256": "4e2b34f7d4aacac2e608dae1b57887a7f50b0fa5bac6c9ee6b9bf1077aa8cdb4",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/bit-set-0.8.0/LICENSE-APACHE",
+      "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/bit-set-0.8.0/LICENSE-MIT",
+      "sha256": "f51ac2c59a222f7476ce507ca879960e2b64ea64bb2786eefdbeb7b0b538d1b7",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/bit-vec-0.8.0/LICENSE-APACHE",
+      "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/bit-vec-0.8.0/LICENSE-MIT",
+      "sha256": "f51ac2c59a222f7476ce507ca879960e2b64ea64bb2786eefdbeb7b0b538d1b7",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/bitflags-1.3.2/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/bitflags-1.3.2/LICENSE-MIT",
+      "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/bitflags-2.13.2/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/bitflags-2.13.2/LICENSE-MIT",
+      "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/block-buffer-0.10.4/LICENSE-APACHE",
+      "sha256": "a9040321c3712d8fd0b09cf52b17445de04a23a10165049ae187cd39e5c86be5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/block-buffer-0.10.4/LICENSE-MIT",
+      "sha256": "d5c22aa3118d240e877ad41c5d9fa232f9c77d757d4aac0c2f943afc0a95e0ef",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/brotli-9.0.0/LICENSE.BSD-3-Clause",
+      "sha256": "c0c56f26d9c051cac4d200c34c84e7ae9aaa853e01a982a1df08b09931e518ae",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/brotli-9.0.0/LICENSE.MIT",
+      "sha256": "3d180008e36922a4e8daec11c34c7af264fed5962d07924aea928c38e8663c94",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/brotli-decompressor-6.0.1/LICENSE",
+      "sha256": "c0c56f26d9c051cac4d200c34c84e7ae9aaa853e01a982a1df08b09931e518ae",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/bs58-0.5.1/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/bs58-0.5.1/LICENSE-MIT",
+      "sha256": "42d3bf7e7d4d49d72c0555d14ed99c3ee7ce9ce3cbffbc38bbafe8c103f50969",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/bytemuck-1.25.2/LICENSE-APACHE",
+      "sha256": "e3ba223bb1423f0aad8c3dfce0fe3148db48926d41e6fbc3afbbf5ff9e1c89cb",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/bytemuck-1.25.2/LICENSE-MIT",
+      "sha256": "9df9ba60a11af705f2e451b53762686e615d86f76b169cf075c3237730dbd7e2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/bytemuck-1.25.2/LICENSE-ZLIB",
+      "sha256": "84b34dd7608f7fb9b17bd588a6bf392bf7de504e2716f024a77d89f1b145a151",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/byteorder-1.5.0/COPYING",
+      "sha256": "01c266bced4a434da0051174d6bee16a4c82cf634e2679b6155d40d75012390f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/byteorder-1.5.0/LICENSE-MIT",
+      "sha256": "0f96a83840e146e43c0ec96a22ec1f392e0680e6c1226e6f3ba87e0740af850f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/byteorder-lite-0.1.0/LICENSE-MIT",
+      "sha256": "0f96a83840e146e43c0ec96a22ec1f392e0680e6c1226e6f3ba87e0740af850f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/bytes-1.12.1/LICENSE",
+      "sha256": "45f522cacecb1023856e46df79ca625dfc550c94910078bd8aec6e02880b3d42",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/camino-1.2.6/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/camino-1.2.6/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/cargo-platform-0.1.9/LICENSE-APACHE",
+      "sha256": "8ada45cd9f843acf64e4722ae262c622a2b3b3007c7310ef36ac1061a30f6adb",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/cargo-platform-0.1.9/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/cargo_metadata-0.19.2/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/cargo_toml-1.0.1/LICENSE",
+      "sha256": "ee874098519e956c23a3c5c7e20581f8e9b1d70aa05eb178f983be9775090a2f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/cc-1.8.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/cc-1.8.0/LICENSE-MIT",
+      "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/cfb-0.14.0/LICENSE",
+      "sha256": "ebaac853b53fec0ed475796f533ce676912a4df9ad9d8a621fa76d5060591e10",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/cfg-if-1.0.5/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/cfg-if-1.0.5/LICENSE-MIT",
+      "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/chrono-0.4.45/LICENSE.txt",
+      "sha256": "946c9835d8034d24404f8cfec5f4654cee5dad17e944afc3d06d742cf2882831",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/const-oid-0.9.6/LICENSE-APACHE",
+      "sha256": "a9040321c3712d8fd0b09cf52b17445de04a23a10165049ae187cd39e5c86be5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/const-oid-0.9.6/LICENSE-MIT",
+      "sha256": "bada9e7ed8dc00d63502053c455d7c8d7575dfb7e8277a2a832531844d900682",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/cookie-0.18.2/LICENSE-APACHE",
+      "sha256": "2773e20df8f4c52a026b5b578c7f2457341f5aa3fb6612fd87e1d2e1bd8f48ad",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/cookie-0.18.2/LICENSE-MIT",
+      "sha256": "f28420c1906af38be726cd7842798f0194b27c41d6051c0d1e9ee348b8a4a0ea",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/cpufeatures-0.2.17/LICENSE-APACHE",
+      "sha256": "a9040321c3712d8fd0b09cf52b17445de04a23a10165049ae187cd39e5c86be5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/cpufeatures-0.2.17/LICENSE-MIT",
+      "sha256": "ae9baa7beea910273c2f384c2a6b721fb7bd02bda3436074a1072e4ee689f985",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/crc32fast-1.5.2/LICENSE-APACHE",
+      "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/crc32fast-1.5.2/LICENSE-MIT",
+      "sha256": "61d383b05b87d78f94d2937e2580cce47226d17823c0430fbcad09596537efcf",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/crossbeam-channel-0.5.17/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/crossbeam-channel-0.5.17/LICENSE-MIT",
+      "sha256": "5734ed989dfca1f625b40281ee9f4530f91b2411ec01cb748223e7eb87e201ab",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/crossbeam-channel-0.5.17/LICENSE-THIRD-PARTY",
+      "sha256": "b16db96b93b1d7cf7bea533f572091ec6bca3234fbe0a83038be772ff391a44c",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/crossbeam-utils-0.8.23/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/crossbeam-utils-0.8.23/LICENSE-MIT",
+      "sha256": "5734ed989dfca1f625b40281ee9f4530f91b2411ec01cb748223e7eb87e201ab",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/crypto-common-0.1.7/LICENSE-APACHE",
+      "sha256": "a9040321c3712d8fd0b09cf52b17445de04a23a10165049ae187cd39e5c86be5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/crypto-common-0.1.7/LICENSE-MIT",
+      "sha256": "3521672491a3479422d5fe1aca6645dd2984090f85da6e5205abfb18fb7a6897",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/cssparser-0.37.0/LICENSE",
+      "sha256": "fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/cssparser-macros-0.7.1/LICENSE",
+      "sha256": "fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/ctor-1.0.13/LICENSE-APACHE",
+      "sha256": "a8ad31b1c3f40dca5a84119351b8fa8ddc868edd77fad8a8ebf6d8f2d16fa4ae",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/ctor-1.0.13/LICENSE-MIT",
+      "sha256": "bccaa8b6c09f94e81f06696e179dbe058464bbdfbc823b6d49cada1d71e84ac3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/curve25519-dalek-4.1.3/LICENSE",
+      "sha256": "cca0bd3c4fcdba74145ef9d49c62337e2c9fbf9368288f11d0547f1b0273219f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/curve25519-dalek-derive-0.1.1/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/curve25519-dalek-derive-0.1.1/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/darling-0.24.1/LICENSE",
+      "sha256": "8ea93490d74a5a1b1af3ff71d786271b3f1e5f0bea79ac16e02ec533cef040d6",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/darling_core-0.24.1/LICENSE",
+      "sha256": "8ea93490d74a5a1b1af3ff71d786271b3f1e5f0bea79ac16e02ec533cef040d6",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/darling_macro-0.24.1/LICENSE",
+      "sha256": "8ea93490d74a5a1b1af3ff71d786271b3f1e5f0bea79ac16e02ec533cef040d6",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/defmt-1.1.1/LICENSE-APACHE",
+      "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/defmt-1.1.1/LICENSE-MIT",
+      "sha256": "2710a622a896bba67356913d4d0492cab5465f61b2ecce6d880aeb483834fb50",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/defmt-macros-1.1.1/LICENSE-APACHE",
+      "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/defmt-macros-1.1.1/LICENSE-MIT",
+      "sha256": "2710a622a896bba67356913d4d0492cab5465f61b2ecce6d880aeb483834fb50",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/defmt-parser-1.0.0/DEFMT-APACHE.txt",
+      "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/defmt-parser-1.0.0/DEFMT-MIT.txt",
+      "sha256": "2710a622a896bba67356913d4d0492cab5465f61b2ecce6d880aeb483834fb50",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/der-0.7.10/LICENSE-APACHE",
+      "sha256": "a9040321c3712d8fd0b09cf52b17445de04a23a10165049ae187cd39e5c86be5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/der-0.7.10/LICENSE-MIT",
+      "sha256": "ad64fcb9589f162720f3cc5010ad76ca6ad3764e11861f9192c489df176bb71d",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/deranged-0.5.8/LICENSE-Apache",
+      "sha256": "edd65bdd88957a205c47d53fa499eed8865a70320f0f03f6391668cb304ea376",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/deranged-0.5.8/LICENSE-MIT",
+      "sha256": "231c837c45eb53f108fb48929e488965bc4fcc14e9ea21d35f50e6b99d98685b",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/derive_more-2.1.1/LICENSE",
+      "sha256": "8a35369f3ca263b3c62fbb5032947e53b6bfebc6c8a4d1bb982de1c069f6fba5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/derive_more-impl-2.1.1/LICENSE",
+      "sha256": "8a35369f3ca263b3c62fbb5032947e53b6bfebc6c8a4d1bb982de1c069f6fba5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/digest-0.10.7/LICENSE-APACHE",
+      "sha256": "a9040321c3712d8fd0b09cf52b17445de04a23a10165049ae187cd39e5c86be5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/digest-0.10.7/LICENSE-MIT",
+      "sha256": "9e0dfd2dd4173a530e238cb6adb37aa78c34c6bc7444e0e10c1ab5d8881f63ba",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/dirs-7.0.0/LICENSE-APACHE",
+      "sha256": "d3174ad63e721d4c9dccb8ad4320848992d314369bc46319720b5802c9153fe9",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/dirs-7.0.0/LICENSE-MIT",
+      "sha256": "6a2e0ade09a7d5f816f11566fee2b151b32235a7fad52b41d49cce96f833c1a9",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/dirs-sys-0.5.0/LICENSE-APACHE",
+      "sha256": "d3174ad63e721d4c9dccb8ad4320848992d314369bc46319720b5802c9153fe9",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/dirs-sys-0.5.0/LICENSE-MIT",
+      "sha256": "6a2e0ade09a7d5f816f11566fee2b151b32235a7fad52b41d49cce96f833c1a9",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/displaydoc-0.2.7/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/displaydoc-0.2.7/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/dom_query-0.28.0/LICENSE",
+      "sha256": "7554701d1e74fc434f68c522b1dd743c8c16d816a4b761b5213f367b898884c8",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/dpi-0.1.2/LICENSE",
+      "sha256": "6dc0e068dcf3a5bc8e054205b85b7720e1d49265bbc64bf515d2cf79197df69a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/dpi-0.1.2/LICENSE-LIBM-MIT",
+      "sha256": "9eff396a99bafd208e7126602420d6864f6066c08b84485a5b032320a9c01997",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/dtoa-1.0.11/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/dtoa-1.0.11/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/dtoa-short-0.3.5/LICENSE",
+      "sha256": "1f256ecad192880510e84ad60474eab7589218784b9a50bc7ceee34c2b91f1d5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/dunce-1.0.5/LICENSE",
+      "sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/dyn-clone-1.0.20/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/dyn-clone-1.0.20/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/ed25519-2.2.3/LICENSE-APACHE",
+      "sha256": "78779d420019e6b4630376af8e86b6b335ee8a2f89ede6e0411e0469a326aaa4",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/ed25519-2.2.3/LICENSE-MIT",
+      "sha256": "b3470648aff02beb36d7a53240fc9260ed80ed93bd43bace6b67d7ef7336ee33",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/ed25519-dalek-2.2.0/LICENSE",
+      "sha256": "7a313964a6e050794d2ad57f4863c11f6bbe055c0ae6ce2cf3b9fc45150bada3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/embed-resource-3.0.12/LICENSE",
+      "sha256": "1abdbbd4e3f95e56c79d4a8af190254c23ddb14db34aadadfafef9c3af041113",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/equivalent-1.0.2/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/equivalent-1.0.2/LICENSE-MIT",
+      "sha256": "7365cc8878a1d7ce155a58c4ca09c3d7a6be413efa5334a80ea842912b669349",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/erased-serde-0.4.10/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/erased-serde-0.4.10/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/fallible-iterator-0.3.0/LICENSE-APACHE",
+      "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/fallible-iterator-0.3.0/LICENSE-MIT",
+      "sha256": "0816e154b159ba255c563f7c8c7df5bbb8cc5fc96f5ab8cf9f4743b4f41fe7eb",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/fallible-streaming-iterator-0.1.9/LICENSE-APACHE",
+      "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/fallible-streaming-iterator-0.1.9/LICENSE-MIT",
+      "sha256": "8dcec5569a9be5b0e086c80faed6f1aefa670af0ec29cecc2f714303096887e0",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/fastrand-2.5.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/fastrand-2.5.0/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/fdeflate-0.3.7/LICENSE-APACHE",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/fdeflate-0.3.7/LICENSE-MIT",
+      "sha256": "c77a4cf9da729987d0fe7ccd811e3bd27393914ddf3d23467c18cc22954513b3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/find-msvc-tools-0.1.14/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/find-msvc-tools-0.1.14/LICENSE-MIT",
+      "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/flate2-1.1.10/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/flate2-1.1.10/LICENSE-MIT",
+      "sha256": "025436edff4cfcdde17a5811fdea78892d8482efd1abdec5a17872d07a4f2112",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/fnv-1.0.7/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/fnv-1.0.7/LICENSE-MIT",
+      "sha256": "65fdb6c76cd61612070c066eec9ecdb30ee74fb27859d0d9af58b9f499fd0c3e",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/foldhash-0.2.0/LICENSE",
+      "sha256": "b1181a40b2a7b25cf66fd01481713bc1005df082c53ef73e851e55071b102744",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/form_urlencoded-1.2.2/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/form_urlencoded-1.2.2/LICENSE-MIT",
+      "sha256": "20c7855c364d57ea4c97889a5e8d98470a9952dade37bd9248b9a54431670e5e",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/generic-array-0.14.7/LICENSE",
+      "sha256": "c09aae9d3c77b531f56351a9947bc7446511d6b025b3255312d3e3442a9a7583",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/getrandom-0.3.4/LICENSE-APACHE",
+      "sha256": "aaff376532ea30a0cd5330b9502ad4a4c8bf769c539c87ffe78819d188a18ebf",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/getrandom-0.3.4/LICENSE-MIT",
+      "sha256": "29e9fe5074bd27e0e5d5d110394fbbcd841baee2651a3c4b4560a632702cede4",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/getrandom-0.4.3/LICENSE-APACHE",
+      "sha256": "aaff376532ea30a0cd5330b9502ad4a4c8bf769c539c87ffe78819d188a18ebf",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/getrandom-0.4.3/LICENSE-MIT",
+      "sha256": "523a42c25d245dde9c015f882cec7f4555aad883382a6cf19b4b7d9b2cd5419b",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/glob-0.3.4/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/glob-0.3.4/LICENSE-MIT",
+      "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/hashbrown-0.12.3/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/hashbrown-0.12.3/LICENSE-MIT",
+      "sha256": "ff8f68cb076caf8cefe7a6430d4ac086ce6af2ca8ce2c4e5a2004d4552ef52a2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/hashbrown-0.17.1/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/hashbrown-0.17.1/LICENSE-MIT",
+      "sha256": "ff8f68cb076caf8cefe7a6430d4ac086ce6af2ca8ce2c4e5a2004d4552ef52a2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/hashlink-0.12.2/LICENSE-APACHE",
+      "sha256": "c144680885b29e4719e2a51f0aab5439a1e02d980692b5aaf086cae12727f28b",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/hashlink-0.12.2/LICENSE-MIT",
+      "sha256": "e915669a595b11a200873df8286561881b0e04932f6412a585db6297ba0bc97c",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/heck-0.5.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/heck-0.5.0/LICENSE-MIT",
+      "sha256": "7b63ecd5f1902af1b63729947373683c32745c16a10e8e6292e2e2dcd7e90ae0",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/hex-0.4.3/LICENSE-APACHE",
+      "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/hex-0.4.3/LICENSE-MIT",
+      "sha256": "f7bdb3426d045cd50efd4953026e3eb5a83d0199f458a075602611b9344da5b9",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/html5ever-0.39.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/html5ever-0.39.0/LICENSE-MIT",
+      "sha256": "86dd7f026f916daf7511e39951ad8ea8cf55a8db67ae64060dacf829761c18f3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/http-1.5.0/LICENSE-APACHE",
+      "sha256": "8bb1b50b0e5c9399ae33bd35fab2769010fa6c14e8860c729a52295d84896b7a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/http-1.5.0/LICENSE-MIT",
+      "sha256": "dc91f8200e4b2a1f9261035d4c18c33c246911a6c0f7b543d75347e61b249cff",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/ico-0.5.0/LICENSE",
+      "sha256": "41ca90213441b294e7517d5858f0cc85bc12e19ec044001b45bc213de461d33b",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/icu_collections-2.3.0/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/icu_locale_core-2.3.0/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/icu_normalizer-2.3.0/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/icu_normalizer_data-2.3.0/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/icu_properties-2.3.0/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/icu_properties_data-2.3.0/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/icu_provider-2.3.1/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/ident_case-1.0.1/LICENSE",
+      "sha256": "508a77d2e7b51d98adeed32648ad124b7b30241a8e70b2e72c99f92d8e5874d1",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/idna-1.1.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/idna-1.1.0/LICENSE-MIT",
+      "sha256": "b38f11f6096706e6de553dabe2a7ed142d59b6fa8c97e290c67496154745cdd5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/idna_adapter-1.2.2/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/idna_adapter-1.2.2/LICENSE-MIT",
+      "sha256": "8b43ce8accd61e9d370b5ca9e9c4f953279b5c239926c62315b40e24df51b726",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/image-0.25.10/LICENSE-APACHE",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/image-0.25.10/LICENSE-MIT",
+      "sha256": "c77a4cf9da729987d0fe7ccd811e3bd27393914ddf3d23467c18cc22954513b3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/indexmap-1.9.3/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/indexmap-1.9.3/LICENSE-MIT",
+      "sha256": "ecc269ef87fd38a1d98e30bfac9ba964a9dbd9315c3770fed98d4d7cb5882055",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/indexmap-2.14.2/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/indexmap-2.14.2/LICENSE-MIT",
+      "sha256": "ecc269ef87fd38a1d98e30bfac9ba964a9dbd9315c3770fed98d4d7cb5882055",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/infer-0.22.0/LICENSE",
+      "sha256": "270b0d81891aa44c7e8726cf9432dade9556a01c848bacd2f3ef839c9c1a1859",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/itoa-1.0.18/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/itoa-1.0.18/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/jiff-0.2.38/COPYING",
+      "sha256": "01c266bced4a434da0051174d6bee16a4c82cf634e2679b6155d40d75012390f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/jiff-0.2.38/LICENSE-MIT",
+      "sha256": "0f96a83840e146e43c0ec96a22ec1f392e0680e6c1226e6f3ba87e0740af850f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/jiff-core-0.1.1/COPYING",
+      "sha256": "01c266bced4a434da0051174d6bee16a4c82cf634e2679b6155d40d75012390f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/jiff-core-0.1.1/LICENSE-MIT",
+      "sha256": "0f96a83840e146e43c0ec96a22ec1f392e0680e6c1226e6f3ba87e0740af850f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/jiff-tzdb-0.1.9/COPYING",
+      "sha256": "01c266bced4a434da0051174d6bee16a4c82cf634e2679b6155d40d75012390f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/jiff-tzdb-0.1.9/LICENSE-MIT",
+      "sha256": "0f96a83840e146e43c0ec96a22ec1f392e0680e6c1226e6f3ba87e0740af850f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/jiff-tzdb-platform-0.1.3/COPYING",
+      "sha256": "01c266bced4a434da0051174d6bee16a4c82cf634e2679b6155d40d75012390f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/jiff-tzdb-platform-0.1.3/LICENSE-MIT",
+      "sha256": "0f96a83840e146e43c0ec96a22ec1f392e0680e6c1226e6f3ba87e0740af850f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/json-patch-4.2.0/LICENSE-APACHE",
+      "sha256": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/json-patch-4.2.0/LICENSE-MIT",
+      "sha256": "87f7527b1066337751f7f4d717089bf514ff8f7ee7d66c4c5b891b09e744ec11",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/jsonptr-0.7.1/LICENSE-APACHE",
+      "sha256": "2cf31f2ae7f3feba667d50fc1d4d21ecf217703c04c3068b83c9a73b6dde723a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/jsonptr-0.7.1/LICENSE-MIT",
+      "sha256": "2bc107bdc18a74263d20bdefdb8073e17bc1a01b6b374dc5835683a33ee5ba7d",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/keyboard-types-0.8.3/LICENSE-APACHE",
+      "sha256": "769f80b5bcb42ed0af4e4d2fd74e1ac9bf843cb80c5a29219d1ef3544428a6bb",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/keyboard-types-0.8.3/LICENSE-MIT",
+      "sha256": "31dbbab009f1b2e59a1622d5955dfafc38ebe834000215b49d954c6f85fe927c",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/libc-0.2.190/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/libc-0.2.190/LICENSE-MIT",
+      "sha256": "123a331b5dbf04c30097fa43b8f858bc85df671fe776de498d01f3d6b7c1f69e",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/libsqlite3-sys-0.38.2/LICENSE",
+      "sha256": "c10c1f27337546471e5f7e4e97fdd398b35b9d4e126115dcd22de8d8e65abf6f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/litemap-0.8.3/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/lock_api-0.4.14/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/lock_api-0.4.14/LICENSE-MIT",
+      "sha256": "c9a75f18b9ab2927829a208fc6aa2cf4e63b8420887ba29cdb265d6619ae82d5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/log-0.4.34/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/log-0.4.34/LICENSE-MIT",
+      "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/markup5ever-0.39.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/markup5ever-0.39.0/LICENSE-MIT",
+      "sha256": "86dd7f026f916daf7511e39951ad8ea8cf55a8db67ae64060dacf829761c18f3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/memchr-2.8.3/COPYING",
+      "sha256": "01c266bced4a434da0051174d6bee16a4c82cf634e2679b6155d40d75012390f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/memchr-2.8.3/LICENSE-MIT",
+      "sha256": "0f96a83840e146e43c0ec96a22ec1f392e0680e6c1226e6f3ba87e0740af850f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/mime-0.3.17/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/mime-0.3.17/LICENSE-MIT",
+      "sha256": "df9cfd06d8a44d9a671eadd39ffd97f166481da015a30f45dfd27886209c5922",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/miniz_oxide-0.8.9/LICENSE",
+      "sha256": "4108245a1f2df9d4e94df8abed5b4ba0759bb2f9b40a6b939f1be141077ae50b",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/miniz_oxide-0.8.9/LICENSE-APACHE.md",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/miniz_oxide-0.8.9/LICENSE-MIT.md",
+      "sha256": "799e9ca9d179295ef372f25d3769cdda7d25bb2668add6a6a1e22d1e4c678b8d",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/miniz_oxide-0.8.9/LICENSE-ZLIB.md",
+      "sha256": "0a54e647fe54104658b5e563c04c6f9edf251710e47bce692e0bd990a4ddaa39",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/miniz_oxide-0.9.1/LICENSE",
+      "sha256": "4108245a1f2df9d4e94df8abed5b4ba0759bb2f9b40a6b939f1be141077ae50b",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/miniz_oxide-0.9.1/LICENSE-APACHE.md",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/miniz_oxide-0.9.1/LICENSE-MIT.md",
+      "sha256": "799e9ca9d179295ef372f25d3769cdda7d25bb2668add6a6a1e22d1e4c678b8d",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/miniz_oxide-0.9.1/LICENSE-ZLIB.md",
+      "sha256": "0a54e647fe54104658b5e563c04c6f9edf251710e47bce692e0bd990a4ddaa39",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/mio-1.2.4/LICENSE",
+      "sha256": "07919255c7e04793d8ea760d6c2ce32d19f9ff02bdbdde3ce90b1e1880929a9b",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/moxcms-0.8.1/LICENSE-APACHE.md",
+      "sha256": "90bf2d659c43045111b65c733ab2a6d4cbcb422a098368c8c58a9ba3db4ed0c5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/moxcms-0.8.1/LICENSE.md",
+      "sha256": "2aa92cada6431e75615e3fe6cb1a9082c98f777d48ae1c087c0da0e37f7b8bff",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/muda-0.20.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/muda-0.20.0/LICENSE-MIT",
+      "sha256": "2ab5537b8c0cb1d475e2145b6a7994b04e7c71e6e5bd836f7f9c47c221a5ad9a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/muda-0.20.0/LICENSE.spdx",
+      "sha256": "b99f9d43803f2ac979c50949df630bd8eeaf2fcd1b9fdb9093710d70f5dfb63d",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/new_debug_unreachable-1.0.6/LICENSE-MIT",
+      "sha256": "f7715d38a3fa1b4ac97c5729740752505a39cb92ee83ab5b102aeb5eaa7cdea4",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/num-conv-0.2.2/LICENSE-Apache",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/num-conv-0.2.2/LICENSE-MIT",
+      "sha256": "e2e245f2b566d0bfafb0f6a04c16b82d710c4e6e7d799e39bb4ef6e541b85b98",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/num-traits-0.2.19/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/num-traits-0.2.19/LICENSE-MIT",
+      "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/once_cell-1.21.4/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/once_cell-1.21.4/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/option-ext-0.2.0/LICENSE.txt",
+      "sha256": "66a3107d5ad6a058aab753eaac2047ccb2ed0e39465dd0fe5844da3e300d5172",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/parking_lot-0.12.5/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/parking_lot-0.12.5/LICENSE-MIT",
+      "sha256": "c9a75f18b9ab2927829a208fc6aa2cf4e63b8420887ba29cdb265d6619ae82d5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/parking_lot_core-0.9.12/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/parking_lot_core-0.9.12/LICENSE-MIT",
+      "sha256": "c9a75f18b9ab2927829a208fc6aa2cf4e63b8420887ba29cdb265d6619ae82d5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/percent-encoding-2.3.2/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/percent-encoding-2.3.2/LICENSE-MIT",
+      "sha256": "b38f11f6096706e6de553dabe2a7ed142d59b6fa8c97e290c67496154745cdd5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/phf-0.13.1/LICENSE",
+      "sha256": "0ab4d106b6faac07fb6a051815fd1b4d862d730895e2d7d7358c2f13565e7a38",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/phf_codegen-0.13.1/LICENSE",
+      "sha256": "0ab4d106b6faac07fb6a051815fd1b4d862d730895e2d7d7358c2f13565e7a38",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/phf_generator-0.13.1/LICENSE",
+      "sha256": "0ab4d106b6faac07fb6a051815fd1b4d862d730895e2d7d7358c2f13565e7a38",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/phf_macros-0.13.1/LICENSE",
+      "sha256": "0ab4d106b6faac07fb6a051815fd1b4d862d730895e2d7d7358c2f13565e7a38",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/phf_shared-0.13.1/LICENSE",
+      "sha256": "0ab4d106b6faac07fb6a051815fd1b4d862d730895e2d7d7358c2f13565e7a38",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/pin-project-lite-0.2.17/LICENSE-APACHE",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/pin-project-lite-0.2.17/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/pkcs8-0.10.2/LICENSE-APACHE",
+      "sha256": "a9040321c3712d8fd0b09cf52b17445de04a23a10165049ae187cd39e5c86be5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/pkcs8-0.10.2/LICENSE-MIT",
+      "sha256": "ad64fcb9589f162720f3cc5010ad76ca6ad3764e11861f9192c489df176bb71d",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/pkg-config-0.3.34/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/pkg-config-0.3.34/LICENSE-MIT",
+      "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/plist-1.10.1/LICENCE",
+      "sha256": "5b0ae40d1a35f7ae6591a28e44771240e6a88cb03a66c9189a45b9681639b466",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/png-0.17.16/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/png-0.17.16/LICENSE-MIT",
+      "sha256": "eaf40297c75da471f7cda1f3458e8d91b4b2ec866e609527a13acfa93b638652",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/png-0.18.1/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/png-0.18.1/LICENSE-MIT",
+      "sha256": "eaf40297c75da471f7cda1f3458e8d91b4b2ec866e609527a13acfa93b638652",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/potential_utf-0.1.6/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/powerfmt-0.2.1/LICENSE-Apache",
+      "sha256": "155420c6403d4e0fca34105e3c03fdd6939b64c393c7ec6f95f5b72c5474eab0",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/powerfmt-0.2.1/LICENSE-MIT",
+      "sha256": "070dbc7dda03a29296f2d58bdb9b7331af90f2abc9f31df22875d1eabaf29852",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/precomputed-hash-0.1.1/LICENSE",
+      "sha256": "7ca6700600dfa9c9497bf5556365067daa802c871ea78239f129309c7a2048f7",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/proc-macro2-1.0.107/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/proc-macro2-1.0.107/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/pxfm-0.1.30/LICENSE-APACHE.md",
+      "sha256": "90bf2d659c43045111b65c733ab2a6d4cbcb422a098368c8c58a9ba3db4ed0c5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/pxfm-0.1.30/LICENSE.md",
+      "sha256": "2aa92cada6431e75615e3fe6cb1a9082c98f777d48ae1c087c0da0e37f7b8bff",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/quick-xml-0.42.0/LICENSE-MIT.md",
+      "sha256": "f0cf9b1c62bbe3bd3a69f5f79c7158f513f612b4940a0a812d1db39d605318bc",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/quote-1.0.47/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/quote-1.0.47/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/rand_core-0.10.1/COPYRIGHT",
+      "sha256": "92b81db30f7ab6d693e0af5661a40d273ca1947e891123ed823924192c10cbc7",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/rand_core-0.10.1/LICENSE-APACHE",
+      "sha256": "6df43f6f4b5d4587f3d8d71e45532c688fd168afa5fe89d571cb32fa09c4ef51",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/rand_core-0.10.1/LICENSE-MIT",
+      "sha256": "8b6e9feec03e7c9a5facb26855cecd31662bf989b636bcfe79521bdf8ac863f0",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/raw-window-handle-0.6.2/LICENSE-APACHE.md",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/raw-window-handle-0.6.2/LICENSE-MIT.md",
+      "sha256": "9c5a80639a57c1c945570e7ebbca0706305849ce3c098021325cca9db2f7acc4",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/raw-window-handle-0.6.2/LICENSE-ZLIB.md",
+      "sha256": "ae895c8576e682f310fb70d93d9f99b1dd82872094c54a8f6cdfe2ca5c2d6ecb",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/ref-cast-1.0.27/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/ref-cast-1.0.27/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/ref-cast-impl-1.0.27/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/ref-cast-impl-1.0.27/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/regex-1.13.1/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/regex-1.13.1/LICENSE-MIT",
+      "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/regex-automata-0.4.18/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/regex-automata-0.4.18/LICENSE-MIT",
+      "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/regex-syntax-0.8.11/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/regex-syntax-0.8.11/LICENSE-MIT",
+      "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/rfd-0.17.2/LICENSE",
+      "sha256": "65fc947f4bac882a2cd104ef73c246b1b037059df9f2b3a58b7f77f0b9e56071",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/rusqlite-0.40.2/LICENSE",
+      "sha256": "c10c1f27337546471e5f7e4e97fdd398b35b9d4e126115dcd22de8d8e65abf6f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/rustc-hash-2.1.3/LICENSE-APACHE",
+      "sha256": "95bd3988beee069fa2848f648dab43cc6e0b2add2ad6bcb17360caf749802bcc",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/rustc-hash-2.1.3/LICENSE-MIT",
+      "sha256": "30fefc3a7d6a0041541858293bcbea2dde4caa4c0a5802f996a7f7e8c0085652",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/rustc_version-0.4.1/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/rustc_version-0.4.1/LICENSE-MIT",
+      "sha256": "c9a75f18b9ab2927829a208fc6aa2cf4e63b8420887ba29cdb265d6619ae82d5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/same-file-1.0.6/COPYING",
+      "sha256": "01c266bced4a434da0051174d6bee16a4c82cf634e2679b6155d40d75012390f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/same-file-1.0.6/LICENSE-MIT",
+      "sha256": "cb3c929a05e6cbc9de9ab06a4c57eeb60ca8c724bef6c138c87d3a577e27aa14",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/schemars-0.8.22/LICENSE",
+      "sha256": "1954992a2b32e8a2af24a4c11b726902e344c1934b947a77f04d404908f8db30",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/schemars-0.9.0/LICENSE",
+      "sha256": "1954992a2b32e8a2af24a4c11b726902e344c1934b947a77f04d404908f8db30",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/schemars-1.2.2/LICENSE",
+      "sha256": "1954992a2b32e8a2af24a4c11b726902e344c1934b947a77f04d404908f8db30",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/schemars_derive-0.8.22/LICENSE",
+      "sha256": "1954992a2b32e8a2af24a4c11b726902e344c1934b947a77f04d404908f8db30",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/schemars_derive-1.2.2/LICENSE",
+      "sha256": "1954992a2b32e8a2af24a4c11b726902e344c1934b947a77f04d404908f8db30",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/scopeguard-1.2.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/scopeguard-1.2.0/LICENSE-MIT",
+      "sha256": "fb77f0a9c53e473abe5103c8632ef9f0f2874d4fb3f17cb2d8c661aab9cee9d7",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/selectors-0.38.0/MPL-2.0.txt",
+      "sha256": "3f3d9e0024b1921b067d6f7f88deb4a60cbe7a78e76c64e3f1d7fc3b779b9d04",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/semver-1.0.28/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/semver-1.0.28/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serde-1.0.229/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serde-1.0.229/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serde-untagged-0.1.9/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serde-untagged-0.1.9/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serde_core-1.0.229/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serde_core-1.0.229/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serde_derive-1.0.229/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serde_derive-1.0.229/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serde_derive_internals-0.29.1/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serde_derive_internals-0.29.1/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serde_derive_internals-0.30.0/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serde_derive_internals-0.30.0/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serde_json-1.0.154/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serde_json-1.0.154/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serde_repr-0.1.21/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serde_repr-0.1.21/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serde_spanned-1.1.2/LICENSE-APACHE",
+      "sha256": "249fdb6694467dd615b259f7ddde07be3f8ae5a72cecebb0e24f6629af4215fe",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serde_spanned-1.1.2/LICENSE-MIT",
+      "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serde_with-3.24.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serde_with-3.24.0/LICENSE-MIT",
+      "sha256": "7576269ea71f767b99297934c0b2367532690f8c4badc695edf8e04ab6a1e545",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serde_with_macros-3.24.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serde_with_macros-3.24.0/LICENSE-MIT",
+      "sha256": "7576269ea71f767b99297934c0b2367532690f8c4badc695edf8e04ab6a1e545",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serialize-to-javascript-0.1.2/LICENSE-APACHE",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serialize-to-javascript-0.1.2/LICENSE-MIT",
+      "sha256": "e53a7165e8bc3ced5e5628404b3d2d28ecc14ad720f1c09ba28385d5151ecf93",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serialize-to-javascript-impl-0.1.2/LICENSE-APACHE",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/serialize-to-javascript-impl-0.1.2/LICENSE-MIT",
+      "sha256": "e53a7165e8bc3ced5e5628404b3d2d28ecc14ad720f1c09ba28385d5151ecf93",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/servo_arc-0.4.3/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/servo_arc-0.4.3/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/sha2-0.10.9/LICENSE-APACHE",
+      "sha256": "a9040321c3712d8fd0b09cf52b17445de04a23a10165049ae187cd39e5c86be5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/sha2-0.10.9/LICENSE-MIT",
+      "sha256": "b4eb00df6e2a4d22518fcaa6a2b4646f249b3a3c9814509b22bd2091f1392ff1",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/shlex-2.0.1/LICENSE-APACHE",
+      "sha256": "553fffcd9b1cb158bc3e9edc35da85ca5c3b3d7d2e61c883ebcfa8a65814b583",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/shlex-2.0.1/LICENSE-MIT",
+      "sha256": "4455bf75a91154108304cb283e0fea9948c14f13e20d60887cf2552449dea3b1",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/signature-2.1.0/LICENSE-APACHE",
+      "sha256": "a9040321c3712d8fd0b09cf52b17445de04a23a10165049ae187cd39e5c86be5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/signature-2.1.0/LICENSE-MIT",
+      "sha256": "b3470648aff02beb36d7a53240fc9260ed80ed93bd43bace6b67d7ef7336ee33",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/simd-adler32-0.3.10/LICENSE.md",
+      "sha256": "42a35170233e83e18856792e748de4c1ce4a63b2afce9a370c89ef3fe23f9f2d",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/siphasher-1.0.4/COPYING",
+      "sha256": "c962ee4d1d05ddc138b202b2540219ebc57893fcf97b364852094a9a94ce1365",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/siphasher-1.0.4/LICENSE-APACHE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/siphasher-1.0.4/LICENSE-MIT",
+      "sha256": "f9c4c77baa3828004ee54b8a4f2db2e88ed44a6237a493965bf551fac0fcb62d",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/smallvec-1.16.3/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/smallvec-1.16.3/LICENSE-MIT",
+      "sha256": "0b28172679e0009b655da42797c03fd163a3379d5cfa67ba1f1655e974a2a1a9",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/socket2-0.6.5/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/socket2-0.6.5/LICENSE-MIT",
+      "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/softbuffer-0.4.8/LICENSE-APACHE",
+      "sha256": "a4445427440043e8ce6fadf7a43fb906cb0d7f6c573a560a9f142cf9f9bf8ff4",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/softbuffer-0.4.8/LICENSE-MIT",
+      "sha256": "0463bfa47d6d763d8c824333efb0e6d6df3946c13c3b077c78ed9f23ca50d0f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/spki-0.7.3/LICENSE-APACHE",
+      "sha256": "a9040321c3712d8fd0b09cf52b17445de04a23a10165049ae187cd39e5c86be5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/spki-0.7.3/LICENSE-MIT",
+      "sha256": "c995204cc6bad2ed67dd41f7d89bb9f1a9d48e0edd745732b30640d7912089a4",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/stable_deref_trait-1.2.1/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/stable_deref_trait-1.2.1/LICENSE-MIT",
+      "sha256": "5e05b024f653a5ce199e77cbbbd42fb5553562ec714b819421ed0c3e552a75d7",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/string_cache-0.9.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/string_cache-0.9.0/LICENSE-MIT",
+      "sha256": "62065228e42caebca7e7d7db1204cbb867033de5982ca4009928915e4095f3a3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/string_cache_codegen-0.6.1/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/string_cache_codegen-0.6.1/LICENSE-MIT",
+      "sha256": "62065228e42caebca7e7d7db1204cbb867033de5982ca4009928915e4095f3a3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/strsim-0.11.1/LICENSE",
+      "sha256": "1e697ce8d21401fbf1bddd9b5c3fd4c4c79ae1e3bdf51f81761c85e11d5a89cd",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/subtle-2.6.1/LICENSE",
+      "sha256": "d1fc1bc0d155df60b2e7705b6b2ae02a05c96f948e1cec6e2fb86360b09f346b",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/syn-2.0.119/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/syn-2.0.119/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/syn-3.0.8/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/syn-3.0.8/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/synstructure-0.14.0/LICENSE",
+      "sha256": "219920e865eee70b7dcfc948a86b099e7f4fe2de01bcca2ca9a20c0a033f2b59",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tao-0.37.1/LICENSE",
+      "sha256": "6dc0e068dcf3a5bc8e054205b85b7720e1d49265bbc64bf515d2cf79197df69a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tao-0.37.1/LICENSE.spdx",
+      "sha256": "02b6448337b757772d90e5f31caaa0f9e6afaad2221c01771d0a3deaa4d4196c",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tauri-2.12.3/LICENSE-APACHE-2.0",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tauri-2.12.3/LICENSE-MIT",
+      "sha256": "9dd42ea92cff2ede5cd477cbfcce051b2d0115c0ac7f368ee88cb545055dff1d",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tauri-build-2.7.2/LICENSE-APACHE-2.0",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tauri-build-2.7.2/LICENSE-MIT",
+      "sha256": "9dd42ea92cff2ede5cd477cbfcce051b2d0115c0ac7f368ee88cb545055dff1d",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tauri-codegen-2.7.2/LICENSE-APACHE-2.0",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tauri-codegen-2.7.2/LICENSE-MIT",
+      "sha256": "9dd42ea92cff2ede5cd477cbfcce051b2d0115c0ac7f368ee88cb545055dff1d",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tauri-macros-2.7.2/LICENSE-APACHE-2.0",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tauri-macros-2.7.2/LICENSE-MIT",
+      "sha256": "9dd42ea92cff2ede5cd477cbfcce051b2d0115c0ac7f368ee88cb545055dff1d",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tauri-runtime-2.12.1/LICENSE-APACHE-2.0",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tauri-runtime-2.12.1/LICENSE-MIT",
+      "sha256": "9dd42ea92cff2ede5cd477cbfcce051b2d0115c0ac7f368ee88cb545055dff1d",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tauri-runtime-wry-2.12.1/LICENSE-APACHE-2.0",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tauri-runtime-wry-2.12.1/LICENSE-MIT",
+      "sha256": "9dd42ea92cff2ede5cd477cbfcce051b2d0115c0ac7f368ee88cb545055dff1d",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tauri-utils-2.10.1/LICENSE-APACHE-2.0",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tauri-utils-2.10.1/LICENSE-MIT",
+      "sha256": "9dd42ea92cff2ede5cd477cbfcce051b2d0115c0ac7f368ee88cb545055dff1d",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tauri-winres-0.3.6/LICENSE",
+      "sha256": "d9fa6b0e6fed50d4961b9c931587af6bd127df13e9473418d3e324f427db4f06",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tendril-0.5.1/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tendril-0.5.1/LICENSE-MIT",
+      "sha256": "60a7062291b01ba068f300612cdbdc20382ac1d4934f07bcdd7167c15299f309",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/thiserror-2.0.21/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/thiserror-2.0.21/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/thiserror-impl-2.0.21/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/thiserror-impl-2.0.21/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/time-0.3.55/LICENSE-Apache",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/time-0.3.55/LICENSE-MIT",
+      "sha256": "2537228d9a1b44a5dc595241349cae7090b326c8de165aaf89bfddef4a00d0fc",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/time-core-0.1.9/LICENSE-Apache",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/time-core-0.1.9/LICENSE-MIT",
+      "sha256": "2537228d9a1b44a5dc595241349cae7090b326c8de165aaf89bfddef4a00d0fc",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/time-macros-0.2.32/LICENSE-Apache",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/time-macros-0.2.32/LICENSE-MIT",
+      "sha256": "2537228d9a1b44a5dc595241349cae7090b326c8de165aaf89bfddef4a00d0fc",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tinystr-0.8.4/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tinyvec-1.13.3/LICENSE-APACHE.md",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tinyvec-1.13.3/LICENSE-MIT.md",
+      "sha256": "fd80a26fbb3f644af1fa994134446702932968519797227e07a1368dea80f0bc",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tinyvec-1.13.3/LICENSE-ZLIB.md",
+      "sha256": "84b34dd7608f7fb9b17bd588a6bf392bf7de504e2716f024a77d89f1b145a151",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tokio-1.53.2/LICENSE",
+      "sha256": "253cd04c6714889df2d32f3f64d669179a1c95c76ac43c40882c52eb06bc3552",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/toml-1.1.8+spec-1.1.0/LICENSE-APACHE",
+      "sha256": "249fdb6694467dd615b259f7ddde07be3f8ae5a72cecebb0e24f6629af4215fe",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/toml-1.1.8+spec-1.1.0/LICENSE-MIT",
+      "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/toml_datetime-1.1.2+spec-1.1.0/LICENSE-APACHE",
+      "sha256": "249fdb6694467dd615b259f7ddde07be3f8ae5a72cecebb0e24f6629af4215fe",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/toml_datetime-1.1.2+spec-1.1.0/LICENSE-MIT",
+      "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/toml_parser-1.1.5+spec-1.1.0/LICENSE-APACHE",
+      "sha256": "249fdb6694467dd615b259f7ddde07be3f8ae5a72cecebb0e24f6629af4215fe",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/toml_parser-1.1.5+spec-1.1.0/LICENSE-MIT",
+      "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/toml_writer-1.1.3+spec-1.1.0/LICENSE-APACHE",
+      "sha256": "249fdb6694467dd615b259f7ddde07be3f8ae5a72cecebb0e24f6629af4215fe",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/toml_writer-1.1.3+spec-1.1.0/LICENSE-MIT",
+      "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tracing-0.1.44/LICENSE",
+      "sha256": "898b1ae9821e98daf8964c8d6c7f61641f5f5aa78ad500020771c0939ee0dea1",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tracing-core-0.1.36/LICENSE",
+      "sha256": "898b1ae9821e98daf8964c8d6c7f61641f5f5aa78ad500020771c0939ee0dea1",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tray-icon-0.25.1/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tray-icon-0.25.1/LICENSE-MIT",
+      "sha256": "2ab5537b8c0cb1d475e2145b6a7994b04e7c71e6e5bd836f7f9c47c221a5ad9a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/tray-icon-0.25.1/LICENSE.spdx",
+      "sha256": "6c1e5d0ccf5e8951401cb964036ae664d52fc8d1148173b53bc54fc534f5d404",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/typeid-1.0.3/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/typeid-1.0.3/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/typenum-1.20.1/LICENSE",
+      "sha256": "db11fec9946737df39ca3898d9cd8c10ec6f6c3a884a6802b0ad0b81b4e8f23a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/typenum-1.20.1/LICENSE-APACHE",
+      "sha256": "516b24e051bf5630880ebbd55c40a25ce9552ebaf8970a53e8976eb70e522406",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/typenum-1.20.1/LICENSE-MIT",
+      "sha256": "a825bd853ab71619a4923d7b4311221427848070ff44d990da39b0b274c1683f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/unicode-ident-1.0.27/LICENSE-APACHE",
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/unicode-ident-1.0.27/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/unicode-ident-1.0.27/LICENSE-UNICODE",
+      "sha256": "f7db81051789b729fea528a63ec4c938fdcb93d9d61d97dc8cc2e9df6d47f2a1",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/unicode-segmentation-1.13.3/COPYRIGHT",
+      "sha256": "23860c2a7b5d96b21569afedf033469bab9fe14a1b24a35068b8641c578ce24d",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/unicode-segmentation-1.13.3/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/unicode-segmentation-1.13.3/LICENSE-MIT",
+      "sha256": "7b63ecd5f1902af1b63729947373683c32745c16a10e8e6292e2e2dcd7e90ae0",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/url-2.5.8/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/url-2.5.8/LICENSE-MIT",
+      "sha256": "b38f11f6096706e6de553dabe2a7ed142d59b6fa8c97e290c67496154745cdd5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/urlpattern-0.6.0/LICENSE",
+      "sha256": "5cf1c9dc617e4cad7fa03181ff893601ad5243aa3be527ef39034e1cd6377676",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/utf8_iter-1.0.4/COPYRIGHT",
+      "sha256": "c30152c94a6d75e021adbc52b3a52470366a46edb917e17deae3259251af244c",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/utf8_iter-1.0.4/LICENSE-APACHE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/utf8_iter-1.0.4/LICENSE-MIT",
+      "sha256": "3fa4ca83dcc9237839b1bdeb2e6d16bdfb5ec0c5ce42b24694d8bbf0dcbef72c",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/uuid-1.28.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/uuid-1.28.0/LICENSE-MIT",
+      "sha256": "436bc5a105d8e57dcd8778730f3754f7bf39c14d2f530e4cde4bd2d17a83ec3d",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/vcpkg-0.2.15/LICENSE-APACHE",
+      "sha256": "60c93a31f490375aadf64098b75f10715010379541021e00261045d7800611d3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/vcpkg-0.2.15/LICENSE-MIT",
+      "sha256": "016d20f335060a70e79d9fcf8dfaa6201114d65d592211f4bdfb8ae9ca2bc1dc",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/version_check-0.9.5/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/version_check-0.9.5/LICENSE-MIT",
+      "sha256": "b7e650f3fce5c53249d1cdc608b54df156a97edd636cf9d23498d0cfe7aec63e",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/vswhom-0.1.0/LICENSE",
+      "sha256": "b9b7e5d4bf8857061fbecab39ef1923644eba639337af22d7ad0bb9b3ce59c49",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/vswhom-sys-0.1.3/LICENSE",
+      "sha256": "b9b7e5d4bf8857061fbecab39ef1923644eba639337af22d7ad0bb9b3ce59c49",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/walkdir-2.5.0/COPYING",
+      "sha256": "01c266bced4a434da0051174d6bee16a4c82cf634e2679b6155d40d75012390f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/walkdir-2.5.0/LICENSE-MIT",
+      "sha256": "0f96a83840e146e43c0ec96a22ec1f392e0680e6c1226e6f3ba87e0740af850f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/web-time-1.1.0/LICENSE-APACHE",
+      "sha256": "54a744942eb3fa63a74d8d359989ed6962c04f3f10ff20cfa08ff8aa7efbe4e6",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/web-time-1.1.0/LICENSE-MIT",
+      "sha256": "f428305bbf2e70fbd807af0f3c7ac1b7acfb95311640f451e9d2e48db6d7e96b",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/web_atoms-0.2.6/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/web_atoms-0.2.6/LICENSE-MIT",
+      "sha256": "86dd7f026f916daf7511e39951ad8ea8cf55a8db67ae64060dacf829761c18f3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/webview2-com-0.39.1/WEBVIEW2-MIT.txt",
+      "sha256": "0dcf41516e608bbcb6cdc5229feb7b86fe4a643b85e7df251133c93408fdac73",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/webview2-com-macros-0.8.1/WEBVIEW2-MACROS-MIT.txt",
+      "sha256": "0dcf41516e608bbcb6cdc5229feb7b86fe4a643b85e7df251133c93408fdac73",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/webview2-com-sys-0.39.1/WEBVIEW2-MIT.txt",
+      "sha256": "0dcf41516e608bbcb6cdc5229feb7b86fe4a643b85e7df251133c93408fdac73",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/winapi-util-0.1.11/COPYING",
+      "sha256": "01c266bced4a434da0051174d6bee16a4c82cf634e2679b6155d40d75012390f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/winapi-util-0.1.11/LICENSE-MIT",
+      "sha256": "cb3c929a05e6cbc9de9ab06a4c57eeb60ca8c724bef6c138c87d3a577e27aa14",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/window-vibrancy-0.8.1/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/window-vibrancy-0.8.1/LICENSE-MIT",
+      "sha256": "617b85f62a4f1b6a62d3d9f28f6d7003b7f68a70b7675a8174bbcc68401ac62d",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/window-vibrancy-0.8.1/LICENSE.spdx",
+      "sha256": "7ccef0d35e8507fa02d7e904a5277d62723f9ec576d52f6a865cab7b4dbf12ad",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-0.62.2/license-apache-2.0",
+      "sha256": "c16f8dcf1a368b83be78d826ea23de4079fe1b4469a0ab9ee20563f37ff3d44b",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-0.62.2/license-mit",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-collections-0.3.2/license-apache-2.0",
+      "sha256": "c16f8dcf1a368b83be78d826ea23de4079fe1b4469a0ab9ee20563f37ff3d44b",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-collections-0.3.2/license-mit",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-core-0.62.2/license-apache-2.0",
+      "sha256": "c16f8dcf1a368b83be78d826ea23de4079fe1b4469a0ab9ee20563f37ff3d44b",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-core-0.62.2/license-mit",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-future-0.3.2/license-apache-2.0",
+      "sha256": "c16f8dcf1a368b83be78d826ea23de4079fe1b4469a0ab9ee20563f37ff3d44b",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-future-0.3.2/license-mit",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-implement-0.60.2/license-apache-2.0",
+      "sha256": "c16f8dcf1a368b83be78d826ea23de4079fe1b4469a0ab9ee20563f37ff3d44b",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-implement-0.60.2/license-mit",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-interface-0.59.3/license-apache-2.0",
+      "sha256": "c16f8dcf1a368b83be78d826ea23de4079fe1b4469a0ab9ee20563f37ff3d44b",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-interface-0.59.3/license-mit",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-link-0.2.1/license-apache-2.0",
+      "sha256": "c16f8dcf1a368b83be78d826ea23de4079fe1b4469a0ab9ee20563f37ff3d44b",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-link-0.2.1/license-mit",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-numerics-0.3.1/license-apache-2.0",
+      "sha256": "c16f8dcf1a368b83be78d826ea23de4079fe1b4469a0ab9ee20563f37ff3d44b",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-numerics-0.3.1/license-mit",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-result-0.4.1/license-apache-2.0",
+      "sha256": "c16f8dcf1a368b83be78d826ea23de4079fe1b4469a0ab9ee20563f37ff3d44b",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-result-0.4.1/license-mit",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-strings-0.5.1/license-apache-2.0",
+      "sha256": "c16f8dcf1a368b83be78d826ea23de4079fe1b4469a0ab9ee20563f37ff3d44b",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-strings-0.5.1/license-mit",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-sys-0.61.2/license-apache-2.0",
+      "sha256": "c16f8dcf1a368b83be78d826ea23de4079fe1b4469a0ab9ee20563f37ff3d44b",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-sys-0.61.2/license-mit",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-threading-0.2.1/license-apache-2.0",
+      "sha256": "c16f8dcf1a368b83be78d826ea23de4079fe1b4469a0ab9ee20563f37ff3d44b",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-threading-0.2.1/license-mit",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-version-0.1.7/license-apache-2.0",
+      "sha256": "c16f8dcf1a368b83be78d826ea23de4079fe1b4469a0ab9ee20563f37ff3d44b",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/windows-version-0.1.7/license-mit",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/winnow-1.0.4/LICENSE-MIT",
+      "sha256": "cb5aedb296c5246d1f22e9099f925a65146f9f0d6b4eebba97fd27a6cdbbab2d",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/winreg-0.56.0/LICENSE",
+      "sha256": "ea021d8c6383c84d19c15ce90d3b1602cf448fdcc0bf3772c98e43c7bf1bf1d1",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/wowdbdefs-rs-0.1.0/LICENSE-APACHE",
+      "sha256": "4aa06cef7707edf26cceed00c567f45597e780d44e8ed9198de4f6c91882b767",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/wowdbdefs-rs-0.1.0/LICENSE-MIT",
+      "sha256": "6d8cffe77f7525ace5fe58b7bd38cd85c7aab3bc2b5f9132a5d99c23dd70cbbb",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/writeable-0.6.4/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/wry-0.57.0/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/wry-0.57.0/LICENSE-MIT",
+      "sha256": "ef88893533af22ffbb68ceef0724ba1389518df26165a34f3c99ad30b884df4f",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/wry-0.57.0/LICENSE.spdx",
+      "sha256": "26235c41e314fb0da35b33b2bb5bcbc4dd523839f8eeca52efcd43586f441fb5",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/yoke-0.8.3/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/yoke-derive-0.8.4/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/zerofrom-0.1.8/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/zerofrom-derive-0.1.8/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/zeroize-1.6.0/LICENSE-APACHE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/zeroize-1.6.0/LICENSE-MIT",
+      "sha256": "0b04ee3ce0021a922f43f37a17fee09a5a1ee6d1f4e149d5bf75b72395a49c72",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/zerotrie-0.2.5/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/zerovec-0.11.8/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/zerovec-derive-0.11.6/LICENSE",
+      "sha256": "f367c1b8e1aa262435251e442901da4607b4650e0e63a026f5044473ecfb90f2",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/zlib-rs-0.6.8/LICENSE",
+      "sha256": "e72111c52b7d96ebe25348dee19f0744f444d3c95ae6b1ecb6ccaecc5bce05ba",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/rust/zmij-1.0.23/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/sources/cssparser-0.37.0.crate",
+      "sha256": "8c9cdaae01d5ed7882b04d795e7f752f46ff52d2fa3b50a20d28c464510bba98",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/sources/cssparser-macros-0.7.1.crate",
+      "sha256": "d045de693cb712d0b22c6a64be5b953f67b3ce00ab5ad3dd5d8b441886ab8e1a",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/sources/dtoa-short-0.3.5.crate",
+      "sha256": "cd1511a7b6a56299bd043a9c167a6d2bfb37bf84a6dfceaba651168adfb43c87",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/sources/option-ext-0.2.0.crate",
+      "sha256": "04744f49eae99ab78e0d5c0b603ab218f515ea8cfe5a456d7629ad883a3b6e7d",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/sources/selectors-0.38.0.crate",
+      "sha256": "8adfa1c298912827b8a28b223b3b874357397ae706e6190acd9bf28cee99114d",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/webview2-sdk/WEBVIEW2-SDK-LICENSE.txt",
+      "sha256": "0af8f1b807512aae39c2ac1aa4d0cae65cabecb6fd554b8439a5162a0d6eca55",
+      "source_verified": true
+    },
+    {
+      "path": "local-data-notices/webview2-sdk/WEBVIEW2-SDK-NOTICE.txt",
+      "sha256": "106423785c5b7eba0a8e61d1837f2132e9c828e20ad530f565d981c1df60dd90",
+      "source_verified": true
+    },
+    {
+      "path": "uninstall.exe",
+      "sha256": "12ff4f88ef45a6603083bf512454fba4598b35178d1cb72f9aed4503c50209b1",
+      "source_verified": false
+    }
+  ],
+  "addon_zip_matches_source": true,
+  "dependency_closure_verified": true,
+  "evidence_scope": "Hosted synthetic verification; not ordinary-Windows or live acceptance"
+}

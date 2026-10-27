@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "source_commit": "1ddaa8d66b0fe6ccfdbef2dbf57263afcab03611",
+  "production_sha256": "b9d5c2938b11967e214f36435e6dd9d6b0d9d376fa29cc00196285ccea88742e",
+  "returncode": 0,
+  "seconds": 134.13806364599805,
+  "peak_child_rss_kib": 6402732,
+  "executable": "/tmp/navzeroth-stable-inventory/target/release/deps/stable_bundled_functional-590f7a3b5a7e3bb6",
+  "platform": "shared Linux/WSL2",
+  "hardware_limits": "32 logical processors; MemTotal:       32675952 kB; concurrent shared host workload. No Windows or ordinary-PC performance claim.",
+  "scope": "Fresh full-pack source-backed planning/class-role/reminder/dungeon scenario after reviewed travel activation cache and hosted evidence repairs; unchanged test source genuinely rebuilt against new runtime. Linux does not establish Windows installer acceptance.",
+  "proof_sha256": "ef3c7098a521dbe955eb945ae1f25f0bdddb08ff421f6fff0e39a707948d1fe1"
+}

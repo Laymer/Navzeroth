@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "candidate": "97a81de9fd8d07270ed86f55ca9bf445b010e60a",
+  "actual_pr_checkout": "8d9fc3922e3433b45755ef68602a62c054faee4e",
+  "scope": "V14 actual package run39497088109 failed the new helper test before any installer/native/stable-case execution. Preserve signed bytes before repair; current observations remain unverified.",
+  "files": [
+    {
+      "path": "release/history/2026-10-20-signed-content-v14/bundled-content-manifest.json",
+      "bytes": 17187,
+      "sha256": "0eb36d978a196ca38ee9feaa8aed17571f6dda72c4dc430b752ea6724013639b"
+    },
+    {
+      "path": "release/history/2026-10-20-signed-content-v14/bundled-content-build-identity.json",
+      "bytes": 528,
+      "sha256": "3489e818be7a29560347a9a23a8ef58f62aede1895e05a77f72bf05cecbadd8b"
+    },
+    {
+      "path": "release/history/2026-10-20-signed-content-v14/bundled-content-receipt.json",
+      "bytes": 1074,
+      "sha256": "a8d4c71f4f0f209fec7444980aab3401af82ec8e2229b1489087d050ae6c2806"
+    }
+  ]
+}

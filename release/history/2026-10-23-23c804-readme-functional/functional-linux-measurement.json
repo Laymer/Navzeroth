@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "source_commit": "23c8047832c03e07dd96dba359b1dcefe9b2fae7",
+  "production_sha256": "3af2dc70969602ac310551f4528a92a1214114f219fa4f21e2b7b3547175a2cb",
+  "returncode": 0,
+  "timed_out": false,
+  "seconds": 79.04264988499926,
+  "peak_child_rss_kib": 6204360,
+  "executable": "/tmp/navzeroth-stable-inventory/target/release/deps/stable_bundled_functional-590f7a3b5a7e3bb6",
+  "executable_sha256": "d1745d726af2c24457973e1153134b4df24baa5c57d0861f48fd573d1496c5b1",
+  "platform": "shared Linux/WSL2",
+  "hardware_limits": "32 logical processors; MemTotal:       32675956 kB; shared host and uncontrolled cache. No Windows or ordinary-PC performance claim.",
+  "scope": "Cargo --no-run at exact final production confirmed the cached coordinator-built executable from ca94; All production paths except README.md are byte-identical to engineering probe source41b52; application/core/storage/ingest/local-data/CLI/content/Cargo bytes remain unchanged from de2, and production app source and functional test remain identical to ca94. The separate hosted engineering test added since ca94 is outside this executable. Actual full-pack functional assertions executed against final committed source and explicit manual engineering facts. No new compiler build, Windows installer or ordinary-PC acceptance is claimed.",
+  "proof_sha256": "5354c87d5e326ebc26a0778cdb617ecd50f42e995c58173d5d75602866330db9"
+}

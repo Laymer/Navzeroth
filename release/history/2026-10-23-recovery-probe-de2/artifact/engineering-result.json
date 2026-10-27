@@ -1,0 +1,50 @@
+{
+  "kind": "hosted_recovery_engineering_not_acceptance",
+  "source_commit": "de2fd3e69bcce8db55c73d98fed492e2ee485261",
+  "fixture": {
+    "schema_version": 1,
+    "kind": "historical_full_pack_engineering_fixture_not_installer_acceptance",
+    "repository": "Laymer/Navzeroth",
+    "artifact_id": 12405859488,
+    "artifact_run_id": 39641767585,
+    "artifact_name": "azeroth-navigator-windows-90e0d4dd3e574b1b0760e8f4a7a77f28933b02cc",
+    "artifact_bytes": 46082416,
+    "artifact_sha256": "be713e2cba0c2446d9c9d36a1918dbdcc4c1eaa9e17ca16cd47b602c3a52d5cd",
+    "api_head_commit": "9cc774e4f2656f26d544071d6bd174367ccca16a",
+    "installer_source_commit": "90e0d4dd3e574b1b0760e8f4a7a77f28933b02cc",
+    "fixture_tree": "9378020ca6dd9d727665d458e7e35af3f43559a1",
+    "fixture_metadata_commit": "9cc774e4f2656f26d544071d6bd174367ccca16a",
+    "installer_name": "AzerothNavigator-1.0.0-x64-setup.exe",
+    "installer_sha256": "ffcb98661a1310458a663aa06451e765b99bdb07dba40a997f1e57aad5fc3225",
+    "fixture_production_sha256": "2aefc67b79569a01a461315648b64b860599cabb2f67de1b52911025e3ef47e6",
+    "metadata_files": [
+      {
+        "bytes": 528,
+        "sha256": "d3a3892a815a677a6007c6ae9ae5d8ca0a60a8d77477a7c6ec83238f628aa6a6",
+        "git_path": "release/v1/bundled-content-build-identity.json"
+      },
+      {
+        "bytes": 610,
+        "sha256": "c4bbc54f59a8fc3fa382a31b1b8c6f5b9b2f47a7fcd420af0db3057e255bf568",
+        "git_path": "content/bundled/signers-v1.json"
+      },
+      {
+        "bytes": 3714,
+        "sha256": "f5ec63545a98ce1a953f78f5e865b73c23ee7c0a9192756b543869a087f16646",
+        "git_path": "crates/app/tests/support/stable_engineering_snapshot.json"
+      }
+    ],
+    "installer_bytes": 26058654
+  },
+  "passed": false,
+  "acceptance_observations_promoted": false,
+  "platform": "Windows-2025Server-10.0.26100-SP0",
+  "python_version": "3.12.10",
+  "logical_processors": 4,
+  "disk_free_bytes": 235751346176,
+  "peak_memory_bytes": null,
+  "memory_scope": "Not measured by this probe; no ordinary-PC claim.",
+  "binary_sha256": "37c0ca08adf4728b3f05f295fc4cae16f4570171fe98adc07325078ae46ab525",
+  "primary_error": "ValueError: bounded probe process failed: install-fixture",
+  "cleanup_not_attempted": "No valid marker: do not touch an unowned pre-existing application."
+}

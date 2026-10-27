@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "id": "HOSTED-INSTALL",
+  "method": "hosted_windows",
+  "status": "pass",
+  "version": "1.0.0",
+  "source_commit": "277a6e6ab6160d7e16b00cfe711fbf100103841e",
+  "production_sha256": "23b4f54dbd7c567c727a5c2431c332a49f8e3b0b79f3423fd27c95d6dbac1535",
+  "installer_sha256": "b028e4091e8b03d6533f5fdad755ecd792b83c7c675f591b88b4ce38ef0eb2fc",
+  "target": {
+    "build": "70450",
+    "edition": "wow_forever",
+    "interface": 16001,
+    "version": "1.60.1"
+  },
+  "operator": "GitHub Actions 39586958727/1",
+  "environment": "GitHub-hosted Windows Microsoft Windows NT 10.0.26100.0",
+  "recorded_at": "2026-10-21T11:51:02Z",
+  "installed_version": "1.0.0",
+  "install_ms": 8258.0357,
+  "completed": true
+}

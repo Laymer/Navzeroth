@@ -1,0 +1,42 @@
+{
+  "schema_version": 2,
+  "context": {
+    "build": {
+      "edition": "wow_forever",
+      "build": "1.60.1.70450",
+      "interface": "16001"
+    },
+    "namespace": "reference"
+  },
+  "sequence": 5,
+  "settings": {
+    "schema_version": 1,
+    "selected_subject": {
+      "kind": "character",
+      "profile_id": "stored-98716856eb5aee151581a707fc1a15f75fe8e5166b17a4f5e8e3c8f8bb6d52c2"
+    },
+    "selected_installation": null,
+    "selected_export": null,
+    "manual_planning_defaults": {
+      "goal_profile": null,
+      "budget_ms": 3600000,
+      "stopping_service_ms": 0
+    },
+    "accessibility": {
+      "text_scale_percent": 125,
+      "contrast": "system",
+      "motion": "system"
+    },
+    "reference_always_on_top": false
+  },
+  "phase": "selected_content",
+  "profile_id": "stored-98716856eb5aee151581a707fc1a15f75fe8e5166b17a4f5e8e3c8f8bb6d52c2",
+  "active_revision": "set-88fc99070bf008b1e07b63bda9bd99f0",
+  "accepts_inferred_travel": false,
+  "bundle_defaults": {
+    "app_version": "1.0.0",
+    "previous_app_version": null,
+    "revision": "set-88fc99070bf008b1e07b63bda9bd99f0"
+  },
+  "workload": "Synthetic engineering workload: source-backed quest stage and declared travel edge; manual progress and candidate-location/completion/utility estimates; no live-client verification"
+}

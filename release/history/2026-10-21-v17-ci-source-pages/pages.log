@@ -1,0 +1,491 @@
+Validate Pages	UNKNOWN STEP	﻿2026-10-21T12:57:58.3436017Z Current runner version: '2.338.0'
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3458737Z ##[group]Runner Image Provisioner
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3459508Z Hosted Compute Agent
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3460014Z Version: 20261015.610
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3460534Z Commit: 267fdb4e8bbec4ab5ea31367f3a00d5c480c7656
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3461091Z Build Date: 2026-10-14T17:06:54Z
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3461660Z Worker ID: {819d110c-f1df-4ec5-8db4-7c43fce790a1}
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3462207Z Region: centralus
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3462632Z Cloud: Azure
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3463077Z ##[endgroup]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3464110Z ##[group]Operating System
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3464646Z Ubuntu
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3465050Z 24.04.5
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3465687Z LTS
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3466139Z ##[endgroup]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3466573Z ##[group]Runner Image
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3467055Z Image: ubuntu-24.04
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3467494Z Version: 20261018.339.1
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3468504Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261018.339/images/ubuntu/Ubuntu2404-Readme.md
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3469774Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261018.339
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3470529Z ##[endgroup]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3471402Z ##[group]GITHUB_TOKEN Permissions
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3473163Z Contents: read
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3473722Z Metadata: read
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3474140Z ##[endgroup]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3476190Z Secret source: Actions
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3476914Z Cache mode: write
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.3477521Z Prepare workflow directory
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.4063996Z Prepare all required actions
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.4109757Z Getting action download info
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.6810815Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:58.9785650Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.1526977Z Complete job name: Validate Pages
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.2133074Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.2133907Z with:
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.2134295Z   lfs: false
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.2134767Z   repository: Laymer/Navzeroth
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.2138009Z   token: ***
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.2138509Z   ssh-strict: true
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.2138926Z   ssh-user: git
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.2139338Z   persist-credentials: true
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.2139818Z   clean: true
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.2140239Z   sparse-checkout-cone-mode: true
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.2140778Z   fetch-depth: 1
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.2141191Z   fetch-tags: false
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.2141607Z   show-progress: true
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.2142055Z   submodules: false
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.2142478Z   set-safe-directory: true
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.2142999Z   allow-unsafe-pr-checkout: false
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.2143632Z ##[endgroup]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3029292Z Syncing repository: Laymer/Navzeroth
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3031043Z ##[group]Getting Git version info
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3031869Z Working directory is '/home/runner/work/Navzeroth/Navzeroth'
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3032843Z [command]/usr/bin/git version
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3209422Z git version 2.55.0
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3256816Z ##[endgroup]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3264067Z Temporarily overriding HOME='/home/runner/work/_temp/0f9a4df6-5224-447a-b660-74da61b8d365' before making global git config changes
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3266152Z Adding repository directory to the temporary git global config as a safe directory
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3267882Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Navzeroth/Navzeroth
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3303236Z Deleting the contents of '/home/runner/work/Navzeroth/Navzeroth'
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3308268Z ##[group]Determining repository object format
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3309899Z ##[endgroup]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3315644Z ##[group]Initializing the repository
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3316365Z [command]/usr/bin/git init /home/runner/work/Navzeroth/Navzeroth
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3416297Z hint: Using 'master' as the name for the initial branch. This default branch name
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3417633Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3418433Z hint: to use in all of your new repositories, which will suppress this warning,
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3419229Z hint: call:
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3419713Z hint:
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3420325Z hint: 	git config --global init.defaultBranch <name>
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3420867Z hint:
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3421369Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3422170Z hint: 'development'. The just-created branch can be renamed via this command:
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3422819Z hint:
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3423217Z hint: 	git branch -m <name>
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3423661Z hint:
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3424208Z hint: Disable this message with "git config set advice.defaultBranchName false"
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3425068Z Initialized empty Git repository in /home/runner/work/Navzeroth/Navzeroth/.git/
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3436321Z [command]/usr/bin/git remote add origin https://github.com/Laymer/Navzeroth
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3492808Z ##[endgroup]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3493763Z ##[group]Disabling automatic garbage collection
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3498520Z [command]/usr/bin/git config --local gc.auto 0
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3530278Z ##[endgroup]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3531205Z ##[group]Setting up auth
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3531925Z Removing SSH command configuration
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3539071Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3569016Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3885209Z Removing HTTP extra header
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3891472Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.3920596Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.4100847Z Removing includeIf entries pointing to credentials config files
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.4105333Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.4140396Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.4330901Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-4af32a34-d38a-4efe-af6a-430a77c533bb.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.4365907Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git.path /home/runner/work/_temp/git-credentials-4af32a34-d38a-4efe-af6a-430a77c533bb.config
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.4393458Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-4af32a34-d38a-4efe-af6a-430a77c533bb.config
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.4423115Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-4af32a34-d38a-4efe-af6a-430a77c533bb.config
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.4450022Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-4af32a34-d38a-4efe-af6a-430a77c533bb.config
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.4476764Z ##[endgroup]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.4477533Z ##[group]Fetching the repository
+Validate Pages	UNKNOWN STEP	2026-10-21T12:57:59.4482238Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +7361c873a1ba0c3366703917033f7397c74d07c3:refs/remotes/pull/239/merge
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:01.7902695Z From https://github.com/Laymer/Navzeroth
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:01.7904948Z  * [new ref]         7361c873a1ba0c3366703917033f7397c74d07c3 -> pull/239/merge
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:01.7922827Z ##[endgroup]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:01.7924006Z ##[group]Determining the checkout info
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:01.7925138Z ##[endgroup]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:01.7926478Z [command]/usr/bin/git sparse-checkout disable
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:01.7976576Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:01.8005731Z ##[group]Checking out the ref
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:01.8010479Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/239/merge
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.2520190Z Note: switching to 'refs/remotes/pull/239/merge'.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.2521236Z 
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.2522129Z You are in 'detached HEAD' state. You can look around, make experimental
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.2522917Z changes and commit them, and you can discard any commits you make in this
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.2523745Z state without impacting any branches by switching back to a branch.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.2524295Z 
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.2524634Z If you want to create a new branch to retain commits you create, you may
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.2525270Z do so (now or later) by using -c with the switch command. Example:
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.2525830Z 
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.2526059Z   git switch -c <new-branch-name>
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.2529103Z 
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.2529318Z Or undo this operation with:
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.2529545Z 
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.2529705Z   git switch -
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.2529941Z 
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.2530193Z Turn off this advice by setting config variable advice.detachedHead to false
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.2530581Z 
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.2530946Z HEAD is now at 7361c87 Merge 8b12aec1bb28bdb35a3014c365ec500da8876af0 into 807ef674ee13c15ece90e64618ccd5f122afcbdb
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.2925587Z ##[endgroup]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.2966065Z [command]/usr/bin/git log -1 --format=%H
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.2989064Z 7361c873a1ba0c3366703917033f7397c74d07c3
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.3229764Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.3230271Z with:
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.3230570Z   node-version-file: .node-version
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.3230944Z   package-manager-cache: false
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.3231271Z   check-latest: false
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.3233455Z   token: ***
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.3233751Z ##[endgroup]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.4278328Z Node version file is not JSON file
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.4281594Z Node version file is not TOML file
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.4282115Z Resolved .node-version as 24.15.0
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:02.4295073Z Attempting to download 24.15.0...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:03.4904060Z Acquiring 24.15.0 - x64 from https://github.com/actions/node-versions/releases/download/24.15.0-24511264946/node-24.15.0-linux-x64.tar.gz
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:04.0190090Z Extracting ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:04.0289424Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/0365916c-4a14-49b9-9b0a-39237b407d32 -f /home/runner/work/_temp/9c41551b-e52e-410f-bb39-22e1d18a6a4c
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:05.1319019Z Adding to the cache ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:07.0104407Z ##[group]Environment details
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:07.2135196Z node: v24.15.0
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:07.2136021Z npm: 11.12.1
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:07.2136412Z yarn: 1.22.22
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:07.2137480Z ##[endgroup]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:07.2310193Z ##[group]Run npm install --prefix "$RUNNER_TEMP/corepack" --no-package-lock --no-audit --no-fund corepack@0.36.0
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:07.2311099Z ^[[36;1mnpm install --prefix "$RUNNER_TEMP/corepack" --no-package-lock --no-audit --no-fund corepack@0.36.0^[[0m
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:07.2311659Z ^[[36;1mecho "$RUNNER_TEMP/corepack/node_modules/.bin" >> "$GITHUB_PATH"^[[0m
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:07.2312186Z ^[[36;1m"$RUNNER_TEMP/corepack/node_modules/.bin/corepack" pnpm install --frozen-lockfile^[[0m
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:07.2312846Z ^[[36;1m"$RUNNER_TEMP/corepack/node_modules/.bin/corepack" pnpm --dir apps/desktop exec playwright install --with-deps chromium^[[0m
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:07.2440985Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:07.2441613Z ##[endgroup]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:07.6871247Z 
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:07.6878712Z added 1 package in 394ms
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:08.1725612Z Downloading the pnpm 12.11.2 binary for linux-x64...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:09.0107189Z Scope: all 2 workspace projects
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:09.0198188Z ? Verifying lockfile against supply-chain policies (283 entries)...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:09.2419725Z Packages are hard linked from the content-addressable store to the virtual store.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:09.2422498Z   Content-addressable store is at: /home/runner/.local/share/pnpm/store/v11
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:09.2423488Z   Virtual store is at:             node_modules/.pnpm
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:09.2627271Z Downloading @tauri-apps/cli-linux-x64-gnu@2.12.2: 0.00 B/8.97 MB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:09.2738111Z Downloading @rolldown/binding-linux-x64-gnu@1.2.13: 0.00 B/8.18 MB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:09.5721526Z Downloading @typescript/typescript-linux-x64@7.0.2: 0.00 B/9.66 MB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:10.5908958Z ✓ Lockfile passes supply-chain policies (283 entries in 1.6s)
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:10.5910116Z Lockfile is up to date, resolution step is skipped
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:10.5939302Z Packages: +229
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:10.5943824Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:10.6110586Z Progress: resolved 229, reused 0, downloaded 229, added 229, done
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:10.6818005Z 
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:10.6819215Z devDependencies:
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:10.6819971Z + @types/node 24.19.0
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:10.6820545Z + ajv 8.20.0
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:10.6821036Z + json-schema-to-typescript 16.0.0
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:10.6821521Z + typescript 7.0.2
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:10.6821674Z 
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:10.6936724Z Done in 1.7s using pnpm v12.11.2
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:11.1753870Z Installing dependencies...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:11.1824153Z Switching to root user to install dependencies...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:11.2496827Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:11.2786311Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:11.2956945Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:11.3016568Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:11.3057088Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:11.3070161Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:11.3438493Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [565 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:11.3600364Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [628 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:11.4211040Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1400 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:11.4268934Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [309 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:11.4285911Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1706 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:11.4372556Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [342 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:11.4986234Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1145 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:11.5038599Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [231 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:11.5054171Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1222 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:14.8246304Z Fetched 7930 kB in 1s (10.7 MB/s)
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:15.7511497Z Reading package lists...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:15.7767247Z Reading package lists...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:15.9981765Z Building dependency tree...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:15.9987669Z Reading state information...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1691447Z libasound2t64 is already the newest version (1.2.11-1ubuntu0.3).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1692462Z libasound2t64 set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1693137Z libatk-bridge2.0-0t64 is already the newest version (2.52.0-1build1).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1694291Z libatk-bridge2.0-0t64 set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1694933Z libatk1.0-0t64 is already the newest version (2.52.0-1build1).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1695683Z libatk1.0-0t64 set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1696331Z libatspi2.0-0t64 is already the newest version (2.52.0-1build1).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1696942Z libatspi2.0-0t64 set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1697461Z libcairo2 is already the newest version (1.18.0-3build1).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1698057Z libcairo2 set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1698585Z libcups2t64 is already the newest version (2.4.7-1.2ubuntu7.14).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1699212Z libcups2t64 set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1699804Z libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1700594Z libdbus-1-3 set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1701278Z libdrm2 is already the newest version (2.4.125-1ubuntu0.1~24.04.2).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1701858Z libdrm2 set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1702568Z libgbm1 is already the newest version (25.2.8-0ubuntu0.24.04.4).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1703218Z libgbm1 set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1703802Z libnspr4 is already the newest version (2:4.35-1.1build1).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1704447Z libnspr4 set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1704994Z libnss3 is already the newest version (2:3.98-1ubuntu0.2).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1706015Z libnss3 set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1706671Z libpango-1.0-0 is already the newest version (1.52.1+ds-1build1).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1707277Z libpango-1.0-0 set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1707976Z libx11-6 is already the newest version (2:1.8.7-1ubuntu0.1).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1708519Z libx11-6 set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1709076Z libxcb1 is already the newest version (1.15-1ubuntu2).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1709768Z libxcb1 set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1710381Z libxcomposite1 is already the newest version (1:0.4.5-1build3).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1711051Z libxcomposite1 set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1711636Z libxdamage1 is already the newest version (1:1.1.6-1build1).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1712265Z libxdamage1 set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1712898Z libxext6 is already the newest version (2:1.3.4-1build2).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1713368Z libxext6 set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1713770Z libxfixes3 is already the newest version (1:6.0.0-2build1).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1714140Z libxfixes3 set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1714529Z libxkbcommon0 is already the newest version (1.6.0-1build1).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1714961Z libxkbcommon0 set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1715411Z libxrandr2 is already the newest version (2:1.5.2-2build1).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1716026Z libxrandr2 set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1716477Z fonts-noto-color-emoji is already the newest version (2.047-0ubuntu0.24.04.1).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1716990Z libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1717436Z libfontconfig1 set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1717902Z libfreetype6 is already the newest version (2.13.2+dfsg-1ubuntu0.2).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1718587Z libfreetype6 set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1719003Z fonts-liberation is already the newest version (1:2.1.5-3).
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1719371Z fonts-liberation set to manually installed.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1719780Z The following additional packages will be installed:
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1720278Z   gir1.2-glib-2.0 libglib2.0-bin libglib2.0-data xfonts-encodings xfonts-utils
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1720674Z   xserver-common
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1721020Z Suggested packages:
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1721308Z   low-memory-monitor
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1721656Z Recommended packages:
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1722068Z   fonts-ipafont-mincho fonts-tlwg-loma xfonts-base
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1899337Z The following NEW packages will be installed:
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1900599Z   fonts-freefont-ttf fonts-ipafont-gothic fonts-tlwg-loma-otf fonts-unifont
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1908360Z   fonts-wqy-zenhei xfonts-cyrillic xfonts-encodings xfonts-scalable
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1909252Z   xfonts-utils
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1912851Z The following packages will be upgraded:
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1920449Z   gir1.2-glib-2.0 libglib2.0-0t64 libglib2.0-bin libglib2.0-data
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.1921032Z   xserver-common xvfb
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.2079156Z 6 upgraded, 9 newly installed, 0 to remove and 46 not upgraded.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.2079936Z Need to get 23.9 MB of archives.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.2080481Z After this operation, 79.5 MB of additional disk space will be used.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.2081218Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.2677026Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-ipafont-gothic all 00303-21ubuntu1 [3513 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.3420417Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libglib2.0-data all 2.80.0-6ubuntu3.10 [50.2 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.3766761Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libglib2.0-bin amd64 2.80.0-6ubuntu3.10 [97.9 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.4087270Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 gir1.2-glib-2.0 amd64 2.80.0-6ubuntu3.10 [183 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.4408349Z Get:6 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libglib2.0-0t64 amd64 2.80.0-6ubuntu3.10 [1548 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.4824383Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5641 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.5772110Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [107 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.6122747Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-unifont all 1:15.1.01-1build1 [2993 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.6774605Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-wqy-zenhei all 0.9.45-8 [7472 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.7924805Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu2 [578 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.8316394Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-utils amd64 1:7.7+6build3 [94.4 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.8660320Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 xfonts-cyrillic all 1:1.0.5+nmu1 [384 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.9035861Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-scalable all 1:1.0.3-1.3 [304 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.9397453Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 xserver-common all 2:21.1.12-1ubuntu1.9 [35.0 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:16.9736772Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 xvfb amd64 2:21.1.12-1ubuntu1.9 [877 kB]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:17.2278138Z Fetched 23.9 MB in 1s (30.5 MB/s)
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:17.2479229Z Selecting previously unselected package fonts-ipafont-gothic.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:17.2662504Z (Reading database ... 
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:17.2663305Z (Reading database ... 5%
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:17.2663979Z (Reading database ... 10%
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:17.2664681Z (Reading database ... 15%
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:17.2665895Z (Reading database ... 20%
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:17.2666329Z (Reading database ... 25%
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:17.2666730Z (Reading database ... 30%
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:17.2667126Z (Reading database ... 35%
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:17.2667509Z (Reading database ... 40%
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:17.2667868Z (Reading database ... 45%
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:17.2668236Z (Reading database ... 50%
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:17.2705590Z (Reading database ... 55%
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:17.4016625Z (Reading database ... 60%
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:17.5887556Z (Reading database ... 65%
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:17.7067853Z (Reading database ... 70%
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:17.8372210Z (Reading database ... 75%
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:18.0421909Z (Reading database ... 80%
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:18.2076772Z (Reading database ... 85%
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:18.3946952Z (Reading database ... 90%
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:18.5683996Z (Reading database ... 95%
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:18.5684712Z (Reading database ... 100%
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:18.5685168Z (Reading database ... 214410 files and directories currently installed.)
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:18.5731894Z Preparing to unpack .../00-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:18.5810809Z Unpacking fonts-ipafont-gothic (00303-21ubuntu1) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:18.8955098Z Preparing to unpack .../01-libglib2.0-data_2.80.0-6ubuntu3.10_all.deb ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:18.8978414Z Unpacking libglib2.0-data (2.80.0-6ubuntu3.10) over (2.80.0-6ubuntu3.9) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:18.9313342Z Preparing to unpack .../02-libglib2.0-bin_2.80.0-6ubuntu3.10_amd64.deb ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:18.9337130Z Unpacking libglib2.0-bin (2.80.0-6ubuntu3.10) over (2.80.0-6ubuntu3.9) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:18.9817854Z Preparing to unpack .../03-gir1.2-glib-2.0_2.80.0-6ubuntu3.10_amd64.deb ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:18.9850300Z Unpacking gir1.2-glib-2.0:amd64 (2.80.0-6ubuntu3.10) over (2.80.0-6ubuntu3.9) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:19.0305043Z Preparing to unpack .../04-libglib2.0-0t64_2.80.0-6ubuntu3.10_amd64.deb ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:19.0393107Z Unpacking libglib2.0-0t64:amd64 (2.80.0-6ubuntu3.10) over (2.80.0-6ubuntu3.9) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:19.1040763Z Selecting previously unselected package fonts-freefont-ttf.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:19.1169548Z Preparing to unpack .../05-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:19.1179703Z Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:19.2153723Z Selecting previously unselected package fonts-tlwg-loma-otf.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:19.2274857Z Preparing to unpack .../06-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:19.2286932Z Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:19.2479659Z Selecting previously unselected package fonts-unifont.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:19.2605140Z Preparing to unpack .../07-fonts-unifont_1%3a15.1.01-1build1_all.deb ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:19.2614937Z Unpacking fonts-unifont (1:15.1.01-1build1) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:19.4661606Z Selecting previously unselected package fonts-wqy-zenhei.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:19.4790480Z Preparing to unpack .../08-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:19.4890814Z Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.0394144Z Selecting previously unselected package xfonts-encodings.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.0516460Z Preparing to unpack .../09-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.0525348Z Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.0752852Z Selecting previously unselected package xfonts-utils.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.0878197Z Preparing to unpack .../10-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.0887106Z Unpacking xfonts-utils (1:7.7+6build3) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.1159708Z Selecting previously unselected package xfonts-cyrillic.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.1284602Z Preparing to unpack .../11-xfonts-cyrillic_1%3a1.0.5+nmu1_all.deb ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.1292959Z Unpacking xfonts-cyrillic (1:1.0.5+nmu1) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.4197034Z Selecting previously unselected package xfonts-scalable.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.4331037Z Preparing to unpack .../12-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.4339623Z Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.4675217Z Preparing to unpack .../13-xserver-common_2%3a21.1.12-1ubuntu1.9_all.deb ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.4697956Z Unpacking xserver-common (2:21.1.12-1ubuntu1.9) over (2:21.1.12-1ubuntu1.8) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.5049499Z Preparing to unpack .../14-xvfb_2%3a21.1.12-1ubuntu1.9_amd64.deb ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.5072269Z Unpacking xvfb (2:21.1.12-1ubuntu1.9) over (2:21.1.12-1ubuntu1.8) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.6119077Z Setting up fonts-wqy-zenhei (0.9.45-8) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.6386769Z Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.6407103Z Setting up libglib2.0-0t64:amd64 (2.80.0-6ubuntu3.10) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.6518964Z Setting up libglib2.0-data (2.80.0-6ubuntu3.10) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.6540829Z Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.6563637Z Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.6587693Z Setting up gir1.2-glib-2.0:amd64 (2.80.0-6ubuntu3.10) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.6609489Z Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.6668970Z update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.6686778Z Setting up xserver-common (2:21.1.12-1ubuntu1.9) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.6709395Z Setting up fonts-unifont (1:15.1.01-1build1) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.6734088Z Setting up xvfb (2:21.1.12-1ubuntu1.9) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.6757318Z Setting up libglib2.0-bin (2.80.0-6ubuntu3.10) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.6780604Z Setting up xfonts-utils (1:7.7+6build3) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.6825280Z Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.7087258Z Setting up xfonts-scalable (1:1.0.3-1.3) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.7329813Z Processing triggers for libc-bin (2.39-0ubuntu8.9) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.9477691Z Processing triggers for man-db (2.12.0-4build2) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.9503035Z Not building database; man-db/auto-update is not 'true'.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:20.9519372Z Processing triggers for fontconfig (2.15.0-1.1ubuntu2) ...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:21.5344116Z 
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:21.5345630Z Running kernel seems to be up-to-date.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:21.5346295Z 
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:21.5346476Z Restarting services...
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:21.5795076Z  systemctl restart packagekit.service php8.3-fpm.service polkit.service udisks2.service
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:21.6912953Z 
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:21.6913856Z Service restarts being deferred:
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:21.6914720Z  systemctl restart ModemManager.service
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:21.6915870Z  systemctl restart networkd-dispatcher.service
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:21.6916357Z 
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:21.6916835Z No containers need to be restarted.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:21.6917114Z 
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:21.6917604Z No user sessions are running outdated binaries.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:21.6917990Z 
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:21.6918429Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:22.6738989Z Downloading Chrome for Testing 156.0.8078.4 (playwright chromium v1248) from https://cdn.playwright.dev/builds/cft/156.0.8078.4/linux64/chrome-linux64.zip
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:23.0775002Z |                                                                                |   0% of 191.1 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:23.3284078Z |■■■■■■■■                                                                        |  10% of 191.1 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:23.3838362Z |■■■■■■■■■■■■■■■■                                                                |  20% of 191.1 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:23.4536220Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 191.1 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:23.4928272Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 191.1 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:23.5521155Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 191.1 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:23.6125915Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 191.1 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:23.6617850Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 191.1 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:23.7644737Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 191.1 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:23.8411423Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 191.1 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:23.9087806Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 191.1 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:27.1986800Z Chrome for Testing 156.0.8078.4 (playwright chromium v1248) downloaded to /home/runner/.cache/ms-playwright/chromium-1248
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:27.1993197Z Downloading FFmpeg (playwright ffmpeg v1013) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1013/ffmpeg-linux.zip
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:27.5445741Z Error: getaddrinfo ENOTFOUND playwright.download.prss.microsoft.com
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:27.5446781Z     at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:internal/dns/promises:101:17) {
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:27.5447575Z   errno: -3008,
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:27.5447860Z   code: 'ENOTFOUND',
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:27.5448205Z   syscall: 'getaddrinfo',
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:27.5448612Z   hostname: 'playwright.download.prss.microsoft.com'
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:27.5449053Z }
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:27.5522078Z Downloading FFmpeg (playwright ffmpeg v1013) from https://playwright.download.prss.microsoft.com/dbazure/download/playwright/builds/ffmpeg/1013/ffmpeg-linux.zip
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:27.8707380Z Error: getaddrinfo ENOTFOUND playwright.download.prss.microsoft.com
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:27.8708302Z     at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:internal/dns/promises:101:17) {
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:27.8716371Z   errno: -3008,
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:27.8716848Z   code: 'ENOTFOUND',
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:27.8717323Z   syscall: 'getaddrinfo',
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:27.8717819Z   hostname: 'playwright.download.prss.microsoft.com'
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:27.8718326Z }
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:27.8794334Z Downloading FFmpeg (playwright ffmpeg v1013) from https://cdn.playwright.dev/builds/ffmpeg/1013/ffmpeg-linux.zip
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:28.1611098Z |                                                                                |   0% of 2.2 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:28.1645112Z |■■■■■■■■                                                                        |  10% of 2.2 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:28.1656044Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.2 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:28.1670878Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.2 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:28.1683630Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.2 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:28.1695414Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.2 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:28.1708005Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.2 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:28.1719399Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.2 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:28.1731810Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.2 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:28.1747430Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.2 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:28.1758389Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.2 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:28.2300422Z FFmpeg (playwright ffmpeg v1013) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1013
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:28.2302498Z Downloading Chrome Headless Shell 156.0.8078.4 (playwright chromium-headless-shell v1248) from https://cdn.playwright.dev/builds/cft/156.0.8078.4/linux64/chrome-headless-shell-linux64.zip
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:28.6425112Z |                                                                                |   0% of 120 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:28.9068972Z |■■■■■■■■                                                                        |  10% of 120 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:28.9551293Z |■■■■■■■■■■■■■■■■                                                                |  20% of 120 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:29.0376561Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 120 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:29.1138798Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 120 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:29.1800895Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 120 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:29.2734284Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 120 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:29.4200007Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 120 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:29.4756368Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 120 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:29.5452096Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 120 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:29.5895403Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 120 MiB
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:31.9526602Z Chrome Headless Shell 156.0.8078.4 (playwright chromium-headless-shell v1248) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1248
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:31.9799448Z ##[group]Run node --test scripts/site/release-metadata.test.mjs
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:31.9799955Z ^[[36;1mnode --test scripts/site/release-metadata.test.mjs^[[0m
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:31.9837411Z shell: /usr/bin/bash -e {0}
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:31.9837778Z ##[endgroup]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:32.1600724Z ✔ preserves the verified historical RC identity (1.355563ms)
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:32.1602457Z ✔ stable requires its complete material/source artifact set and unsigned policy (2.700176ms)
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:32.1603589Z ✔ refuses unverified identities, wrong versions, altered asset URLs and invalid pins (5.197764ms)
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:32.1604424Z ✔ a historical RC capture cannot be relabelled as current stable (0.547174ms)
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:32.1661232Z ℹ tests 4
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:32.1661672Z ℹ suites 0
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:32.1662087Z ℹ pass 4
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:32.1662361Z ℹ fail 0
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:32.1662614Z ℹ cancelled 0
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:32.1662931Z ℹ skipped 0
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:32.1663182Z ℹ todo 0
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:32.1663645Z ℹ duration_ms 58.810352
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:32.1810203Z ##[group]Run node scripts/site/validate.mjs
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:32.1810806Z ^[[36;1mnode scripts/site/validate.mjs^[[0m
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:32.1848312Z shell: /usr/bin/bash -e {0}
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:32.1848630Z ##[endgroup]
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.1810645Z Pages validation passed: 5 pages × 3 widths; links, assets, keyboard, semantics, clipboard and no-JS navigation. Verified release and capture provenance required.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.2384860Z Post job cleanup.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.3482920Z Post job cleanup.
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4234139Z [command]/usr/bin/git version
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4276026Z git version 2.55.0
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4310076Z Temporarily overriding HOME='/home/runner/work/_temp/1f8d0955-a179-441f-a654-79b2937f4c40' before making global git config changes
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4311020Z Adding repository directory to the temporary git global config as a safe directory
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4315304Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Navzeroth/Navzeroth
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4348627Z Removing SSH command configuration
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4353992Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4386258Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4592138Z Removing HTTP extra header
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4595912Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4624771Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4812157Z Removing includeIf entries pointing to credentials config files
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4818222Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4840657Z includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git.path
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4841505Z includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git/worktrees/*.path
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4842206Z includeif.gitdir:/github/workspace/.git.path
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4842821Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4849226Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git.path
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4866921Z /home/runner/work/_temp/git-credentials-4af32a34-d38a-4efe-af6a-430a77c533bb.config
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4874480Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-4af32a34\-d38a\-4efe\-af6a\-430a77c533bb\.config
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4912413Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git/worktrees/*.path
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4940271Z /home/runner/work/_temp/git-credentials-4af32a34-d38a-4efe-af6a-430a77c533bb.config
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4949494Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-4af32a34\-d38a\-4efe\-af6a\-430a77c533bb\.config
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.4986507Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.5005328Z /github/runner_temp/git-credentials-4af32a34-d38a-4efe-af6a-430a77c533bb.config
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.5012335Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-4af32a34\-d38a\-4efe\-af6a\-430a77c533bb\.config
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.5041731Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.5062606Z /github/runner_temp/git-credentials-4af32a34-d38a-4efe-af6a-430a77c533bb.config
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.5068752Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-4af32a34\-d38a\-4efe\-af6a\-430a77c533bb\.config
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.5103107Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.5286936Z Removing credentials config '/home/runner/work/_temp/git-credentials-4af32a34-d38a-4efe-af6a-430a77c533bb.config'
+Validate Pages	UNKNOWN STEP	2026-10-21T12:58:37.5425956Z Cleaning up orphan processes

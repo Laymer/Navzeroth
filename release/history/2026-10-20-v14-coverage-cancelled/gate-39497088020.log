@@ -1,0 +1,281 @@
+Coverage gate	Set up job	﻿2026-10-20T21:15:16.0143347Z Current runner version: '2.337.0'
+Coverage gate	Set up job	2026-10-20T21:15:16.0170409Z ##[group]Runner Image Provisioner
+Coverage gate	Set up job	2026-10-20T21:15:16.0171344Z Hosted Compute Agent
+Coverage gate	Set up job	2026-10-20T21:15:16.0172037Z Version: 20261015.610
+Coverage gate	Set up job	2026-10-20T21:15:16.0172696Z Commit: 267fdb4e8bbec4ab5ea31367f3a00d5c480c7656
+Coverage gate	Set up job	2026-10-20T21:15:16.0173484Z Build Date: 2026-10-14T17:06:54Z
+Coverage gate	Set up job	2026-10-20T21:15:16.0174606Z Worker ID: {980be4e5-db32-4da9-b4f7-c9ddcc0a1a36}
+Coverage gate	Set up job	2026-10-20T21:15:16.0175394Z Region: westus
+Coverage gate	Set up job	2026-10-20T21:15:16.0176036Z Cloud: Azure
+Coverage gate	Set up job	2026-10-20T21:15:16.0176587Z ##[endgroup]
+Coverage gate	Set up job	2026-10-20T21:15:16.0178150Z ##[group]Operating System
+Coverage gate	Set up job	2026-10-20T21:15:16.0178839Z Ubuntu
+Coverage gate	Set up job	2026-10-20T21:15:16.0179439Z 24.04.5
+Coverage gate	Set up job	2026-10-20T21:15:16.0180013Z LTS
+Coverage gate	Set up job	2026-10-20T21:15:16.0180525Z ##[endgroup]
+Coverage gate	Set up job	2026-10-20T21:15:16.0181066Z ##[group]Runner Image
+Coverage gate	Set up job	2026-10-20T21:15:16.0181780Z Image: ubuntu-24.04
+Coverage gate	Set up job	2026-10-20T21:15:16.0182463Z Version: 20261018.339.1
+Coverage gate	Set up job	2026-10-20T21:15:16.0183621Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261018.339/images/ubuntu/Ubuntu2404-Readme.md
+Coverage gate	Set up job	2026-10-20T21:15:16.0185570Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261018.339
+Coverage gate	Set up job	2026-10-20T21:15:16.0186699Z ##[endgroup]
+Coverage gate	Set up job	2026-10-20T21:15:16.0187851Z ##[group]GITHUB_TOKEN Permissions
+Coverage gate	Set up job	2026-10-20T21:15:16.0189921Z Contents: read
+Coverage gate	Set up job	2026-10-20T21:15:16.0190573Z Metadata: read
+Coverage gate	Set up job	2026-10-20T21:15:16.0191235Z ##[endgroup]
+Coverage gate	Set up job	2026-10-20T21:15:16.0193399Z Secret source: Actions
+Coverage gate	Set up job	2026-10-20T21:15:16.0194716Z Cache mode: write
+Coverage gate	Set up job	2026-10-20T21:15:16.0195458Z Prepare workflow directory
+Coverage gate	Set up job	2026-10-20T21:15:16.0575507Z Prepare all required actions
+Coverage gate	Set up job	2026-10-20T21:15:16.0645559Z Getting action download info
+Coverage gate	Set up job	2026-10-20T21:15:16.4376382Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+Coverage gate	Set up job	2026-10-20T21:15:16.5458801Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+Coverage gate	Set up job	2026-10-20T21:15:16.6410510Z Download action repository 'actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333' (SHA:9000827ccba6bdab643e8b6fd33ac0654aef8333)
+Coverage gate	Set up job	2026-10-20T21:15:17.0001206Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+Coverage gate	Set up job	2026-10-20T21:15:17.1917002Z Complete job name: Coverage gate
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	﻿2026-10-20T21:15:17.2749534Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.2750735Z with:
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.2751218Z   repository: Laymer/Navzeroth
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.2755756Z   token: ***
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.2756221Z   ssh-strict: true
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.2756687Z   ssh-user: git
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.2757156Z   persist-credentials: true
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.2757672Z   clean: true
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.2758141Z   sparse-checkout-cone-mode: true
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.2758724Z   fetch-depth: 1
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.2759177Z   fetch-tags: false
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.2759641Z   show-progress: true
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.2760130Z   lfs: false
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.2760557Z   submodules: false
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.2761033Z   set-safe-directory: true
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.2761562Z   allow-unsafe-pr-checkout: false
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.2762381Z ##[endgroup]
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.3953859Z Syncing repository: Laymer/Navzeroth
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.3957104Z ##[group]Getting Git version info
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.3958314Z Working directory is '/home/runner/work/Navzeroth/Navzeroth'
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.3960101Z [command]/usr/bin/git version
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4041254Z git version 2.55.0
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4064510Z ##[endgroup]
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4077052Z Temporarily overriding HOME='/home/runner/work/_temp/c0318a36-c71c-457e-9e7e-db89476be50a' before making global git config changes
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4079473Z Adding repository directory to the temporary git global config as a safe directory
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4083499Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Navzeroth/Navzeroth
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4147865Z Deleting the contents of '/home/runner/work/Navzeroth/Navzeroth'
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4151972Z ##[group]Determining repository object format
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4153713Z ##[endgroup]
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4155416Z ##[group]Initializing the repository
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4158659Z [command]/usr/bin/git init /home/runner/work/Navzeroth/Navzeroth
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4291966Z hint: Using 'master' as the name for the initial branch. This default branch name
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4293884Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4295778Z hint: to use in all of your new repositories, which will suppress this warning,
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4296991Z hint: call:
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4297643Z hint:
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4298544Z hint: 	git config --global init.defaultBranch <name>
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4299663Z hint:
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4300696Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4302212Z hint: 'development'. The just-created branch can be renamed via this command:
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4303503Z hint:
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4304446Z hint: 	git branch -m <name>
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4305344Z hint:
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4306376Z hint: Disable this message with "git config set advice.defaultBranchName false"
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4308089Z Initialized empty Git repository in /home/runner/work/Navzeroth/Navzeroth/.git/
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4311490Z [command]/usr/bin/git remote add origin https://github.com/Laymer/Navzeroth
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4378549Z ##[endgroup]
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4380273Z ##[group]Disabling automatic garbage collection
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4381719Z [command]/usr/bin/git config --local gc.auto 0
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4421846Z ##[endgroup]
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4423652Z ##[group]Setting up auth
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4428583Z Removing SSH command configuration
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4430234Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4471983Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4939531Z Removing HTTP extra header
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4946791Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.4998819Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.5252902Z Removing includeIf entries pointing to credentials config files
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.5258289Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.5304710Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.5562291Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-3491b7ee-ed1a-4505-b086-e6638e2582cd.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.5616262Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git.path /home/runner/work/_temp/git-credentials-3491b7ee-ed1a-4505-b086-e6638e2582cd.config
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.5664444Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-3491b7ee-ed1a-4505-b086-e6638e2582cd.config
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.5717033Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-3491b7ee-ed1a-4505-b086-e6638e2582cd.config
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.5764926Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-3491b7ee-ed1a-4505-b086-e6638e2582cd.config
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.5808298Z ##[endgroup]
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.5809459Z ##[group]Fetching the repository
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:17.5817907Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +8d9fc3922e3433b45755ef68602a62c054faee4e:refs/remotes/pull/239/merge
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.1273585Z From https://github.com/Laymer/Navzeroth
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.1274974Z  * [new ref]         8d9fc3922e3433b45755ef68602a62c054faee4e -> pull/239/merge
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.1285947Z ##[endgroup]
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.1286731Z ##[group]Determining the checkout info
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.1287341Z ##[endgroup]
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.1287731Z [command]/usr/bin/git sparse-checkout disable
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.1353315Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.1398890Z ##[group]Checking out the ref
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.1403845Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/239/merge
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.6720468Z Note: switching to 'refs/remotes/pull/239/merge'.
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.6721331Z 
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.6721744Z You are in 'detached HEAD' state. You can look around, make experimental
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.6722725Z changes and commit them, and you can discard any commits you make in this
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.6723627Z state without impacting any branches by switching back to a branch.
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.6724584Z 
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.6726586Z If you want to create a new branch to retain commits you create, you may
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.6727432Z do so (now or later) by using -c with the switch command. Example:
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.6727833Z 
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.6728012Z   git switch -c <new-branch-name>
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.6728298Z 
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.6728483Z Or undo this operation with:
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.6728736Z 
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.6728878Z   git switch -
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.6729120Z 
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.6729525Z Turn off this advice by setting config variable advice.detachedHead to false
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.6729999Z 
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.6730511Z HEAD is now at 8d9fc39 Merge 97a81de9fd8d07270ed86f55ca9bf445b010e60a into 807ef674ee13c15ece90e64618ccd5f122afcbdb
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.7300216Z ##[endgroup]
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.7395562Z [command]/usr/bin/git log -1 --format=%H
+Coverage gate	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:19.7414020Z 8d9fc3922e3433b45755ef68602a62c054faee4e
+Coverage gate	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	﻿2026-10-20T21:15:19.7711560Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+Coverage gate	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:15:19.7712055Z with:
+Coverage gate	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:15:19.7712292Z   node-version-file: .node-version
+Coverage gate	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:15:19.7712579Z   package-manager-cache: false
+Coverage gate	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:15:19.7712839Z   check-latest: false
+Coverage gate	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:15:19.7716262Z   token: ***
+Coverage gate	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:15:19.7716513Z ##[endgroup]
+Coverage gate	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:15:19.9033325Z Node version file is not JSON file
+Coverage gate	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:15:19.9040198Z Node version file is not TOML file
+Coverage gate	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:15:19.9040968Z Resolved .node-version as 24.15.0
+Coverage gate	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:15:19.9057987Z Attempting to download 24.15.0...
+Coverage gate	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:15:20.8239167Z Acquiring 24.15.0 - x64 from https://github.com/actions/node-versions/releases/download/24.15.0-24511264946/node-24.15.0-linux-x64.tar.gz
+Coverage gate	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:15:21.3166012Z Extracting ...
+Coverage gate	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:15:21.3311354Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/bca99340-63d0-470d-81f5-9954359df13e -f /home/runner/work/_temp/976d3d84-05af-45f8-b8d9-872cd21ac641
+Coverage gate	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:15:22.5517830Z Adding to the cache ...
+Coverage gate	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:15:24.3973288Z ##[group]Environment details
+Coverage gate	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:15:24.6539175Z node: v24.15.0
+Coverage gate	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:15:24.6539797Z npm: 11.12.1
+Coverage gate	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:15:24.6540239Z yarn: 1.22.22
+Coverage gate	Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1	2026-10-20T21:15:24.6541173Z ##[endgroup]
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	﻿2026-10-20T21:15:24.6806868Z ##[group]Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:24.6807346Z with:
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:24.6807665Z   name: coverage-typescript-8d9fc3922e3433b45755ef68602a62c054faee4e
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:24.6808104Z   path: /home/runner/work/_temp/coverage/typescript
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:24.6808429Z   merge-multiple: false
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:24.6808928Z   repository: Laymer/Navzeroth
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:24.6809178Z   run-id: 39497088020
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:24.6809400Z   skip-decompress: false
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:24.6809637Z   digest-mismatch: error
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:24.6809893Z ##[endgroup]
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:24.8268192Z Downloading single artifact
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:25.1250666Z Preparing to download the following artifacts:
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:25.1252976Z - coverage-typescript-8d9fc3922e3433b45755ef68602a62c054faee4e (ID: 12298582101, Size: 634055, Expected Digest: sha256:ab051c9eaa76ecd66924b9cb586c3cd96735ec98bd6eaee2c8d6a41fb0ea2e2c)
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:25.6882480Z Redirecting to blob download url: https://productionresultssa0.blob.core.windows.net/actions-results/1bb86d9d-4f34-8420-8385-baf3cd5d52a1/workflow-job-run-bfc29346-050f-539a-a510-114633d87326/artifacts/bcc70cc916f947b7d945028f9c02b660b0c571533de085d8b82bd2423f1e3235.zip
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:25.6885788Z Starting download of artifact to: /home/runner/work/_temp/coverage/typescript
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:26.0290626Z (node:2346) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:26.0292665Z (Use `node --trace-deprecation ...` to show where the warning was created)
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:26.4175426Z SHA256 digest of downloaded artifact is ab051c9eaa76ecd66924b9cb586c3cd96735ec98bd6eaee2c8d6a41fb0ea2e2c
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:26.4176550Z Artifact download completed successfully.
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:26.4177353Z Total of 1 artifact(s) downloaded
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:26.4179687Z Download artifact has finished successfully
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	﻿2026-10-20T21:15:26.4325337Z ##[group]Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:26.4325802Z with:
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:26.4326114Z   name: coverage-rust-Linux-8d9fc3922e3433b45755ef68602a62c054faee4e
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:26.4326534Z   path: /home/runner/work/_temp/coverage/linux
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:26.4326843Z   merge-multiple: false
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:26.4327162Z   repository: Laymer/Navzeroth
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:26.4327413Z   run-id: 39497088020
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:26.4327639Z   skip-decompress: false
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:26.4327874Z   digest-mismatch: error
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:26.4328095Z ##[endgroup]
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:26.5813650Z Downloading single artifact
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:26.8910357Z Preparing to download the following artifacts:
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:26.8912646Z - coverage-rust-Linux-8d9fc3922e3433b45755ef68602a62c054faee4e (ID: 12299066859, Size: 70594457, Expected Digest: sha256:0809f7b0e716068ac77ef8c403ba4a3482bb434964f908e967d6fc3b781670a5)
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:27.4422041Z Redirecting to blob download url: https://productionresultssa0.blob.core.windows.net/actions-results/1bb86d9d-4f34-8420-8385-baf3cd5d52a1/workflow-job-run-6fd5a785-eeb7-500a-a34a-61c4298c2a0a/artifacts/c1aaeaedf9c1569a8ef6ec3aeb4e64f766b0f53ffd4cd742e3b9b9f7ab70dbca.zip
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:27.4425619Z Starting download of artifact to: /home/runner/work/_temp/coverage/linux
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:27.8121518Z (node:2358) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:27.8123169Z (Use `node --trace-deprecation ...` to show where the warning was created)
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:31.0088567Z SHA256 digest of downloaded artifact is 0809f7b0e716068ac77ef8c403ba4a3482bb434964f908e967d6fc3b781670a5
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:31.0089573Z Artifact download completed successfully.
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:31.0090166Z Total of 1 artifact(s) downloaded
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:31.0097724Z Download artifact has finished successfully
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	﻿2026-10-20T21:15:31.0281572Z ##[group]Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:31.0282058Z with:
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:31.0282395Z   name: coverage-rust-Windows-8d9fc3922e3433b45755ef68602a62c054faee4e
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:31.0282848Z   path: /home/runner/work/_temp/coverage/windows
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:31.0283176Z   merge-multiple: false
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:31.0283601Z   repository: Laymer/Navzeroth
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:31.0283866Z   run-id: 39497088020
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:31.0284381Z   skip-decompress: false
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:31.0284710Z   digest-mismatch: error
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:31.0284951Z ##[endgroup]
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:31.1754877Z Downloading single artifact
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:31.4605868Z Preparing to download the following artifacts:
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:31.4608012Z - coverage-rust-Windows-8d9fc3922e3433b45755ef68602a62c054faee4e (ID: 12297859579, Size: 65765, Expected Digest: sha256:20f062af844909d86b2f510da0377ab5307490fbba178e307473f1482ed09018)
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:32.0071438Z Redirecting to blob download url: https://productionresultssa0.blob.core.windows.net/actions-results/1bb86d9d-4f34-8420-8385-baf3cd5d52a1/workflow-job-run-254027bc-175c-5634-9c7e-98bac7bd0a3e/artifacts/313427d13bfc03f6e26cf5a7e967a86fb7f5d9d4e640b06d3013202fcf9ff8e1.zip
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:32.0073596Z Starting download of artifact to: /home/runner/work/_temp/coverage/windows
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:32.3002277Z (node:2375) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:32.3003737Z (Use `node --trace-deprecation ...` to show where the warning was created)
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:32.4245872Z SHA256 digest of downloaded artifact is 20f062af844909d86b2f510da0377ab5307490fbba178e307473f1482ed09018
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:32.4247413Z Artifact download completed successfully.
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:32.4248165Z Total of 1 artifact(s) downloaded
+Coverage gate	Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333	2026-10-20T21:15:32.4251245Z Download artifact has finished successfully
+Coverage gate	Require successful collection jobs	﻿2026-10-20T21:15:32.4419272Z ##[group]Run node --input-type=module -e "for(const key of ['TYPESCRIPT_RESULT','RUST_RESULT'])if(process.env[key]!=='success')throw new Error('Coverage collection failed '+key)"
+Coverage gate	Require successful collection jobs	2026-10-20T21:15:32.4421406Z ^[[36;1mnode --input-type=module -e "for(const key of ['TYPESCRIPT_RESULT','RUST_RESULT'])if(process.env[key]!=='success')throw new Error('Coverage collection failed '+key)"^[[0m
+Coverage gate	Require successful collection jobs	2026-10-20T21:15:32.4632692Z shell: /usr/bin/bash -e {0}
+Coverage gate	Require successful collection jobs	2026-10-20T21:15:32.4633076Z env:
+Coverage gate	Require successful collection jobs	2026-10-20T21:15:32.4633349Z   TYPESCRIPT_RESULT: success
+Coverage gate	Require successful collection jobs	2026-10-20T21:15:32.4633673Z   RUST_RESULT: cancelled
+Coverage gate	Require successful collection jobs	2026-10-20T21:15:32.4633972Z ##[endgroup]
+Coverage gate	Require successful collection jobs	2026-10-20T21:15:32.4965937Z file:///home/runner/work/Navzeroth/Navzeroth/[eval1]:1
+Coverage gate	Require successful collection jobs	2026-10-20T21:15:32.4967371Z for(const key of ['TYPESCRIPT_RESULT','RUST_RESULT'])if(process.env[key]!=='success')throw new Error('Coverage collection failed '+key)
+Coverage gate	Require successful collection jobs	2026-10-20T21:15:32.4968187Z                                                                                            ^
+Coverage gate	Require successful collection jobs	2026-10-20T21:15:32.4968604Z 
+Coverage gate	Require successful collection jobs	2026-10-20T21:15:32.4969217Z Error: Coverage collection failed RUST_RESULT
+Coverage gate	Require successful collection jobs	2026-10-20T21:15:32.4970003Z     at file:///home/runner/work/Navzeroth/Navzeroth/[eval1]:1:92
+Coverage gate	Require successful collection jobs	2026-10-20T21:15:32.4970580Z     at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+Coverage gate	Require successful collection jobs	2026-10-20T21:15:32.4971125Z     at async node:internal/modules/esm/loader:246:26
+Coverage gate	Require successful collection jobs	2026-10-20T21:15:32.4971677Z     at async ModuleLoader.executeModuleJob (node:internal/modules/esm/loader:243:20)
+Coverage gate	Require successful collection jobs	2026-10-20T21:15:32.4972352Z     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+Coverage gate	Require successful collection jobs	2026-10-20T21:15:32.4972710Z 
+Coverage gate	Require successful collection jobs	2026-10-20T21:15:32.4972809Z Node.js v24.15.0
+Coverage gate	Require successful collection jobs	2026-10-20T21:15:32.5005232Z ##[error]Process completed with exit code 1.
+Coverage gate	Retain final per-file verdict	﻿2026-10-20T21:15:32.5083707Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+Coverage gate	Retain final per-file verdict	2026-10-20T21:15:32.5084450Z with:
+Coverage gate	Retain final per-file verdict	2026-10-20T21:15:32.5084772Z   name: coverage-verdict-8d9fc3922e3433b45755ef68602a62c054faee4e
+Coverage gate	Retain final per-file verdict	2026-10-20T21:15:32.5085247Z   path: /home/runner/work/_temp/coverage/per-file-verdict.json
+Coverage gate	Retain final per-file verdict	2026-10-20T21:15:32.5085620Z   if-no-files-found: warn
+Coverage gate	Retain final per-file verdict	2026-10-20T21:15:32.5085872Z   retention-days: 14
+Coverage gate	Retain final per-file verdict	2026-10-20T21:15:32.5086105Z   compression-level: 6
+Coverage gate	Retain final per-file verdict	2026-10-20T21:15:32.5086341Z   overwrite: false
+Coverage gate	Retain final per-file verdict	2026-10-20T21:15:32.5086569Z   include-hidden-files: false
+Coverage gate	Retain final per-file verdict	2026-10-20T21:15:32.5086826Z   archive: true
+Coverage gate	Retain final per-file verdict	2026-10-20T21:15:32.5087240Z ##[endgroup]
+Coverage gate	Retain final per-file verdict	2026-10-20T21:15:32.6585880Z ##[warning]No files were found with the provided path: /home/runner/work/_temp/coverage/per-file-verdict.json. No artifacts will be uploaded.
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	﻿2026-10-20T21:15:32.6800851Z Post job cleanup.
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.7735342Z [command]/usr/bin/git version
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.7784009Z git version 2.55.0
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.7825996Z Temporarily overriding HOME='/home/runner/work/_temp/be5ffaa2-2eaf-4ddb-a3f6-78ce7a563e54' before making global git config changes
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.7827829Z Adding repository directory to the temporary git global config as a safe directory
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.7832359Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Navzeroth/Navzeroth
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.7874381Z Removing SSH command configuration
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.7882455Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.7934784Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.8211298Z Removing HTTP extra header
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.8219107Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.8274976Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.8564482Z Removing includeIf entries pointing to credentials config files
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.8570775Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.8612722Z includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git.path
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.8613983Z includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git/worktrees/*.path
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.8615704Z includeif.gitdir:/github/workspace/.git.path
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.8688899Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.8692395Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git.path
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.8694327Z /home/runner/work/_temp/git-credentials-3491b7ee-ed1a-4505-b086-e6638e2582cd.config
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.8709789Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-3491b7ee\-ed1a\-4505\-b086\-e6638e2582cd\.config
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.8846113Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git/worktrees/*.path
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.8875094Z /home/runner/work/_temp/git-credentials-3491b7ee-ed1a-4505-b086-e6638e2582cd.config
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.8889662Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Navzeroth/Navzeroth/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-3491b7ee\-ed1a\-4505\-b086\-e6638e2582cd\.config
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.8965791Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.9010996Z /github/runner_temp/git-credentials-3491b7ee-ed1a-4505-b086-e6638e2582cd.config
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.9023420Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-3491b7ee\-ed1a\-4505\-b086\-e6638e2582cd\.config
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.9078412Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.9127475Z /github/runner_temp/git-credentials-3491b7ee-ed1a-4505-b086-e6638e2582cd.config
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.9138141Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-3491b7ee\-ed1a\-4505\-b086\-e6638e2582cd\.config
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.9204488Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Coverage gate	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-20T21:15:32.9498917Z Removing credentials config '/home/runner/work/_temp/git-credentials-3491b7ee-ed1a-4505-b086-e6638e2582cd.config'
+Coverage gate	Complete job	﻿2026-10-20T21:15:32.9701773Z Cleaning up orphan processes

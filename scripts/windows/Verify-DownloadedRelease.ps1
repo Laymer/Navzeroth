@@ -4,7 +4,9 @@ param(
     [Parameter(Mandatory)][string] $Directory,
     [Parameter(Mandatory)][string] $Version,
     [Parameter(Mandatory)][ValidatePattern('^[a-f0-9]{64}$')][string] $InstallerSha256,
-    [Parameter(Mandatory)][string] $Receipt
+    [Parameter(Mandatory)][string] $Receipt,
+    [ValidateSet('prepared','draft','public')][string] $Phase = 'public',
+    [string] $Evidence = ''
 )
 Set-StrictMode -Version 3.0
 $ErrorActionPreference = 'Stop'
@@ -17,7 +19,12 @@ $Directory = [IO.Path]::GetFullPath($Directory)
 $policy = Get-UnsignedReleasePolicy $root $Version
 if ($null -eq $policy) { throw 'No explicit unsigned release policy for this version.' }
 . (Join-Path $PSScriptRoot 'Native-Smoke-Helpers.ps1')
-Assert-ReleaseArtifacts $root $Version $Directory $false $false
+. (Join-Path $PSScriptRoot 'Stable-Acceptance-Helpers.ps1')
+. (Join-Path $PSScriptRoot 'Draft-Installer-Smoke.ps1')
+$contract=Read-BoundedReleaseContractText (Join-Path $root 'release/v1/acceptance-evidence.json') | ConvertFrom-Json
+$draftUi=$Phase -ceq 'draft' -and $contract.schema_version -eq 5
+$readiness = switch ($Phase) { 'prepared' { 'prebuild' } 'draft' { 'draft' } 'public' { 'public' } }
+Assert-ReleaseArtifacts $root $Version $Directory $false $false $readiness $Evidence
 $setup = Get-NativeSmokeSetup -Directory $Directory
 $setupHash = (Get-FileHash -LiteralPath $setup.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($setupHash -cne $InstallerSha256) { throw 'Downloaded installer differs from the independently recorded packaging hash' }
@@ -49,7 +56,15 @@ try {
 
 $install = Join-Path $env:LOCALAPPDATA 'Azeroth Navigator'
 if (Test-Path -LiteralPath $install) { throw 'Verification requires a fresh installation directory' }
+$previousAppData=$env:APPDATA
+$debugPolicy='HKLM:\SOFTWARE\Policies\Microsoft\Edge\WebView2\AdditionalBrowserArguments'
+if ($draftUi -and $null -ne (Get-ItemProperty -LiteralPath $debugPolicy -Name 'azeroth-desktop.exe' -ErrorAction SilentlyContinue)) { throw 'Existing native debugging policy must be preserved.' }
 try {
+    if ($draftUi) {
+        if ($PSVersionTable.PSVersion.Major -lt 7) { throw 'Draft UI verification requires PowerShell7.' }
+        $env:APPDATA=Join-Path $env:RUNNER_TEMP ('navzeroth-draft-appdata-'+[Guid]::NewGuid().ToString('N'))
+        $null=New-Item -ItemType Directory -Path $env:APPDATA -ErrorAction Stop
+    }
     Install-NativeSmokeSetup -SetupPath $setup.FullName
     if ((Get-InstalledDisplayVersion) -cne $Version) { throw 'Installed version differs from release' }
     $exe = Join-Path $install 'azeroth-desktop.exe'
@@ -66,7 +81,7 @@ try {
         [ordered]@{ name = $_.Name; bytes = $_.Length; sha256 = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant() }
     })
     $result = [ordered]@{
-        schema_version = 2; version = $Version; prerelease = $policy.prerelease; declared_signature = $policy.signature; source_commit = (Get-Content -Raw (Join-Path $Directory 'SOURCE_COMMIT.txt')).Trim()
+        schema_version = 3; phase = $Phase; version = $Version; prerelease = $policy.prerelease; declared_signature = $policy.signature; source_commit = (Get-Content -Raw (Join-Path $Directory 'SOURCE_COMMIT.txt')).Trim()
         checked_at = [DateTime]::UtcNow.ToString('o'); workflow_run_id = $env:GITHUB_RUN_ID; workflow_run_attempt = $env:GITHUB_RUN_ATTEMPT
         assets = $assets; installer_signature = $setupSignature.Status.ToString(); application_signature = $signature.Status.ToString()
         installed_display_version = Get-InstalledDisplayVersion; product_version = $metadata.ProductVersion; file_version = $metadata.FileVersion
@@ -78,7 +93,16 @@ try {
         evidence_scope = 'Hosted synthetic verification; not ordinary-Windows or live acceptance'
     }
     $result | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $Receipt -Encoding utf8
+    if ($draftUi) {
+        $native=Invoke-DownloadedDraftUiSmoke -Root $root -Exe $exe -Manifest (Join-Path $install 'bundled-content/manifest.json') -Version $Version -InstallerSha256 $InstallerSha256 -OutputDirectory (Join-Path ([IO.Path]::GetDirectoryName($Receipt)) 'native')
+        [IO.File]::WriteAllText((Join-Path ([IO.Path]::GetDirectoryName($Receipt)) 'native-result.json'),(($native|ConvertTo-Json -Depth 16)+"`n"),(New-Object Text.UTF8Encoding($false)))
+    }
 } finally {
-    Stop-NativeSmokeProcesses
-    Uninstall-NativeSmokeApp -InstallDirectory $install
+    try { Stop-NativeSmokeProcesses; Uninstall-NativeSmokeApp -InstallDirectory $install }
+    finally {
+        $env:APPDATA=$previousAppData
+        # The parent also cleans up after a killed Node watchdog, whose finally
+        # block may not execute. Preflight guaranteed this one value was absent.
+        if ($draftUi) { Remove-ItemProperty -LiteralPath $debugPolicy -Name 'azeroth-desktop.exe' -ErrorAction SilentlyContinue }
+    }
 }

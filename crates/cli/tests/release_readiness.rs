@@ -60,7 +60,14 @@ impl Temp {
             "release/v1/accepted-origins.json",
             "release/v1/world-data-target.json",
         ] {
-            temp.write(file, &fs::read_to_string(source.join(file)).unwrap());
+            let source_path = if file == INVENTORY || file == EVIDENCE {
+                source
+                    .join("release/history/2026-10-19-pre-stable-v3")
+                    .join(Path::new(file).file_name().unwrap())
+            } else {
+                source.join(file)
+            };
+            temp.write(file, &fs::read_to_string(source_path).unwrap());
         }
         temp.git(&["init", "-q"]);
         temp.git(&["config", "user.name", "Synthetic Release Test"]);
@@ -339,7 +346,7 @@ fn future_unknown_duplicate_and_oversized_manifests_fail_even_for_preview() {
     let temp = Temp::new("0.8.1");
     let original = fs::read(temp.0.join(EVIDENCE)).unwrap();
     let mut value = temp.json(EVIDENCE);
-    value["schema_version"] = json!(azeroth_core::release::SCHEMA_STABLE + 1);
+    value["schema_version"] = json!(azeroth_core::release::SCHEMA_AUTOMATED_DRAFT + 1);
     temp.json_write(EVIDENCE, &value);
     assert!(report(&temp.options("0.8.1")).is_err());
     value["schema_version"] = json!(3);

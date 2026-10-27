@@ -274,6 +274,34 @@ class PlacementTest(unittest.TestCase):
 
 
 class DungeonGraveyardAreaTest(unittest.TestCase):
+    def test_ghost_planar_estimates_do_not_invent_height_and_zero_test_map_is_excluded(self):
+        instances = [{"map":36,"levelMin":17,"levelMax":26,"ghostEntranceMap":0,
+                      "ghostEntranceX":-11207.8,"ghostEntranceY":1681.15},
+                     {"map":169,"maxPlayers":0,"levelMin":0,"levelMax":0,
+                      "ghostEntranceMap":0,"ghostEntranceX":0,"ghostEntranceY":0}]
+        teleports = [{"id":78,"name":"Deadmines - Entering","target_map":36},
+                     {"id":1,"name":"Emerald Dream","target_map":169}]
+        areas = [{"ID":"1581","ContinentID":"36","ParentAreaID":"0","AreaName_lang":"The Deadmines"},
+                 {"ID":"206","ContinentID":"36","ParentAreaID":"0","AreaName_lang":"Westfall"}]
+        records = gen.dungeon_records(instances, {}, {}, {}, teleports, areas)
+        estimate = records[0]["entrance_estimate"]
+        self.assertEqual((estimate["map_id"],estimate["x"],estimate["y"]),(0,-11207.8,1681.15))
+        self.assertNotIn("z",estimate)
+        self.assertIn("ghostEntrance",estimate["derivation"])
+        self.assertIn("unverified",estimate["uncertainty"])
+        self.assertEqual(records[0]["entrance"],envelope.unknown())
+        self.assertEqual(records[0]["area_id"],1581)
+        self.assertIsNone(records[1]["entrance_estimate"])
+        self.assertIn("Unused/test map 169",records[1]["excluded_reason"])
+        areas.append(dict(areas[0],ID="999"))
+        ambiguous=gen.dungeon_records(instances, {}, {}, {}, teleports, areas)
+        self.assertIsNone(ambiguous[0]["area_id"])
+        instances[0]["ghostEntranceX"]=0
+        self.assertEqual(gen.dungeon_records(instances, {}, {}, {}, teleports)[0]["entrance_estimate"]["x"],0)
+        instances[0]["ghostEntranceY"]=0
+        self.assertIsNone(gen.dungeon_records(instances, {}, {}, {}, teleports)[0]["entrance_estimate"])
+
+
     def test_entrance_unknown_without_client_trigger(self):
         teleports = [{"id": 78, "name": "Deadmines - Entering", "target_map": 36},
                      {"id": 2848, "name": "Onyxia's Lair - Entering", "target_map": 249},

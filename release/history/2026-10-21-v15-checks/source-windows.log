@@ -1,0 +1,338 @@
+﻿2026-10-20T21:27:12.5576974Z Current runner version: '2.337.0'
+2026-10-20T21:27:12.5603197Z ##[group]Runner Image Provisioner
+2026-10-20T21:27:12.5604025Z Hosted Compute Agent
+2026-10-20T21:27:12.5604612Z Version: 20261002.596
+2026-10-20T21:27:12.5605196Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-20T21:27:12.5605876Z Build Date: 2026-10-02T22:28:27Z
+2026-10-20T21:27:12.5606551Z Worker ID: {de7d084c-0156-4d9b-8647-48d9ec4cf976}
+2026-10-20T21:27:12.5607222Z Region: eastus
+2026-10-20T21:27:12.5607728Z Cloud: Azure
+2026-10-20T21:27:12.5608250Z ##[endgroup]
+2026-10-20T21:27:12.5609571Z ##[group]Operating System
+2026-10-20T21:27:12.5610241Z Microsoft Windows Server 2025
+2026-10-20T21:27:12.5610823Z 10.0.26100
+2026-10-20T21:27:12.5611344Z Datacenter
+2026-10-20T21:27:12.5611832Z ##[endgroup]
+2026-10-20T21:27:12.5612346Z ##[group]Runner Image
+2026-10-20T21:27:12.5612923Z Image: windows-2025-vs2026
+2026-10-20T21:27:12.5613486Z Version: 20261007.264.1
+2026-10-20T21:27:12.5614948Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20261007.264/images/windows/Windows2025-VS2026-Readme.md
+2026-10-20T21:27:12.5616551Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261007.264
+2026-10-20T21:27:12.5617518Z ##[endgroup]
+2026-10-20T21:27:12.5618574Z ##[group]GITHUB_TOKEN Permissions
+2026-10-20T21:27:12.5620380Z Contents: read
+2026-10-20T21:27:12.5620984Z Metadata: read
+2026-10-20T21:27:12.5622005Z ##[endgroup]
+2026-10-20T21:27:12.5624202Z Secret source: Actions
+2026-10-20T21:27:12.5625074Z Cache mode: write
+2026-10-20T21:27:12.5625769Z Prepare workflow directory
+2026-10-20T21:27:12.5951026Z Prepare all required actions
+2026-10-20T21:27:12.5999935Z Getting action download info
+2026-10-20T21:27:12.7726594Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-10-20T21:27:12.9101749Z Download action repository 'actions/cache@caa296126883cff596d87d8935842f9db880ef25' (SHA:caa296126883cff596d87d8935842f9db880ef25)
+2026-10-20T21:27:13.0476739Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-10-20T21:27:13.4182068Z Complete job name: Offline sources (windows-2025)
+2026-10-20T21:27:13.5519998Z ##[group]Run git config --global core.autocrlf false
+2026-10-20T21:27:13.5520870Z [36;1mgit config --global core.autocrlf false[0m
+2026-10-20T21:27:13.5542669Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-10-20T21:27:13.5543696Z ##[endgroup]
+2026-10-20T21:27:14.4795335Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-10-20T21:27:14.4796327Z with:
+2026-10-20T21:27:14.4796746Z   lfs: false
+2026-10-20T21:27:14.4797199Z   repository: Laymer/Navzeroth
+2026-10-20T21:27:14.4801708Z   token: ***
+2026-10-20T21:27:14.4802148Z   ssh-strict: true
+2026-10-20T21:27:14.4802600Z   ssh-user: git
+2026-10-20T21:27:14.4803051Z   persist-credentials: true
+2026-10-20T21:27:14.4803596Z   clean: true
+2026-10-20T21:27:14.4804061Z   sparse-checkout-cone-mode: true
+2026-10-20T21:27:14.4804615Z   fetch-depth: 1
+2026-10-20T21:27:14.4805050Z   fetch-tags: false
+2026-10-20T21:27:14.4805498Z   show-progress: true
+2026-10-20T21:27:14.4806399Z   submodules: false
+2026-10-20T21:27:14.4806883Z   set-safe-directory: true
+2026-10-20T21:27:14.4807439Z   allow-unsafe-pr-checkout: false
+2026-10-20T21:27:14.4808001Z ##[endgroup]
+2026-10-20T21:27:14.6330650Z Syncing repository: Laymer/Navzeroth
+2026-10-20T21:27:14.6332659Z ##[group]Getting Git version info
+2026-10-20T21:27:14.6333392Z Working directory is 'D:\a\Navzeroth\Navzeroth'
+2026-10-20T21:27:14.7285281Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-20T21:27:14.7724781Z git version 2.56.0.windows.2
+2026-10-20T21:27:14.7775392Z ##[endgroup]
+2026-10-20T21:27:14.7786284Z Copying 'C:\Users\runneradmin\.gitconfig' to 'D:\a\_temp\7dc403cf-e5fe-4a45-a099-cbe0bc4dcddf\.gitconfig'
+2026-10-20T21:27:14.7807896Z Temporarily overriding HOME='D:\a\_temp\7dc403cf-e5fe-4a45-a099-cbe0bc4dcddf' before making global git config changes
+2026-10-20T21:27:14.7810211Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-20T21:27:14.7818495Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\Navzeroth\Navzeroth
+2026-10-20T21:27:14.8209957Z Deleting the contents of 'D:\a\Navzeroth\Navzeroth'
+2026-10-20T21:27:14.8215561Z ##[group]Determining repository object format
+2026-10-20T21:27:14.8217506Z ##[endgroup]
+2026-10-20T21:27:14.8218707Z ##[group]Initializing the repository
+2026-10-20T21:27:14.8226303Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\Navzeroth\Navzeroth
+2026-10-20T21:27:14.9396091Z Initialized empty Git repository in D:/a/Navzeroth/Navzeroth/.git/
+2026-10-20T21:27:14.9447098Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/Laymer/Navzeroth
+2026-10-20T21:27:15.0118314Z ##[endgroup]
+2026-10-20T21:27:15.0119879Z ##[group]Disabling automatic garbage collection
+2026-10-20T21:27:15.0126210Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-10-20T21:27:15.0512911Z ##[endgroup]
+2026-10-20T21:27:15.0515115Z ##[group]Setting up auth
+2026-10-20T21:27:15.0516579Z Removing SSH command configuration
+2026-10-20T21:27:15.0525189Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-20T21:27:15.0918736Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-20T21:27:16.2822692Z Removing HTTP extra header
+2026-10-20T21:27:16.2831835Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-20T21:27:16.3217137Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-20T21:27:16.8998053Z Removing includeIf entries pointing to credentials config files
+2026-10-20T21:27:16.9011819Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-20T21:27:16.9409388Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-20T21:27:17.4994824Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:\a\_temp\git-credentials-a09be966-c695-4887-af06-5def63d8ec72.config http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-10-20T21:27:17.5408047Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:D:/a/Navzeroth/Navzeroth/.git.path D:\a\_temp\git-credentials-a09be966-c695-4887-af06-5def63d8ec72.config
+2026-10-20T21:27:17.5793329Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:D:/a/Navzeroth/Navzeroth/.git/worktrees/*.path D:\a\_temp\git-credentials-a09be966-c695-4887-af06-5def63d8ec72.config
+2026-10-20T21:27:17.6232998Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-a09be966-c695-4887-af06-5def63d8ec72.config
+2026-10-20T21:27:17.6669066Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-a09be966-c695-4887-af06-5def63d8ec72.config
+2026-10-20T21:27:17.7242052Z ##[endgroup]
+2026-10-20T21:27:17.7243159Z ##[group]Fetching the repository
+2026-10-20T21:27:17.7257451Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +6dfe820bc36e4aaffaa30e900b6b80dd207d2c51:refs/remotes/pull/239/merge
+2026-10-20T21:27:19.2970428Z From https://github.com/Laymer/Navzeroth
+2026-10-20T21:27:19.2971405Z  * [new ref]         6dfe820bc36e4aaffaa30e900b6b80dd207d2c51 -> pull/239/merge
+2026-10-20T21:27:19.3017932Z ##[endgroup]
+2026-10-20T21:27:19.3018599Z ##[group]Determining the checkout info
+2026-10-20T21:27:19.3020324Z ##[endgroup]
+2026-10-20T21:27:19.3029503Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-10-20T21:27:19.3599086Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-10-20T21:27:19.4002565Z ##[group]Checking out the ref
+2026-10-20T21:27:19.4012733Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force refs/remotes/pull/239/merge
+2026-10-20T21:27:21.2210172Z Updating files:   8% (335/4163)
+2026-10-20T21:27:21.2655273Z Updating files:   9% (375/4163)
+2026-10-20T21:27:21.2925636Z Updating files:  10% (417/4163)
+2026-10-20T21:27:21.3140096Z Updating files:  11% (458/4163)
+2026-10-20T21:27:21.3378882Z Updating files:  12% (500/4163)
+2026-10-20T21:27:21.3520859Z Updating files:  13% (542/4163)
+2026-10-20T21:27:21.3633914Z Updating files:  14% (583/4163)
+2026-10-20T21:27:21.3757296Z Updating files:  15% (625/4163)
+2026-10-20T21:27:21.3886361Z Updating files:  16% (667/4163)
+2026-10-20T21:27:21.4004452Z Updating files:  17% (708/4163)
+2026-10-20T21:27:21.4116321Z Updating files:  18% (750/4163)
+2026-10-20T21:27:21.4253343Z Updating files:  19% (791/4163)
+2026-10-20T21:27:21.4422343Z Updating files:  20% (833/4163)
+2026-10-20T21:27:21.4535202Z Updating files:  21% (875/4163)
+2026-10-20T21:27:21.4553708Z Updating files:  22% (916/4163)
+2026-10-20T21:27:21.4654162Z Updating files:  22% (922/4163)
+2026-10-20T21:27:21.4782727Z Updating files:  23% (958/4163)
+2026-10-20T21:27:21.4897918Z Updating files:  24% (1000/4163)
+2026-10-20T21:27:21.5011278Z Updating files:  25% (1041/4163)
+2026-10-20T21:27:21.5132827Z Updating files:  26% (1083/4163)
+2026-10-20T21:27:21.5251615Z Updating files:  27% (1125/4163)
+2026-10-20T21:27:21.5367474Z Updating files:  28% (1166/4163)
+2026-10-20T21:27:21.5481594Z Updating files:  29% (1208/4163)
+2026-10-20T21:27:21.5590924Z Updating files:  30% (1249/4163)
+2026-10-20T21:27:21.5708573Z Updating files:  31% (1291/4163)
+2026-10-20T21:27:21.5837686Z Updating files:  32% (1333/4163)
+2026-10-20T21:27:21.6033634Z Updating files:  33% (1374/4163)
+2026-10-20T21:27:21.6159271Z Updating files:  34% (1416/4163)
+2026-10-20T21:27:21.6299955Z Updating files:  35% (1458/4163)
+2026-10-20T21:27:21.6419828Z Updating files:  36% (1499/4163)
+2026-10-20T21:27:21.6536541Z Updating files:  37% (1541/4163)
+2026-10-20T21:27:21.6652265Z Updating files:  38% (1582/4163)
+2026-10-20T21:27:21.6766722Z Updating files:  39% (1624/4163)
+2026-10-20T21:27:21.6869109Z Updating files:  40% (1666/4163)
+2026-10-20T21:27:21.6981828Z Updating files:  41% (1707/4163)
+2026-10-20T21:27:21.7297817Z Updating files:  42% (1749/4163)
+2026-10-20T21:27:21.7405919Z Updating files:  43% (1791/4163)
+2026-10-20T21:27:21.7540480Z Updating files:  44% (1832/4163)
+2026-10-20T21:27:21.7647035Z Updating files:  45% (1874/4163)
+2026-10-20T21:27:21.7751161Z Updating files:  46% (1915/4163)
+2026-10-20T21:27:21.7860742Z Updating files:  47% (1957/4163)
+2026-10-20T21:27:21.7970792Z Updating files:  48% (1999/4163)
+2026-10-20T21:27:21.8079897Z Updating files:  49% (2040/4163)
+2026-10-20T21:27:21.8186352Z Updating files:  50% (2082/4163)
+2026-10-20T21:27:21.8288283Z Updating files:  51% (2124/4163)
+2026-10-20T21:27:21.8388804Z Updating files:  52% (2165/4163)
+2026-10-20T21:27:21.8523400Z Updating files:  53% (2207/4163)
+2026-10-20T21:27:21.8626894Z Updating files:  54% (2249/4163)
+2026-10-20T21:27:21.8741638Z Updating files:  55% (2290/4163)
+2026-10-20T21:27:21.8871694Z Updating files:  56% (2332/4163)
+2026-10-20T21:27:21.8982472Z Updating files:  57% (2373/4163)
+2026-10-20T21:27:21.9088436Z Updating files:  58% (2415/4163)
+2026-10-20T21:27:21.9192922Z Updating files:  59% (2457/4163)
+2026-10-20T21:27:21.9297958Z Updating files:  60% (2498/4163)
+2026-10-20T21:27:21.9422007Z Updating files:  61% (2540/4163)
+2026-10-20T21:27:21.9525446Z Updating files:  62% (2582/4163)
+2026-10-20T21:27:21.9652074Z Updating files:  63% (2623/4163)
+2026-10-20T21:27:21.9762996Z Updating files:  64% (2665/4163)
+2026-10-20T21:27:22.0166035Z Updating files:  65% (2706/4163)
+2026-10-20T21:27:22.1735653Z Updating files:  66% (2748/4163)
+2026-10-20T21:27:22.1842561Z Updating files:  67% (2790/4163)
+2026-10-20T21:27:22.1940612Z Updating files:  68% (2831/4163)
+2026-10-20T21:27:22.2054769Z Updating files:  69% (2873/4163)
+2026-10-20T21:27:22.2146384Z Updating files:  70% (2915/4163)
+2026-10-20T21:27:22.2241781Z Updating files:  71% (2956/4163)
+2026-10-20T21:27:22.2533741Z Updating files:  72% (2998/4163)
+2026-10-20T21:27:22.2647903Z Updating files:  73% (3039/4163)
+2026-10-20T21:27:22.2771783Z Updating files:  74% (3081/4163)
+2026-10-20T21:27:22.2893222Z Updating files:  75% (3123/4163)
+2026-10-20T21:27:22.2999660Z Updating files:  76% (3164/4163)
+2026-10-20T21:27:22.3116496Z Updating files:  77% (3206/4163)
+2026-10-20T21:27:22.3225728Z Updating files:  78% (3248/4163)
+2026-10-20T21:27:22.3355406Z Updating files:  79% (3289/4163)
+2026-10-20T21:27:22.3463157Z Updating files:  80% (3331/4163)
+2026-10-20T21:27:22.3573183Z Updating files:  81% (3373/4163)
+2026-10-20T21:27:22.3678238Z Updating files:  82% (3414/4163)
+2026-10-20T21:27:22.3833277Z Updating files:  83% (3456/4163)
+2026-10-20T21:27:22.3954272Z Updating files:  84% (3497/4163)
+2026-10-20T21:27:22.4065705Z Updating files:  85% (3539/4163)
+2026-10-20T21:27:22.4233073Z Updating files:  86% (3581/4163)
+2026-10-20T21:27:22.4348199Z Updating files:  87% (3622/4163)
+2026-10-20T21:27:22.4456724Z Updating files:  88% (3664/4163)
+2026-10-20T21:27:22.4589011Z Updating files:  89% (3706/4163)
+2026-10-20T21:27:22.4675124Z Updating files:  90% (3747/4163)
+2026-10-20T21:27:22.4708022Z Updating files:  90% (3778/4163)
+2026-10-20T21:27:22.4806327Z Updating files:  91% (3789/4163)
+2026-10-20T21:27:22.4973302Z Updating files:  92% (3830/4163)
+2026-10-20T21:27:22.5085657Z Updating files:  93% (3872/4163)
+2026-10-20T21:27:22.5703541Z Updating files:  94% (3914/4163)
+2026-10-20T21:27:22.5902713Z Updating files:  95% (3955/4163)
+2026-10-20T21:27:22.6707070Z Updating files:  96% (3997/4163)
+2026-10-20T21:27:22.6832079Z Updating files:  97% (4039/4163)
+2026-10-20T21:27:22.6959344Z Updating files:  98% (4080/4163)
+2026-10-20T21:27:22.7069207Z Updating files:  99% (4122/4163)
+2026-10-20T21:27:22.7070053Z Updating files: 100% (4163/4163)
+2026-10-20T21:27:22.7070841Z Updating files: 100% (4163/4163), done.
+2026-10-20T21:27:22.7232229Z Note: switching to 'refs/remotes/pull/239/merge'.
+2026-10-20T21:27:22.7232827Z 
+2026-10-20T21:27:22.7233133Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-20T21:27:22.7233922Z changes and commit them, and you can discard any commits you make in this
+2026-10-20T21:27:22.7234709Z state without impacting any branches by switching back to a branch.
+2026-10-20T21:27:22.7235188Z 
+2026-10-20T21:27:22.7235503Z If you want to create a new branch to retain commits you create, you may
+2026-10-20T21:27:22.7236039Z do so (now or later) by using -c with the switch command. Example:
+2026-10-20T21:27:22.7236286Z 
+2026-10-20T21:27:22.7236432Z   git switch -c <new-branch-name>
+2026-10-20T21:27:22.7236606Z 
+2026-10-20T21:27:22.7236693Z Or undo this operation with:
+2026-10-20T21:27:22.7236846Z 
+2026-10-20T21:27:22.7236916Z   git switch -
+2026-10-20T21:27:22.7237029Z 
+2026-10-20T21:27:22.7237246Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-20T21:27:22.7237572Z 
+2026-10-20T21:27:22.7240651Z HEAD is now at 6dfe820 Merge 2466b7440fec64e346b7d0eba7e8fefcb1a1fa6e into 807ef674ee13c15ece90e64618ccd5f122afcbdb
+2026-10-20T21:27:23.0976129Z ##[endgroup]
+2026-10-20T21:27:23.1542013Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-10-20T21:27:23.1901015Z 6dfe820bc36e4aaffaa30e900b6b80dd207d2c51
+2026-10-20T21:27:23.2319745Z ##[group]Run python -m unittest discover -s scripts/tests -p test_world_source_parity.py
+2026-10-20T21:27:23.2320511Z [36;1mpython -m unittest discover -s scripts/tests -p test_world_source_parity.py[0m
+2026-10-20T21:27:23.2336684Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-10-20T21:27:23.2337106Z ##[endgroup]
+2026-10-20T21:27:25.5741213Z .............
+2026-10-20T21:27:25.5741700Z ----------------------------------------------------------------------
+2026-10-20T21:27:25.5742317Z Ran 13 tests in 0.075s
+2026-10-20T21:27:25.5742548Z 
+2026-10-20T21:27:25.5742651Z OK
+2026-10-20T21:27:25.5743492Z Actual admitted world closure/policy are absent; only legacy source knowledge is checked. Actual world parity remains unverified.
+2026-10-20T21:27:25.5745265Z Actual admitted world closure/policy are absent; only legacy source knowledge is checked. Actual world parity remains unverified.
+2026-10-20T21:27:25.5746635Z Actual admitted world outputs and complete selected input hashes match across platforms.
+2026-10-20T21:27:25.6178968Z ##[group]Run set -euo pipefail
+2026-10-20T21:27:25.6179341Z [36;1mset -euo pipefail[0m
+2026-10-20T21:27:25.6179688Z [36;1mmode=$(python scripts/verify-world-source-parity.py mode)[0m
+2026-10-20T21:27:25.6180079Z [36;1mecho "mode=$mode" >> "$GITHUB_OUTPUT"[0m
+2026-10-20T21:27:25.6195097Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-10-20T21:27:25.6195678Z ##[endgroup]
+2026-10-20T21:27:25.9053467Z ##[group]Run git lfs install --local
+2026-10-20T21:27:25.9053851Z [36;1mgit lfs install --local[0m
+2026-10-20T21:27:25.9054200Z [36;1mpython scripts/verify-world-source-parity.py hydrate[0m
+2026-10-20T21:27:25.9068903Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-10-20T21:27:25.9069501Z ##[endgroup]
+2026-10-20T21:27:26.3731724Z Updated Git hooks.
+2026-10-20T21:27:26.3732143Z Git LFS initialized.
+2026-10-20T21:27:44.6180139Z {"base": "content/world/1.60.1.70450", "files": [{"bytes": 121103, "path": "content/authored/slice-v1/catalog.json", "sha256": "67bb95bce07c80e901963115d546364f605df56c2b3f0295c79cfd72ca384fea"}, {"bytes": 16934, "path": "content/source-materials/objects/03687b4dbe1993e7d61de2c321c73d1f3c47d05c0eb5a7bf5d964ae783d8da6a", "sha256": "03687b4dbe1993e7d61de2c321c73d1f3c47d05c0eb5a7bf5d964ae783d8da6a"}, {"bytes": 4578, "path": "content/source-materials/objects/07222b184a692c0b275ad713bbb30e1a88e8da14e3f2e26d9afb6d6b59e41404", "sha256": "07222b184a692c0b275ad713bbb30e1a88e8da14e3f2e26d9afb6d6b59e41404"}, {"bytes": 2042, "path": "content/source-materials/objects/08abb624e55bd7383eefca9d14a02f5309c44c0012d865a78d01fc45736a25f3", "sha256": "08abb624e55bd7383eefca9d14a02f5309c44c0012d865a78d01fc45736a25f3"}, {"bytes": 15036, "path": "content/source-materials/objects/1f32c1c7b87bf9b28df520c611ea7cdd27c249de0d77638b8eec75153d785d0a", "sha256": "1f32c1c7b87bf9b28df520c611ea7cdd27c249de0d77638b8eec75153d785d0a"}, {"bytes": 3097, "path": "content/source-materials/objects/1f4aac70eaac015b1d2d0ea0faf6e3d7fb2cf7afdf45e5bb6772d9b80a72346b", "sha256": "1f4aac70eaac015b1d2d0ea0faf6e3d7fb2cf7afdf45e5bb6772d9b80a72346b"}, {"bytes": 2187350, "path": "content/source-materials/objects/27674c6456677b71cdfd50e4193e0db9feea2beb69c15cd5f48906c9ec092d17", "sha256": "27674c6456677b71cdfd50e4193e0db9feea2beb69c15cd5f48906c9ec092d17"}, {"bytes": 8336, "path": "content/source-materials/objects/2b10b13b66b0bb64a3533538ee9613639ee50b9c6d15ccc2558f3daf6f450302", "sha256": "2b10b13b66b0bb64a3533538ee9613639ee50b9c6d15ccc2558f3daf6f450302"}, {"bytes": 91994, "path": "content/source-materials/objects/2fc77108f68cd7a369f794e57836dbbb8cfbf41995e4e30b4e7c5cf1e9970c41", "sha256": "2fc77108f68cd7a369f794e57836dbbb8cfbf41995e4e30b4e7c5cf1e9970c41"}, {"bytes": 38933, "path": "content/source-materials/objects/3a93c2441d907a5e5aa003a51036de064fdf6965186acf6ae4e0487cd8e3a937", "sha256": "3a93c2441d907a5e5aa003a51036de064fdf6965186acf6ae4e0487cd8e3a937"}, {"bytes": 1435186, "path": "content/source-materials/objects/42a865db73a34b45f75b13cf0d01e6b699f3ea7f72cd63826c8124e587b1859c", "sha256": "42a865db73a34b45f75b13cf0d01e6b699f3ea7f72cd63826c8124e587b1859c"}, {"bytes": 832925, "path": "content/source-materials/objects/4f92b73343c9828fdb3d315f5732e6de8d41af6b8e2fc24263fef73cd46681a1", "sha256": "4f92b73343c9828fdb3d315f5732e6de8d41af6b8e2fc24263fef73cd46681a1"}, {"bytes": 12959882, "path": "content/source-materials/objects/4f92db520868ab4e566726f68b5b2e380ae781209beaf22237b4f7f04600d0c0", "sha256": "4f92db520868ab4e566726f68b5b2e380ae781209beaf22237b4f7f04600d0c0"}, {"bytes": 9790, "path": "content/source-materials/objects/508f9da55f5cb7d345240e81e14c605345b10e3d5a586fa40332afa2ccf470e9", "sha256": "508f9da55f5cb7d345240e81e14c605345b10e3d5a586fa40332afa2ccf470e9"}, {"bytes": 4421, "path": "content/source-materials/objects/5459cb6fda663a4e3fcd07a6e0c7d065b87e4ebb3e3c8d29fbceab29f445eb8e", "sha256": "5459cb6fda663a4e3fcd07a6e0c7d065b87e4ebb3e3c8d29fbceab29f445eb8e"}, {"bytes": 11544, "path": "content/source-materials/objects/5f2ba338646a454d2420a14cf56da693803267f734893e2b3f5e71250eaa56bf", "sha256": "5f2ba338646a454d2420a14cf56da693803267f734893e2b3f5e71250eaa56bf"}, {"bytes": 148648, "path": "content/source-materials/objects/623d79e218e2a9b0c365a1e47066abda26bfd019d2e0023e72c422be0f5eeb50", "sha256": "623d79e218e2a9b0c365a1e47066abda26bfd019d2e0023e72c422be0f5eeb50"}, {"bytes": 23334, "path": "content/source-materials/objects/665307a5ff3625380f37c9d42753002d630b414d142e8c61780ff7e8849a6d9a", "sha256": "665307a5ff3625380f37c9d42753002d630b414d142e8c61780ff7e8849a6d9a"}, {"bytes": 13786, "path": "content/source-materials/objects/6a652497819bed04963dd72957c1e00a39da7e8b4ebaf1e59fb4bc87c78c08ea", "sha256": "6a652497819bed04963dd72957c1e00a39da7e8b4ebaf1e59fb4bc87c78c08ea"}, {"bytes": 15892, "path": "content/source-materials/objects/6e3c9c8d9adffca4694f41917fdd0de9f6e9865bf0d444c9de77059c7a8036b0", "sha256": "6e3c9c8d9adffca4694f41917fdd0de9f6e9865bf0d444c9de77059c7a8036b0"}, {"bytes": 84, "path": "content/source-materials/objects/71be58ee7deb00c43e4075e86d2c76fc13d55362099e70edef8997f99e097735", "sha256": "71be58ee7deb00c43e4075e86d2c76fc13d55362099e70edef8997f99e097735"}, {"bytes": 5254, "path": "content/source-materials/objects/76e73df09998d20f038887329beb2bb90313e19ceab633e3a59cdfae243f0372", "sha256": "76e73df09998d20f038887329beb2bb90313e19ceab633e3a59cdfae243f0372"}, {"bytes": 6778, "path": "content/source-materials/objects/79267e8be8034e47daab14350411b3acc0b1f64e86efc9d821a217497254ca0a", "sha256": "79267e8be8034e47daab14350411b3acc0b1f64e86efc9d821a217497254ca0a"}, {"bytes": 5324973, "path": "content/source-materials/objects/802f4e863a28ff48d63e7e27c5cfb3b2396584aaed56870da90de6a823691aae", "sha256": "802f4e863a28ff48d63e7e27c5cfb3b2396584aaed56870da90de6a823691aae"}, {"bytes": 13629, "path": "content/source-materials/objects/81ba3828fec16cde77759c3c52e707d20653a2f4efc1470a73dcc86efc088211", "sha256": "81ba3828fec16cde77759c3c52e707d20653a2f4efc1470a73dcc86efc088211"}, {"bytes": 1123, "path": "content/source-materials/objects/82d2406c330adb4e4b96795821f79e7c171332008f5827d9ddc6433045477385", "sha256": "82d2406c330adb4e4b96795821f79e7c171332008f5827d9ddc6433045477385"}, {"bytes": 35148, "path": "content/source-materials/objects/8b1ba204bb69a0ade2bfcf65ef294a920f6bb361b317dba43c7ef29d96332b9b", "sha256": "8b1ba204bb69a0ade2bfcf65ef294a920f6bb361b317dba43c7ef29d96332b9b"}, {"bytes": 1555, "path": "content/source-materials/objects/9539a388c0e697381f7574247488da528f2647099db4c39096bdb2a8695139b9", "sha256": "9539a388c0e697381f7574247488da528f2647099db4c39096bdb2a8695139b9"}, {"bytes": 35241, "path": "content/source-materials/objects/b209bc9a3cb51e6581f7c22361dc04e62670553e1d780e774a0c8d76282eb0d9", "sha256": "b209bc9a3cb51e6581f7c22361dc04e62670553e1d780e774a0c8d76282eb0d9"}, {"bytes": 31358, "path": "content/source-materials/objects/b96a5ef667a17b0a9b551e2d75552d3872a1d0e147fd817d251e1fab415dc81c", "sha256": "b96a5ef667a17b0a9b551e2d75552d3872a1d0e147fd817d251e1fab415dc81c"}, {"bytes": 28530, "path": "content/source-materials/objects/ba59cba0b05b905a5d6af499b6eb604407157bd30b6cbfbec084284932e5971a", "sha256": "ba59cba0b05b905a5d6af499b6eb604407157bd30b6cbfbec084284932e5971a"}, {"bytes": 21498, "path": "content/source-materials/objects/ba5b30228207235fbf64a1e6de265489fb6f5dca1ae92043daa552033487aa15", "sha256": "ba5b30228207235fbf64a1e6de265489fb6f5dca1ae92043daa552033487aa15"}, {"bytes": 1493, "path": "content/source-materials/objects/bb8c92b0d88004866778ef0946f1df8d2990c78238454a17b4e6c6941f136b84", "sha256": "bb8c92b0d88004866778ef0946f1df8d2990c78238454a17b4e6c6941f136b84"}, {"bytes": 754037, "path": "content/source-materials/objects/c8ccd626eed82a6d6bd048222176847c915dcf9e14c02230ae27025c62005be1", "sha256": "c8ccd626eed82a6d6bd048222176847c915dcf9e14c02230ae27025c62005be1"}, {"bytes": 3603, "path": "content/source-materials/objects/cbbd9e6a70be4774dbd8d645db3078e704c24f564ce522a19425c72b8aae0b40", "sha256": "cbbd9e6a70be4774dbd8d645db3078e704c24f564ce522a19425c72b8aae0b40"}, {"bytes": 20593, "path": "content/source-materials/objects/d0025ef40c64eece57bb6bedc4c9f4a33310a8bce5dfd74becd74fefc27c54c6", "sha256": "d0025ef40c64eece57bb6bedc4c9f4a33310a8bce5dfd74becd74fefc27c54c6"}, {"bytes": 4749, "path": "content/source-materials/objects/d7037eba080701c5ac4f5ac9a88624e50f449c2cc9e05f387fc07df09a5adaf8", "sha256": "d7037eba080701c5ac4f5ac9a88624e50f449c2cc9e05f387fc07df09a5adaf8"}, {"bytes": 309805, "path": "content/source-materials/objects/da19f8391c5c6f72fe858d4e35e91ba82d335a53c06530cad6477d28a81cb721", "sha256": "da19f8391c5c6f72fe858d4e35e91ba82d335a53c06530cad6477d28a81cb721"}, {"bytes": 12384, "path": "content/source-materials/objects/e3d4833dcb395214c0366d241fdaa4b7d7e2330133bb6db03ed5bfd01f974bea", "sha256": "e3d4833dcb395214c0366d241fdaa4b7d7e2330133bb6db03ed5bfd01f974bea"}, {"bytes": 32214, "path": "content/source-materials/objects/e4a41af2ea8dc344c0c1ce36b26cba741b7f393cb74197e52d9893e6cb223db5", "sha256": "e4a41af2ea8dc344c0c1ce36b26cba741b7f393cb74197e52d9893e6cb223db5"}, {"bytes": 406458, "path": "content/source-materials/objects/e79bc66c053da9499dad75ddc543656d988ede83e9e84cc1e18624f421e9a0e1", "sha256": "e79bc66c053da9499dad75ddc543656d988ede83e9e84cc1e18624f421e9a0e1"}, {"bytes": 4801, "path": "content/source-materials/objects/e7b6167bc682a755c39f4275445ceda590b8365354d932e59fe44eb82d160fdf", "sha256": "e7b6167bc682a755c39f4275445ceda590b8365354d932e59fe44eb82d160fdf"}, {"bytes": 4664, "path": "content/source-materials/objects/e8ff7ef72d106df5b637a5606a149e4331144fd932c1ef2b3776c4900b393b2e", "sha256": "e8ff7ef72d106df5b637a5606a149e4331144fd932c1ef2b3776c4900b393b2e"}, {"bytes": 31447, "path": "content/source-materials/objects/ef5518c5a3aaa7458e074a7e41e87837f8a1c74da00938244019e2e8c0428b4a", "sha256": "ef5518c5a3aaa7458e074a7e41e87837f8a1c74da00938244019e2e8c0428b4a"}, {"bytes": 6178, "path": "content/source-materials/objects/f77efcf98808dcf795aa1e695e466dca089690daa924d2296fbaa163622b1858", "sha256": "f77efcf98808dcf795aa1e695e466dca089690daa924d2296fbaa163622b1858"}, {"bytes": 153162131, "path": "content/world/1.60.1.70450/catalog.json", "sha256": "04e9ef266ff093acb74d7200d35f4c727ce8752ff8149031809ac361d8c99d63"}, {"bytes": 2212410, "path": "content/world/1.60.1.70450/conflicts.json", "sha256": "a56df26dd8359810b9809a625df3569190a504930f9c4bec0492cda11f4022f2"}, {"bytes": 24985, "path": "content/world/1.60.1.70450/source-closure.json", "sha256": "ea7a6c15998e870282b2734287ff0dc926ae87df809e6e941cafba1cd8e87538"}, {"bytes": 4071, "path": "content/world/1.60.1.70450/sources.json", "sha256": "b6d06a561c7d48afb8c01f589b19f4050674f6af4f07904f188f69f475c02276"}, {"bytes": 2373, "path": "content/world/1.60.1.70450/summary.json", "sha256": "986526275b190499ab02e8df5a33c6fdb35ed7b81f2ac8a80eef1e70b990b41a"}, {"bytes": 15109, "path": "data-generators/output/dungeons/dungeons/vanilla_1_12/1.12.1/part-0000.json", "sha256": "ad28727ae00b4e08621570f90e1053859ae2eda63d58b05d900efd5a136c49ed"}, {"bytes": 5520, "path": "data-generators/output/fishing/areas/vanilla_1_12/1.12.1/part-0000.json", "sha256": "2103a86f8598d3720da03d089b689f1a371b9352ebc3bd602cd94cb0f2ab925b"}, {"bytes": 890, "path": "data-generators/output/fishing/events/wow_classic_era/unknown-build/part-0000.json", "sha256": "f014e2eaf96f282c55b23db66c06dfa744414abd09eb753292616ff78bae5ce5"}, {"bytes": 7547, "path": "data-generators/output/fishing/goals/vanilla_1_12/1.12.1/part-0000.json", "sha256": "34a58a5127fc1b8e52ee9440184494921c4ac5867eeb43a13455c1bc84a86f6e"}, {"bytes": 2027, "path": "data-generators/output/fishing/timed/wow_classic_era/unknown-build/part-0000.json", "sha256": "49ccbb2a7aa1d75c56114bf0f345247d9fd95142376b82dfbf469512d17597d1"}, {"bytes": 4838969, "path": "data-generators/output/items/items/vanilla_1_12/1.12.1/part-0000.json", "sha256": "aa7224b63dba9921257e47dfa7190d0f832772963a1c4636b6139d54b040dd29"}, {"bytes": 5136706, "path": "data-generators/output/items/items/wow_forever/1.60.1.70245/part-0000.json", "sha256": "613b26d0a5224b12d29bb70b55c195daf7ff80f10fc37901aae153c6d6030ead"}, {"bytes": 8388302, "path": "data-generators/output/loot/creature/vanilla_1_12/1.12.1/part-0000.json", "sha256": "e12ef0dd4f3179621f3ebfbd93bf4a627b6618faa8be047a6780b4b5fd002482"}, {"bytes": 8388331, "path": "data-generators/output/loot/creature/vanilla_1_12/1.12.1/part-0001.json", "sha256": "4886c4f9cce09cc6502190171dc2e0bb3a822eae25ff61d566abe744c7c25646"}, {"bytes": 1027079, "path": "data-generators/output/loot/creature/vanilla_1_12/1.12.1/part-0002.json", "sha256": "de1aaf30da788e3ca5cea7a92ea681cab475b09f7380950504c42e915302ef91"}, {"bytes": 9813, "path": "data-generators/output/loot/disenchant/vanilla_1_12/1.12.1/part-0000.json", "sha256": "a1d00088b7e86cc8f4ae75c4cdc75fa2beef7cffff0648dce12e04a8b4502538"}, {"bytes": 18749, "path": "data-generators/output/loot/fishing/vanilla_1_12/1.12.1/part-0000.json", "sha256": "76c550eee509c8adc9f3c93b1169dbc633620ca33bdbbae6e44f6f48e7b5a061"}, {"bytes": 2688714, "path": "data-generators/output/loot/game_object/vanilla_1_12/1.12.1/part-0000.json", "sha256": "815839a07e2a9f60bb7845708f87dd46188c37154d97171b8745cffe77c91d78"}, {"bytes": 397430, "path": "data-generators/output/loot/item/vanilla_1_12/1.12.1/part-0000.json", "sha256": "d926a95fa7e6d478d7bb9a3ca848574726adc4dca6098144d69f66cdb40e408b"}, {"bytes": 760850, "path": "data-generators/output/loot/pickpocketing/vanilla_1_12/1.12.1/part-0000.json", "sha256": "28a9142241c29df21c52e9b6039b16313b9feaffa68ea032c7d799bec9ea7e68"}, {"bytes": 3823901, "path": "data-generators/output/loot/reference/vanilla_1_12/1.12.1/part-0000.json", "sha256": "ed00ed1db3ffcc6822a5f8b526b2fcaf01e9bc5d287d619a67cce383c349dca8"}, {"bytes": 323021, "path": "data-generators/output/loot/skinning/vanilla_1_12/1.12.1/part-0000.json", "sha256": "7b97a7efa50e0fb73ae365130c129ea2d2bf8c69afe6d4a2434972190a883d32"}, {"bytes": 2026036, "path": "data-generators/output/quests/quests/vanilla_1_12/1.12.1/part-0000.json", "sha256": "85f5820f1ce7a24cee07bda5cc641cc772b496b94aabf9e972ab1a50b4a645d8"}, {"bytes": 12070, "path": "data-generators/output/run-manifest.json", "sha256": "6cd8c78edd93bed34d71678cbf0d31bb0719449ce4fce908a7266fa4f2eeee7c"}, {"bytes": 1155765, "path": "data-generators/output/spells/spells/wow_forever/1.60.1.70245/part-0000.json", "sha256": "e3a9e00da04bd0a1517e7d94caa4a6b90db6fbc0c45fbce7eaa38447172e586d"}, {"bytes": 57409, "path": "data-generators/output/talents/talents/wow_forever/1.60.1.70245/part-0000.json", "sha256": "46bf5fc040472957577993d154a6c237234a9c1065ee962da8a919d2df6b81a5"}, {"bytes": 3115287, "path": "data-generators/output/trainers/spells/vanilla_1_12/1.12.1/part-0000.json", "sha256": "24b9af55e1f309e04f82c96fea98a07e500fcfb6f2a759fa6d09b93f30b1c020"}, {"bytes": 25147, "path": "data-generators/output/travel/taxi_nodes/wow_forever/1.60.1.70245/part-0000.json", "sha256": "6cdde07dc711e572cb6e06e7549a89586052fefbb4580897fff52c82071581cc"}, {"bytes": 811839, "path": "data-generators/output/travel/taxi_paths/wow_forever/1.60.1.70245/part-0000.json", "sha256": "3a7474243c80ea92ab866df7399cd4864adb1b2529f08d4b0a28c3b01ba7e5ba"}, {"bytes": 734782, "path": "data-generators/output/vendors/items/vanilla_1_12/1.12.1/part-0000.json", "sha256": "8982d54a842d167c65a908efb6ea06d4f78b8d472ddd82bf7f2edecd8c2bde7d"}, {"bytes": 4635, "path": "data-generators/output/world/area_levels/vanilla_1_12/1.12.1/part-0000.json", "sha256": "d5867473237ad8a05b052e4c332ffea35ae6c9609f0b63feb687951bd01855cd"}, {"bytes": 153701, "path": "data-generators/output/world/areas/wow_forever/1.60.1.70245/part-0000.json", "sha256": "983756ab3abe3843c85426b6bb088b810312176811bddc2a9c7b99933d1f320f"}, {"bytes": 795809, "path": "data-generators/output/world/game_objects/vanilla_1_12/1.12.1/part-0000.json", "sha256": "788526cc04b3d77f093362a4684e534875de7dc070d52af0189c37dd1b47f2e1"}, {"bytes": 25033, "path": "data-generators/output/world/graveyards/vanilla_1_12/1.12.1/part-0000.json", "sha256": "033963bf6b0877f01a66b359b143552e9f855073b430d2b6e37c18b3fcded309"}, {"bytes": 1876625, "path": "data-generators/output/world/npcs/vanilla_1_12/1.12.1/part-0000.json", "sha256": "010c2cca38594290561c113085fcb59881292ed47f508f50f9ffa179cf42c6cf"}, {"bytes": 8388237, "path": "data-generators/output/world/spawns/vanilla_1_12/1.12.1/part-0000.json", "sha256": "b03693f339a5d75052006beb144b73a54542464741b91585882dda894b70d7e4"}, {"bytes": 8388264, "path": "data-generators/output/world/spawns/vanilla_1_12/1.12.1/part-0001.json", "sha256": "518a84f8702fb27e4f9764ef5f05d17d0126bb742aa3da7228e9273658673186"}, {"bytes": 8388152, "path": "data-generators/output/world/spawns/vanilla_1_12/1.12.1/part-0002.json", "sha256": "0d9219f75971a90a117716d1f13781268b9787e139b19971d4682bdcffeae206"}, {"bytes": 1671871, "path": "data-generators/output/world/spawns/vanilla_1_12/1.12.1/part-0003.json", "sha256": "928d5848aa62e8d4c68bafd8b1bb85bfe00a431e908839e666ee8bd6efc9d48f"}, {"bytes": 15023, "path": "data-generators/output/world/ui_map_assignments/wow_forever/1.60.1.70245/part-0000.json", "sha256": "1110653313d9525954a1bff75dea7814c577fd00c2e7414050bf626cf8ec7d80"}, {"bytes": 5865, "path": "data-generators/output/world/ui_maps/wow_forever/1.60.1.70245/part-0000.json", "sha256": "03457c55c0356c72d724c14ee2048affbf4e8d245da69d349cd3754495c6a9db"}, {"bytes": 136287, "path": "docs/sources/source-admission-v1.json", "sha256": "cca9c39fe42fbfee29dac150f5d9ab8a44ea0c88e24a465c659cf801475d91f1"}, {"bytes": 904, "path": "release/v1/accepted-origins.json", "sha256": "d58e2e456fc81b35b840ae846a794e1bf1b2ada46e0fff434ad9c063d5b73dd7"}, {"bytes": 2639, "path": "release/v1/source-normalization-policy.json", "sha256": "9132bf0c98df299865270264481dbaa195f20c0cf312d888ff3e1ef4f58af35f"}, {"bytes": 317, "path": "release/v1/world-data-target.json", "sha256": "82a4d71301d0efb798334e37cfe1e15f105ff30bce469810f3e8ae094b2da941"}], "raw_shards": 35, "schema_version": 1, "source_commit": "a9e5e4f35710c05e80283ae318f5a70882702110", "transformation": "world_to_content_v4", "upstream_originals": 19}
+2026-10-20T21:27:44.6424052Z ##[group]Run python scripts/verify-world-source-parity.py verify --out dist/source-knowledge-a
+2026-10-20T21:27:44.6424879Z [36;1mpython scripts/verify-world-source-parity.py verify --out dist/source-knowledge-a[0m
+2026-10-20T21:27:44.6439378Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-10-20T21:27:44.6439780Z ##[endgroup]
+2026-10-20T21:28:21.0587536Z {"catalog_bytes": 153162131, "counts": {"acquisition_facts": 58712, "dungeons": 26, "entities": 21043, "equipment": 24359, "loot_rows": 240722, "loot_tables": 8196, "models": 0, "node_facts": 8820, "quest_facts": 4245, "quest_stages": 6039, "reference.acquisitions": 58712, "reference.edges": 32365, "reference.evidence": 26, "reference.items": 24359, "reference.map_spaces": 86, "reference.nodes": 8820, "reference.objectives": 0, "reference.quests": 4245, "reference.rules": 0}, "revision": "navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11"}
+2026-10-20T21:28:51.2171839Z {"catalog_bytes": 153162131, "counts": {"acquisition_facts": 58712, "dungeons": 26, "entities": 21043, "equipment": 24359, "loot_rows": 240722, "loot_tables": 8196, "models": 0, "node_facts": 8820, "quest_facts": 4245, "quest_stages": 6039, "reference.acquisitions": 58712, "reference.edges": 32365, "reference.evidence": 26, "reference.items": 24359, "reference.map_spaces": 86, "reference.nodes": 8820, "reference.objectives": 0, "reference.quests": 4245, "reference.rules": 0}, "revision": "navzeroth-world-1.60.1.70450-ce0f04bc6c368e79f1d9ed11"}
+2026-10-20T21:28:51.6179887Z ##[group]Run # Include the exact original source, licence texts and transformation
+2026-10-20T21:28:51.6180575Z [36;1m# Include the exact original source, licence texts and transformation[0m
+2026-10-20T21:28:51.6181074Z [36;1m# source revision with the derived artifact, not just its hashes.[0m
+2026-10-20T21:28:51.6181551Z [36;1m# git archive also runs smudge filters; checkout lfs:false alone is[0m
+2026-10-20T21:28:51.6182043Z [36;1m# insufficient. Keep committed pointer bytes and never fetch imagery.[0m
+2026-10-20T21:28:51.6183274Z [36;1mgit -c filter.lfs.process= -c filter.lfs.smudge= -c filter.lfs.required=false archive --format=tar --output=dist/source-knowledge-a/navzeroth-source.tar HEAD[0m
+2026-10-20T21:28:51.6184174Z [36;1mif ($LASTEXITCODE -ne 0) { throw 'Could not retain complete transformation source' }[0m
+2026-10-20T21:28:51.6184749Z [36;1mgit rev-parse HEAD | Set-Content dist/source-knowledge-a/source-commit.txt[0m
+2026-10-20T21:28:51.6972895Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-20T21:28:51.6973369Z ##[endgroup]
+2026-10-20T21:28:52.6252529Z ##[group]Run set -euo pipefail
+2026-10-20T21:28:52.6252902Z [36;1mset -euo pipefail[0m
+2026-10-20T21:28:52.6253159Z [36;1marchive_check_dir=$(mktemp -d)[0m
+2026-10-20T21:28:52.6253463Z [36;1mtrap 'rm -rf "$archive_check_dir"' EXIT[0m
+2026-10-20T21:28:52.6253803Z [36;1mgit ls-files -z > "$archive_check_dir/files"[0m
+2026-10-20T21:28:52.6254325Z [36;1mgit check-attr --stdin -z filter < "$archive_check_dir/files" > "$archive_check_dir/attributes"[0m
+2026-10-20T21:28:52.6255118Z [36;1mawk 'BEGIN{RS="\0"; ORS="\0"} NR%3==1{p=$0} NR%3==0 && $0=="lfs"{print p}' "$archive_check_dir/attributes" > "$archive_check_dir/lfs"[0m
+2026-10-20T21:28:52.6255693Z [36;1mwhile IFS= read -r -d '' path; do[0m
+2026-10-20T21:28:52.6256033Z [36;1m  git show "HEAD:$path" > "$archive_check_dir/expected"[0m
+2026-10-20T21:28:52.6256567Z [36;1m  tar -xOf dist/source-knowledge-a/navzeroth-source.tar "$path" > "$archive_check_dir/actual"[0m
+2026-10-20T21:28:52.6257163Z [36;1m  cmp "$archive_check_dir/expected" "$archive_check_dir/actual"[0m
+2026-10-20T21:28:52.6257521Z [36;1mdone < "$archive_check_dir/lfs"[0m
+2026-10-20T21:28:52.6272611Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-10-20T21:28:52.6273023Z ##[endgroup]
+2026-10-20T21:29:09.4295168Z ##[group]Run git diff --exit-code
+2026-10-20T21:29:09.4295528Z [36;1mgit diff --exit-code[0m
+2026-10-20T21:29:09.4366025Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-20T21:29:09.4366395Z ##[endgroup]
+2026-10-20T21:29:09.8858448Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-10-20T21:29:09.8869066Z with:
+2026-10-20T21:29:09.8869440Z   name: source-knowledge-Windows-6dfe820bc36e4aaffaa30e900b6b80dd207d2c51
+2026-10-20T21:29:09.8869870Z   path: dist/source-knowledge-a/
+2026-10-20T21:29:09.8870123Z   if-no-files-found: error
+2026-10-20T21:29:09.8870338Z   retention-days: 30
+2026-10-20T21:29:09.8870546Z   compression-level: 6
+2026-10-20T21:29:09.8870743Z   overwrite: false
+2026-10-20T21:29:09.8870941Z   include-hidden-files: false
+2026-10-20T21:29:09.8871157Z   archive: true
+2026-10-20T21:29:09.8871336Z ##[endgroup]
+2026-10-20T21:29:10.0741122Z With the provided path, there will be 3 files uploaded
+2026-10-20T21:29:10.0746985Z Artifact name is valid!
+2026-10-20T21:29:10.0748286Z Root directory input is valid!
+2026-10-20T21:29:10.2975607Z Uploading artifact: source-knowledge-Windows-6dfe820bc36e4aaffaa30e900b6b80dd207d2c51.zip
+2026-10-20T21:29:10.3036302Z Beginning upload of artifact content to blob storage
+2026-10-20T21:29:11.4338419Z Uploaded bytes 8388608
+2026-10-20T21:29:12.3556819Z Uploaded bytes 14547957
+2026-10-20T21:29:12.3692827Z Finished uploading artifact content to blob storage!
+2026-10-20T21:29:12.3697230Z SHA256 digest of uploaded artifact is 424aecc8477889abb855b310b43563b345e5242feff1db0136270fa1d909dbbe
+2026-10-20T21:29:12.3700002Z Finalizing artifact upload
+2026-10-20T21:29:12.5941218Z Artifact source-knowledge-Windows-6dfe820bc36e4aaffaa30e900b6b80dd207d2c51 successfully finalized. Artifact ID 12299861647
+2026-10-20T21:29:12.5943096Z Artifact source-knowledge-Windows-6dfe820bc36e4aaffaa30e900b6b80dd207d2c51 has been successfully uploaded! Final size is 14547957 bytes. Artifact ID is 12299861647
+2026-10-20T21:29:12.5953687Z Artifact download URL: https://github.com/Laymer/Navzeroth/actions/runs/39500462134/artifacts/12299861647
+2026-10-20T21:29:12.6314923Z Post job cleanup.
+2026-10-20T21:29:12.8409968Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-20T21:29:12.8794925Z git version 2.56.0.windows.2
+2026-10-20T21:29:12.8854653Z Copying 'C:\Users\runneradmin\.gitconfig' to 'D:\a\_temp\e0dcf3b9-26a7-4d8b-8fc6-838c88b3297c\.gitconfig'
+2026-10-20T21:29:12.8875631Z Temporarily overriding HOME='D:\a\_temp\e0dcf3b9-26a7-4d8b-8fc6-838c88b3297c' before making global git config changes
+2026-10-20T21:29:12.8877237Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-20T21:29:12.8887015Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\Navzeroth\Navzeroth
+2026-10-20T21:29:12.9281547Z Removing SSH command configuration
+2026-10-20T21:29:12.9292803Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-20T21:29:12.9709691Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-20T21:29:13.5753182Z Removing HTTP extra header
+2026-10-20T21:29:13.5763734Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-20T21:29:13.6164203Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-20T21:29:14.1980751Z Removing includeIf entries pointing to credentials config files
+2026-10-20T21:29:14.1991724Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-20T21:29:14.2345708Z includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git.path
+2026-10-20T21:29:14.2346999Z includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git/worktrees/*.path
+2026-10-20T21:29:14.2347668Z includeif.gitdir:/github/workspace/.git.path
+2026-10-20T21:29:14.2348289Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-20T21:29:14.2391490Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git.path
+2026-10-20T21:29:14.2742738Z D:\a\_temp\git-credentials-a09be966-c695-4887-af06-5def63d8ec72.config
+2026-10-20T21:29:14.2791041Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git.path D\:\\a\\_temp\\git\-credentials\-a09be966\-c695\-4887\-af06\-5def63d8ec72\.config
+2026-10-20T21:29:14.3216761Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git/worktrees/*.path
+2026-10-20T21:29:14.3577261Z D:\a\_temp\git-credentials-a09be966-c695-4887-af06-5def63d8ec72.config
+2026-10-20T21:29:14.3622672Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/Navzeroth/Navzeroth/.git/worktrees/*.path D\:\\a\\_temp\\git\-credentials\-a09be966\-c695\-4887\-af06\-5def63d8ec72\.config
+2026-10-20T21:29:14.4018185Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-20T21:29:14.4371512Z /github/runner_temp/git-credentials-a09be966-c695-4887-af06-5def63d8ec72.config
+2026-10-20T21:29:14.4418998Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-a09be966\-c695\-4887\-af06\-5def63d8ec72\.config
+2026-10-20T21:29:14.4823054Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-20T21:29:14.5181075Z /github/runner_temp/git-credentials-a09be966-c695-4887-af06-5def63d8ec72.config
+2026-10-20T21:29:14.5263745Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-a09be966\-c695\-4887\-af06\-5def63d8ec72\.config
+2026-10-20T21:29:14.5665645Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-20T21:29:15.1513987Z Removing credentials config 'D:\a\_temp\git-credentials-a09be966-c695-4887-af06-5def63d8ec72.config'
+2026-10-20T21:29:15.1711321Z Cleaning up orphan processes

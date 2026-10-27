@@ -1,0 +1,14 @@
+{
+  "lcov_bytes": 9070675,
+  "lcov_sha256": "34753c9cecf6941cdce7545acc496cf99811576bd8791ce5e8b32d19c26d8753",
+  "entrypoints": {
+    "crates/cli/src/main.rs": {
+      "executable": 409,
+      "covered": 371
+    },
+    "apps/desktop/src-tauri/src/main.rs": {
+      "executable": 18,
+      "covered": 3
+    }
+  }
+}

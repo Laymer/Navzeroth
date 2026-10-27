@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "scope": "Superseded initial V22 functional execution. Launch/measurement source2d33 and proof-time source3647 differ only by excluded metadata; production is identical. Not the authoritative exact-source V22 binding. Replaced by a frozen-HEAD rerun after independent reviewer finding.",
+  "files": [
+    {
+      "path": "functional-scenarios.json",
+      "bytes": 15568,
+      "sha256": "476a4649178784515e4759493d2ca7bc696f674342cc75729f3ef1fce06831cd"
+    },
+    {
+      "path": "functional-linux-measurement.json",
+      "bytes": 1105,
+      "sha256": "e0fd24846c115abd6e366442aaeaa6f4f6cc7fb8ea5f00ab0adbdc6d6243f752"
+    },
+    {
+      "path": "functional-run.log",
+      "bytes": 953,
+      "sha256": "a0a0d764a150271d0687776f833c106f2ea429fe225e48f189359ce6bb6c38ad"
+    }
+  ]
+}

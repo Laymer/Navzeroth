@@ -1,0 +1,79 @@
+[
+  {
+    "path": "crates/storage/src/content.rs",
+    "source_sha256": "1aabacebebc1866b41055db0ac1676f5438a1dc56f28b783af69efadb114a332",
+    "ranges": [
+      [
+        276,
+        279
+      ],
+      [
+        281,
+        282
+      ]
+    ],
+    "covered": 374,
+    "executable": 412,
+    "percent": 90.77669902912622,
+    "passes": true
+  },
+  {
+    "path": "crates/storage/src/content_catalog.rs",
+    "source_sha256": "af0b77c89d568c6d8fdea9ffeed04d94df495ad21dbdcbf50380308112fe9f46",
+    "ranges": [
+      [
+        202,
+        203
+      ],
+      [
+        206,
+        207
+      ],
+      [
+        505,
+        654
+      ]
+    ],
+    "covered": 363,
+    "executable": 381,
+    "percent": 95.2755905511811,
+    "passes": true
+  },
+  {
+    "path": "crates/storage/src/content_preferences.rs",
+    "source_sha256": "1538fa98592632d68a86131cc5db3da6b7d3989405a741319662fb5b516c3f21",
+    "ranges": [],
+    "covered": 89,
+    "executable": 93,
+    "percent": 95.6989247311828,
+    "passes": true
+  },
+  {
+    "path": "crates/storage/src/catalog_generation.rs",
+    "source_sha256": "8356e0db733f5523be7fe810637b671d63b50a193bd2046f0320e7353764f11a",
+    "ranges": [
+      [
+        102,
+        970
+      ]
+    ],
+    "covered": 52,
+    "executable": 52,
+    "percent": 100,
+    "passes": true
+  },
+  {
+    "path": "crates/storage/src/hash.rs",
+    "source_sha256": "0e901e4e4e71cc029e4253792988689d8d69b3c27456c936a5b96039efed6ef2",
+    "ranges": [
+      [
+        91,
+        171
+      ]
+    ],
+    "covered": 51,
+    "executable": 51,
+    "percent": 100,
+    "passes": true
+  }
+]

@@ -1,0 +1,282 @@
+{
+  "acceptance_contract": {
+    "bounds": "Retain allten protected checks, exact resulting-main stability, two-platform source parity, per-file90% Rust/TS coverage, 20-minute individual workload,60-minute suite, signed content receipts and explicitly unsigned installer policy.",
+    "checks": [
+      {
+        "id": "HOSTED-INSTALL",
+        "method": "hosted_windows",
+        "status": "unverified"
+      },
+      {
+        "id": "HOSTED-FIRST-START",
+        "method": "hosted_windows",
+        "status": "unverified"
+      },
+      {
+        "id": "HOSTED-UPGRADE-RC1",
+        "method": "hosted_windows",
+        "status": "unverified"
+      },
+      {
+        "id": "HOSTED-DOWNGRADE-REFUSAL",
+        "method": "hosted_windows",
+        "status": "unverified"
+      },
+      {
+        "id": "HOSTED-PERSISTENCE-RECOVERY",
+        "method": "hosted_windows",
+        "status": "unverified"
+      },
+      {
+        "id": "HOSTED-RESOURCES",
+        "method": "hosted_windows",
+        "status": "unverified"
+      },
+      {
+        "id": "HOSTED-OFFLINE",
+        "method": "hosted_windows",
+        "status": "unverified"
+      },
+      {
+        "id": "HOSTED-PERFORMANCE",
+        "method": "hosted_windows",
+        "status": "unverified"
+      },
+      {
+        "id": "DRAFT-INSTALLER-SMOKE",
+        "method": "automated_draft_windows",
+        "status": "unverified"
+      }
+    ],
+    "schema_version": 5,
+    "scope": "Allnine rows remain pristine pending; no artifact, installer hash, operator/environment or timestamp invented. Prior attempts remain failed/historical."
+  },
+  "actual_check_limits": "Reviewer initial helper invocation on unsigned V22 checkpoint refused because its old build identity was intentionally removed; not counted as a pass. Native PS5.1/PS7 helper counts57/58 are coordinator-executed evidence, hash-audited by reviewer, not independently rerun. Reviewer full-pack/Cargo checks used the existing cached executable confirmed at current production, not a new compiler build. Linux/WSL2 and shared cache/hardware are not ordinary-PC/Windows acceptance.",
+  "actual_reviewer_checks": [
+    {
+      "command": "node --test scripts/windows/package-windows-workflow.test.mjs",
+      "log": {
+        "bytes": 749,
+        "path": "release/v1/verification-v22/independent-review/workflow-tests.log",
+        "sha256": "0ae3e708bbea137e8bbf35e86f4a533a74ba8931da71b132f57764dec7d77249"
+      },
+      "result": "6/6 pass"
+    },
+    {
+      "command": "pwsh -NoProfile -File scripts/windows/Test-StableWorkflowGate.ps1",
+      "log": {
+        "bytes": 63,
+        "path": "release/v1/verification-v22/independent-review/workflow-gate.log",
+        "sha256": "1f0ff04518b4fdbf96b43bc0789816169117f27be2c92f5651e712d67205dbdb"
+      },
+      "result": "12/12 pass"
+    },
+    {
+      "command": "actionlint",
+      "result": "exit0; empty diagnostic output"
+    },
+    {
+      "command": "pwsh -NoProfile -File scripts/windows/Test-StableAcceptanceHelpers.ps1",
+      "log": {
+        "bytes": 3925,
+        "path": "release/v1/verification-v22/independent-review/helper-linux-pr286.log",
+        "sha256": "769d16942a0c8f5d9a979118f9cd2c1bae7c24a02959f05ca335bb81afb6465b"
+      },
+      "result": "57/57 LinuxPS7 helper checks pass against identical helper implementation and original valid bundled identity",
+      "source": "2c4435808a8baa2a7f8434b9aa4b2029e7bbb122",
+      "worktree": "/tmp/navzeroth-appdata-isolation"
+    },
+    {
+      "command": "python3 -m unittest discover -s scripts/release -p test_prepare_bundle.py",
+      "log": {
+        "bytes": 260,
+        "path": "release/v1/verification-v22/independent-review/preparation-tests.log",
+        "sha256": "0470f2d7735d17f71fc00f6a7e7d95996179891c0159bf9891cd80ef3b392a2a"
+      },
+      "result": "9 tests pass"
+    }
+  ],
+  "app_version": "1.0.0",
+  "findings": [
+    {
+      "finding": "Initial run launched at2d33 but proof recorded3647 after coordinator archive commit; metadata falsely implied exact equality.",
+      "location": "release/v1/functional-scenarios.json vs functional-linux-measurement.json and acceptance/checks source bindings",
+      "resolution": "Coordinator preserved initial artifacts with superseded scope, reran at frozen3609 without commits, and renewed all proof/evidence/checks/preview bindings. Reviewer rechecked exact equality at f422b73b.",
+      "severity": "important",
+      "status": "resolved"
+    },
+    {
+      "disposition": "Its workflow uses a separate fresh windows-2025 job with no earlier installed application launch, so no same-job contamination path analogous to package smoke was found. Env assignment is not isolation evidence. Review exact fresh hosted draft native results; no production expansion made absent a demonstrated failure.",
+      "finding": "Adjacent draft verifier still assigns APPDATA, which does not isolate native known-folder state.",
+      "location": "scripts/windows/Verify-DownloadedRelease.ps1:59",
+      "severity": "optional",
+      "status": "bounded_limitation"
+    }
+  ],
+  "format": "navzeroth-independent-content-review",
+  "functional_validation": {
+    "coordinator": {
+      "measurement": {
+        "bytes": 1105,
+        "path": "release/v1/functional-linux-measurement.json",
+        "sha256": "8cc9821378034df57d658d5eef476e1d33675547fecd614be3a509f4a3b6d7f7"
+      },
+      "operator": "Codex /root",
+      "peak_child_rss_kib": 6206072,
+      "proof": {
+        "bytes": 15568,
+        "path": "release/v1/functional-scenarios.json",
+        "sha256": "2e601431669d08724669865eaef2e403bfd904b6b996020d67e20adb704eef12"
+      },
+      "scope": "Cargo --no-run confirmed the cached optimized executable at the tested source. Only acceptance workflow/PowerShell and docs changed from V21; runtime/content/test source unchanged. Actual full-pack manual engineering assertions; no new compiler build or installed Windows acceptance claimed.",
+      "seconds": 80.56773594699916,
+      "source_binding": "Corrected frozen rerun: launch, proof and terminal HEAD all3609c2b5; evidence, checks and measurement now match proof source. Earlier misbound run is explicitly superseded and archived."
+    },
+    "counts": {
+      "classes": 9,
+      "dungeon_packages": 26,
+      "dungeon_quest_references": 438,
+      "dungeon_reward_references": 16390,
+      "excluded_test_maps": [
+        169
+      ],
+      "models": 54,
+      "raw_dungeons": 27,
+      "reminder_boundary_cases": 24,
+      "restored_affected_reward_references": 8107,
+      "score_boundary_cases": 108
+    },
+    "disclosure": "Permitted manual_entry engineering snapshot and explicit class/role/time/node assumptions. No addon capture, live-client correctness, Windows/manual acceptance or whole-game completeness is established.",
+    "independent": {
+      "binary_sha256": "d1745d726af2c24457973e1153134b4df24baa5c57d0861f48fd573d1496c5b1",
+      "build_log": {
+        "bytes": 207,
+        "path": "release/v1/verification-v22/independent-review/functional-build.log",
+        "sha256": "b1e2dacfc9ea966cfdb525d880edd612c0b1292a485be9f709ef1768f077e08c"
+      },
+      "measurement": {
+        "bytes": 821,
+        "path": "release/v1/verification-v22/independent-review/functional-measurement.json",
+        "sha256": "101d825b699fccde38c4153ff1f41a22972af7b5f82e6a23180606c016536a90"
+      },
+      "operator": "Codex /root/v22_independent_review",
+      "peak_child_rss_kib": 6205284,
+      "proof": {
+        "bytes": 15568,
+        "path": "release/v1/verification-v22/independent-review/functional-proof.json",
+        "sha256": "2e601431669d08724669865eaef2e403bfd904b6b996020d67e20adb704eef12"
+      },
+      "run_log": {
+        "bytes": 953,
+        "path": "release/v1/verification-v22/independent-review/functional-run.log",
+        "sha256": "13008b0f71ef9af5828460f1a5919ba046a753c1eb1b97f09d9a94ce68dda492"
+      },
+      "scope": "Independent reviewer actual full-pack assertion rerun using Cargo-confirmed cached binary. Shared Linux/WSL2; no new compiler build, Windows or ordinary-PC acceptance. Launch and proof-time HEAD differ only by the coordinator approval-claim documentation commit; production bytes identical, independently recomputed. No exact equality of those metadata HEADs is asserted.",
+      "seconds": 80.66834407800161,
+      "semantic_comparison": "Independent proof equals coordinator proof except test_source.commit metadata; all counts, pack/input hashes, assertion scopes, concrete identities and disclosure match."
+    }
+  },
+  "implementation_review": {
+    "base": "b81e55c576df22d73f5d6ece3396a3b556376198",
+    "production_changed_paths": [
+      ".github/workflows/package-windows.yml",
+      "scripts/windows/Stable-Acceptance-Helpers.ps1",
+      "scripts/windows/Stable-Acceptance.ps1",
+      "scripts/windows/Test-StableAcceptanceHelpers.ps1"
+    ],
+    "repair_head": "2c4435808a8baa2a7f8434b9aa4b2029e7bbb122",
+    "result": "No blocking implementation finding. Known-folder resolution ignores APPDATA overrides just as the app does; acceptance refuses prior data; disposable hosted workflow removes earlier native-smoke data; complete candidate data moves to a new retained destination after process/uninstall completion before RC1. Existing destination and non-directory sources refuse without deletion. Failure remains a failed case; no app/exchange/schema change."
+  },
+  "independence": {
+    "compiled_public_policy": {
+      "bytes": 610,
+      "path": "content/bundled/signers-v1.json",
+      "sha256": "c4bbc54f59a8fc3fa382a31b1b8c6f5b9b2f47a7fcd420af0db3057e255bf568"
+    },
+    "current_authorship": "Separate read-only Codex subagent session. Reviewer authored none of Claude Code PR286, coordinator V22 proof/measurement/bindings/inventory/preview or production source. Reviewer generated its own scratch assertion rerun, reference audit and this report; coordinator copies those exact reviewed bytes.",
+    "disclosure": "Both receipt keys remain operator-controlled; separate key names and signatures do not establish independent custody or third-party certification. Reviewer has not read, listed, copied, hashed or used private keys.",
+    "operator_controls_both_keys": true
+  },
+  "material_closure": {
+    "accepted_unknown_fields": 274059,
+    "checks": {
+      "bytes": 2703,
+      "path": "release/v1/verification-v22/checks.json",
+      "sha256": "0d3a4b54de4936c0a7a15c0367654f32a6af1066b1f2ffc0671f7d8748206ff5"
+    },
+    "inventory": {
+      "bytes": 27957511,
+      "path": "release/v1/coverage-inventory.json",
+      "sha256": "4d3b844ee3d5d624531dea878e4e06a795f1dea29f0ba1436ebc4573361bf72e"
+    },
+    "inventory_byte_identical_to_v21": true,
+    "prebundle_evidence": {
+      "bytes": 27970074,
+      "path": "release/v1/verification-v22/prebundle-evidence.json",
+      "sha256": "c0fff41fa76ace5ef62232f8721cecc0d65af9fd5996091eb5e1ca916657e61a"
+    },
+    "records": 260113,
+    "reference_audit": {
+      "bytes": 93860,
+      "path": "release/v1/verification-v22/independent-review/reference-audit-final.json",
+      "sha256": "52e485b3520fba3ea66fa7b40088865b7ba1f1cbb1bbfac48a9b15ece15181fc"
+    },
+    "scope": "Actual file lengths/SHA256 checked against working files and committed Git blobs or Git-LFS identities; prior and final archive ledgers verified. Origin policy, notices, admission scope, catalog resources and source code unchanged. No absent records are promoted by accepted unknown fields.",
+    "selected_files": 82,
+    "selected_packs": 2,
+    "unsigned_preparation_ready": true,
+    "unsigned_preview": {
+      "bytes": 55727,
+      "path": "release/v1/verification-v22/unsigned-material-preview.json",
+      "sha256": "1c722fed999bb430456cd17ee474b4746b1155c9d99192575b3ea6f297eefc50"
+    },
+    "v21_to_v22_evidence_changed_fields": [
+      "/coverage/1/validation_evidence/0/sha256",
+      "/coverage/12/validation_evidence/0/sha256",
+      "/coverage/7/validation_evidence/0/sha256",
+      "/coverage/9/validation_evidence/0/sha256",
+      "/production_sha256",
+      "/tested_source_commit"
+    ],
+    "verified_current_filerefs": 102,
+    "verified_prior_review_filerefs": 287
+  },
+  "no_live_client_verification_claim": true,
+  "prior_review": {
+    "artifact": {
+      "bytes": 142226,
+      "path": "release/history/2026-10-24-v21-signed/public-content-review-v21.json",
+      "sha256": "7542fb89ed8954c648f5df48d548cf99b25a8dbae6804a78421db3f111919257"
+    },
+    "original_git_commit": "b81e55c576df22d73f5d6ece3396a3b556376198",
+    "original_git_path": "release/v1/public-content-review-v21.json",
+    "scope": "Immutable independently authored V21 semantic/content review retained as historical scope, not relabelled V22. Independently checked all287 nested FileRefs against prior Git blobs or Git-LFS pins plus exact retained object bytes. Runtime/content remains byte-identical from V21 to this review."
+  },
+  "production_fingerprint_entry_count": 3160,
+  "production_fingerprint_method": "SHA256 of exact git ls-tree -r -z entries in Git order, including terminating NUL, excluding only docs/ and release/. Recomputed at final reviewed metadata and tested source; equal.",
+  "production_sha256": "a947d2f092f9ed4921676c008745c87c837325102db04b106460121871295537",
+  "publication_allowed_by_this_review": false,
+  "receipt_preparation_conditions": "After this review is committed verbatim, prepare a new manifest/identity using the documented trusted command. Reviewer must independently reproduce exact prepared bytes and construct expected payload BEFORE private-key use. No future manifest, identity or receipt hash is self-referenced here. Signatures require separate subsequent closure checks; no publication permission.",
+  "recorded_at": "2026-10-24T10:15:02.138998+00:00",
+  "remaining_release_gates": [
+    "Independent pre-sign manifest/identity reproduction and expected payload",
+    "Two-key receipt, independent cryptography/resource/default-trust/prebuild closure",
+    "Fresh exact-candidate protected checks, coverage, full source parity and all eight real hosted installed cases",
+    "Exact resulting-main stability and repeated applicable checks",
+    "Exact tag/draft asset verification and independently reviewed schema5 downloaded-draft Windows UI/native results",
+    "Zero-blocker publication readiness, public downloads and website deployment"
+  ],
+  "review_owner": "Codex /root/v22_independent_review",
+  "review_revision": "v22",
+  "review_status": "independent_review_clear_for_receipt_preparation_only",
+  "reviewed_evidence_commit": "f422b73bbdf10721c222ebfc0dc4be1a05153031",
+  "reviewed_source_commit": "3609c2b574d5302711a40cc08128b1e9c76f8955",
+  "schema_version": 1,
+  "scope": "Independent review of PR286 appdata isolation, V22 functional/source binding, exact content/resource identities and unsigned preparation. No signed receipt, installed Windows acceptance, resulting-main stability, draft smoke or publication result is supplied by this review.",
+  "target": {
+    "build": "70450",
+    "edition": "wow_forever",
+    "interface": 16001,
+    "version": "1.60.1"
+  }
+}

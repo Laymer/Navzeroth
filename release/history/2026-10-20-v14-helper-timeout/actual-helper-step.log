@@ -1,0 +1,36 @@
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	﻿2026-10-20T21:05:39.4649816Z ##[group]Run ./scripts/windows/Test-StableAcceptanceHelpers.ps1
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:39.4650364Z ^[[36;1m./scripts/windows/Test-StableAcceptanceHelpers.ps1^[[0m
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:39.4723383Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:39.4723765Z ##[endgroup]
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:40.0222911Z ok actual current target identity accepts different JSON field order
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:40.6458207Z ok current source-bound release and committed build identity targets match
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:40.6507608Z ok integer widths from supported PowerShell JSON parsers retain identity
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:40.6646888Z ok wrong target edition is refused
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:40.6697134Z ok wrong target version is refused
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:40.6738053Z ok wrong target build is refused
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:40.6804924Z ok wrong target interface is refused
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:40.6927890Z ok missing and additional target fields are refused
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:40.7113896Z ok malformed interface types and bounds are refused
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:40.7315097Z ok non-object targets and malformed string fields are refused on either side
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:40.8630450Z ok old six-key ordered dictionary reproduces actual performance admission failure
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:40.8973754Z ok actual performance constructor passes live case validation and JSON roundtrip
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:40.9137420Z ok extra missing and renamed performance metrics still refuse live admission
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:41.1982213Z ok all six metrics retain strict numeric type finite and range validation
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:41.2043594Z ok performance constructor never coerces raw string values to numbers
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:41.2147506Z ok completed actual details create a pass
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:41.2192673Z ok actual failure is retained as fail and thrown
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:41.2209820Z ok hosted producer cannot record owner smoke
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:41.2242965Z ok action cannot replace release identity
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:41.2330690Z ok unsupported or missing results cannot pass
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:41.2591416Z ok offline workload runs with external adapters disabled and restores only originally-up ones
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:41.2631874Z ok workload failure restores adapters before propagating error
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:41.2681610Z ok all original adapters get a restoration attempt after one failure
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:41.2702160Z ok lack of controllable adapter is unverified/failure
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:41.2721494Z ok offline controls refuse non-hosted environments
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:43.5522309Z ^[[31;1mGet-Item: ^[[0mD:\a\Navzeroth\Navzeroth\scripts\windows\Release-Materials.ps1:29^[[0m
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:43.5523432Z ^[[31;1m^[[0m^[[36;1mLine |^[[0m
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:43.5524450Z ^[[31;1m^[[0m^[[36;1m^[[36;1m  29 | ^[[0m     $item = ^[[36;1mGet-Item -LiteralPath $current -Force -ErrorAction Stop^[[0m
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:43.5525623Z ^[[31;1m^[[0m^[[36;1m^[[36;1m^[[0m^[[36;1m^[[0m^[[36;1m     | ^[[31;1m             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^[[0m
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:43.5526427Z ^[[31;1m^[[0m^[[36;1m^[[36;1m^[[0m^[[36;1m^[[0m^[[36;1m^[[31;1m^[[31;1m^[[36;1m     | ^[[31;1mCannot find path^[[0m
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:43.5528434Z ^[[31;1m^[[0m^[[36;1m^[[36;1m^[[0m^[[36;1m^[[0m^[[36;1m^[[31;1m^[[31;1m^[[36;1m^[[31;1m^[[36;1m     | ^[[31;1m'C:\Users\runneradmin\AppData\Local\Temp\anav-hosted-helper-72fde3e0688d49a58e8bbbe730fbb60d\killed-workload.json.progress.json' because it does not exist.^[[0m
+Windows installer and addon package	Hosted producer helper tests (PowerShell 7 mocks)	2026-10-20T21:05:43.6241439Z ##[error]Process completed with exit code 1.

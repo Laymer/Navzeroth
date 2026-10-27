@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "kind": "hosted_offline_firewall_engineering_probe",
+  "acceptance_observations_promoted": false,
+  "passed": false,
+  "source_commit": "38ae6f23f0ba9d1ce137f268c91ced02ae162d16",
+  "run_id": "39982567901",
+  "run_attempt": "1",
+  "runner_os": "Windows_NT",
+  "powershell_version": "7.6.7",
+  "hold_seconds": 1260,
+  "phase": "isolated_hold",
+  "external_connection_owners": [
+    {
+      "process": "hosted-compute-agent",
+      "connections": 3
+    },
+    {
+      "process": "lsass",
+      "connections": 1
+    },
+    {
+      "process": "provjobd.exe2577350826",
+      "connections": 1
+    },
+    {
+      "process": "Runner.Listener",
+      "connections": 3
+    },
+    {
+      "process": "Runner.Worker",
+      "connections": 5
+    },
+    {
+      "process": "StartMenuExperienceHost",
+      "connections": 2
+    },
+    {
+      "process": "svchost",
+      "connections": 2
+    },
+    {
+      "process": "WaAppAgent",
+      "connections": 1
+    },
+    {
+      "process": "WindowsAzureGuestAgent",
+      "connections": 2
+    }
+  ],
+  "infrastructure_programs": [
+    {
+      "name": "hosted-compute-agent",
+      "path": "C:\\ProgramData\\GitHub\\HostedComputeAgent\\hosted-compute-agent",
+      "long_path": "C:\\ProgramData\\GitHub\\HostedComputeAgent\\hosted-compute-agent",
+      "as_given": "accepted",
+      "long": "accepted"
+    },
+    {
+      "name": "provjobd.exe2577350826",
+      "path": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\provjobd.exe2577350826",
+      "long_path": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\provjobd.exe2577350826",
+      "as_given": "The parameter is incorrect. ",
+      "long": "accepted"
+    },
+    {
+      "name": "WaAppAgent",
+      "path": "C:\\WindowsAzure\\GuestAgent_2.7.41491.1243_2026-10-21_155005\\WaAppAgent.exe",
+      "long_path": "C:\\WindowsAzure\\GuestAgent_2.7.41491.1243_2026-10-21_155005\\WaAppAgent.exe",
+      "as_given": "accepted",
+      "long": "accepted"
+    },
+    {
+      "name": "WindowsAzureGuestAgent",
+      "path": "C:\\WindowsAzure\\GuestAgent_2.7.41491.1243_2026-10-21_155005\\WindowsAzureGuestAgent.exe",
+      "long_path": "C:\\WindowsAzure\\GuestAgent_2.7.41491.1243_2026-10-21_155005\\WindowsAzureGuestAgent.exe",
+      "as_given": "accepted",
+      "long": "accepted"
+    }
+  ],
+  "checks": 0,
+  "isolation": null,
+  "elapsed_ms": 20858.0326,
+  "error": "Hosted offline firewall control failed: {\"primary\":{\"stage\":\"isolate\",\"error\":\"The parameter is incorrect. \"},\"restoration\":{\"profiles\":\"ok\",\"rules_enabled\":\"ok\",\"rules_removed\":\"ok\",\"verification\":\"ok\",\"connectivity\":\"ok\"},\"verify_elapsed_ms\":370,\"restore_elapsed_ms\":13,\"disabled_allow_rules\":0,\"remaining_enabled_allow_rules\":null,\"effective_outbound_allow\":null}"
+}

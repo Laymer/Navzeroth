@@ -1,0 +1,182 @@
+{
+  "candidate": "9cc774e4f2656f26d544071d6bd174367ccca16a",
+  "run_id": 39641767585,
+  "scope": "Attempt1 cancelled during responsive offline startup; no proven hang. Attempt2 recovery exceeded1200s after database check, during subsequent content/planning sequence. Historical results remain bound to their actual attempts; no acceptance promotion.",
+  "files": [
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt1/cases/hosted-first-start.json",
+      "bytes": 11524,
+      "sha256": "0526af73bd6eefd8d5ee76f0b6d6fbc4bc780463bdf027872d8653fac427e139"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt1/cases/hosted-install.json",
+      "bytes": 751,
+      "sha256": "d604228c327ee9c0d3fa58b0f181730d65d42d5ba72e42bab29a94de3985a3f8"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt1/cases/hosted-offline.json",
+      "bytes": 668,
+      "sha256": "a823e1bc3bd538b33dc9d24d8ccf75aece2d5532398d5065c2e71bda5b77ceb7"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt1/cases/hosted-performance.json",
+      "bytes": 12716,
+      "sha256": "e98bd0f66497e9be0275759f318fc3d7d83df677325bf3ab95c1eeddaa42c46b"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt1/cases/hosted-persistence-recovery.json",
+      "bytes": 23336,
+      "sha256": "36a0d6a9a919ae6cc705e7e1d38b6f28d9be584a6ecd3bb5ec43e509c215157a"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt1/cases/hosted-resources.json",
+      "bytes": 132137,
+      "sha256": "725552cfcfdbfc6b6aa14ed6a5d0199dbd393cd9204e53cb79c2667163737610"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt1/cases/raw/fresh-49451d7fb1f84f84af7b0a37cde3817f.json",
+      "bytes": 9876,
+      "sha256": "d8bb87a0ae10dd3bd0f7a0246db14dc6c0e92c8afdacbff9ed39681b43146c10"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt1/cases/raw/fresh-49451d7fb1f84f84af7b0a37cde3817f.json.progress.json",
+      "bytes": 2690,
+      "sha256": "c53c8e9ad2751792c0bd345e1931ee30e3d9927fabb6a73f8573f85ca0cfd01c"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt1/cases/raw/offline-5ab9970260e54c448bee4812062cdc1d.json.progress.json",
+      "bytes": 2772,
+      "sha256": "cf1a53030fe1fda7a03ae089ea505f767161d1935034600e7978dfd603dae020"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt1/cases/raw/recover-20ed2e417a354c77b5344d091014f6c1.json",
+      "bytes": 10726,
+      "sha256": "db991a6da07e967268652b7a6ca0182131eb02dfd90ee817633db6613ee32c54"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt1/cases/raw/recover-20ed2e417a354c77b5344d091014f6c1.json.progress.json",
+      "bytes": 2694,
+      "sha256": "830fc60e0f7709182d1906340c957b8fb3051e887efa8c4538d706866930943a"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt1/cases/raw/restart-5bc52b08318d4b2aa16f41f6d6191aad.json",
+      "bytes": 9876,
+      "sha256": "5ebdd9723aa67256462902a144311db39237b2f19b6b80e0ff4b2a1403920264"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt1/cases/raw/restart-5bc52b08318d4b2aa16f41f6d6191aad.json.progress.json",
+      "bytes": 2700,
+      "sha256": "b5c93565dda4b685f0793c2413acff337599c7dc2eac0c27df382b8f41c89b20"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt1/cases/raw/state.json",
+      "bytes": 1311,
+      "sha256": "dd139ab154dd6c9b740be498bf9f2501fafec836af108748a95ec8077866677c"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt1/cases/raw/uninstall-ec3a77fc23cb485c8780cbb5e8c3b6e7.json",
+      "bytes": 84,
+      "sha256": "1cf4428dd11b2234c2ae1a943e1a7ed89b614ef6194fa93a82695c02908d9dac"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt1/package.log",
+      "bytes": 416269,
+      "sha256": "2a72eb1757fee8baf60321ae6449bab8620b65b26add26f8e137d923a6e3eeb0"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt1/jobs.json",
+      "bytes": 13203,
+      "sha256": "a9025427d5803b49523f206050ad4a1473cfcd6dbb06e487aa47c56bb04f4484"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt2/cases/hosted-first-start.json",
+      "bytes": 11526,
+      "sha256": "82ddfdb3358fbe0b8abea20a73850022a0514117a5fb3af28b1ac0b9946d0d23"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt2/cases/hosted-install.json",
+      "bytes": 751,
+      "sha256": "ed64ff01d6ec966cf356afe249728b9423fd08a560618504605ad72d9d002e5d"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt2/cases/hosted-performance.json",
+      "bytes": 12720,
+      "sha256": "a004e72ac70f2677c90ebd4e2c7d3037350a5416a33a2fbb5e701c6d5365919e"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt2/cases/hosted-persistence-recovery.json",
+      "bytes": 768,
+      "sha256": "3f260dab1d56b0891814defa54637d1b6821388fbc1faa9f4d7e4fdd1e28f65e"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt2/cases/hosted-resources.json",
+      "bytes": 132137,
+      "sha256": "149a52b15f2b7ea5ef02c7e36d054a6f411e3116dea02659e1dc580620c835bf"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt2/cases/raw/fresh-f40a19ea71da4a7db7f2cbfe1b35ac4b.json",
+      "bytes": 9878,
+      "sha256": "800c4127da10e3765d1054b024fe43b175f0aa6dedc7acc89f5810f5905ee7b7"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt2/cases/raw/fresh-f40a19ea71da4a7db7f2cbfe1b35ac4b.json.progress.json",
+      "bytes": 2690,
+      "sha256": "f3fe334d0b514deffcb6138d12e71c210336d77854e8f1badbfd4db51c420b09"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt2/cases/raw/recover-73e928d6d18a4f78a6f906348a8c33ca.json.progress.json",
+      "bytes": 2758,
+      "sha256": "38ae23a5966c2931fd362123e5a374ddb9a21b0ceeae2f43574c2ab70cee3965"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt2/cases/raw/recover-73e928d6d18a4f78a6f906348a8c33ca.json.watchdog.json",
+      "bytes": 523,
+      "sha256": "8468325ae8f4e471ea3a081a6a5f19e72b5412db085a21eeaf742cd962e53a0f"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt2/cases/raw/restart-6d554bfd672344a4ae49744704ac0549.json",
+      "bytes": 9880,
+      "sha256": "e0a8e0033bc8a1343f1dcd5df9329db0b931d7842b98b6e2b4d4f8f4c9d029c1"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt2/cases/raw/restart-6d554bfd672344a4ae49744704ac0549.json.progress.json",
+      "bytes": 2700,
+      "sha256": "2c1cc0df5b2daea90ecd88abf0f7401346973a93d04c761b1e963711073f3478"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt2/cases/raw/state.json",
+      "bytes": 1311,
+      "sha256": "75c657aeda3617a36d7b090189e78600bde5149ab36aeb08f073add4e0ece00b"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt2/cases/raw/uninstall-7ce5fa3335a5437495809e56defe9e63.json",
+      "bytes": 85,
+      "sha256": "c78f506a8c1a686e32a0bb9b26dccabd1e1cabfc2ac09d9d22c7472cbf717402"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt2/package.log",
+      "bytes": 670679,
+      "sha256": "8189c9130b40dc6a7793807f0ebf6a25781fe9c9fbb52804c4df1b1178bc99db"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/attempt2/jobs.json",
+      "bytes": 13199,
+      "sha256": "69982031269985d812cb09897f81a6bab76407094c336faec41d82245c5901b4"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/signed-v19/bundled-content-manifest.json",
+      "bytes": 17187,
+      "sha256": "211bbcdaa0ef80089c2edfb8b5fb4ac2f90df05e044d1b161f26d46bd189ed90"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/signed-v19/bundled-content-build-identity.json",
+      "bytes": 528,
+      "sha256": "d3a3892a815a677a6007c6ae9ae5d8ca0a60a8d77477a7c6ec83238f628aa6a6"
+    },
+    {
+      "path": "release/history/2026-10-23-v19-attempts/signed-v19/bundled-content-receipt.json",
+      "bytes": 1080,
+      "sha256": "0e1a91f8fe487bcc47e2fdd4a9e1ce6310bb190c5fd51798921416a31bcb4aa8"
+    }
+  ]
+}

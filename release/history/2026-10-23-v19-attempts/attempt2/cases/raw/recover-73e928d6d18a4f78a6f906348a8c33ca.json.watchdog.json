@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "kind": "workload_watchdog",
+  "passed": false,
+  "completed": false,
+  "mode": "recover",
+  "version": "1.0.0",
+  "reason": "selected_time_bound_exceeded",
+  "maximum_seconds": 1200,
+  "elapsed_ms": 1200725.9954,
+  "samples": 5835,
+  "sampling_errors": 0,
+  "native_pids": [
+    {
+      "pid": 10144,
+      "peak_memory_bytes": 6132609024
+    }
+  ],
+  "native_pids_truncated": false,
+  "partial_progress_file": "recover-73e928d6d18a4f78a6f906348a8c33ca.json.progress.json"
+}

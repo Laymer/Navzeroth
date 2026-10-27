@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "candidate_commit": "ee26d119b8fc63454771e963cfd28ae6cb1b6aab",
+  "actual_pr_merge_checkout": "e3fdd58a9fe969f972d2796c47f4b114e5b0d661",
+  "production_sha256": "f7515b8cf1111828f7fb76c29f77c94439f6f3e372144261f982edc7c7d72b25",
+  "package_run_id": 39441834744,
+  "package_conclusion": "failure",
+  "stable_hosted_suite": "skipped_all_eight_cases",
+  "owner_smoke": "unverified",
+  "publication_allowed": false,
+  "kind": "actual_native_upgrade_failure_before_stable_acceptance",
+  "installer_sha256": "f7369af0a7ec647eadbde627218472d3e0f26bc26d7881beda383a2c0bab742b",
+  "installer_bytes": 26109201,
+  "declared_signature": "unsigned",
+  "actual_native_smoke": "success_32_passed",
+  "actual_native_upgrade": "failure_6_passed_1_failed",
+  "baseline_tag": "v0.9.2",
+  "files": {
+    "native-smoke.json": {
+      "path": "release/history/2026-10-20-v11-native-upgrade-failure/native-smoke.json",
+      "bytes": 27455,
+      "sha256": "81877c55f2b86911511d0ca8b356c3a2f5de3f3adefd958d8c6abfb13023c0e3"
+    },
+    "baseline-populate.json": {
+      "path": "release/history/2026-10-20-v11-native-upgrade-failure/baseline-populate.json",
+      "bytes": 4475,
+      "sha256": "15f1356eb87c76d97c4ea3adf1d2b7f9007834cac3afd06c3dc7a2ad7e0ef9f6"
+    },
+    "candidate-verify.json": {
+      "path": "release/history/2026-10-20-v11-native-upgrade-failure/candidate-verify.json",
+      "bytes": 18396,
+      "sha256": "171f433ff6f0b17058d14babf69c7468efd43295caa13388aca8f050754de736"
+    },
+    "db-before.json": {
+      "path": "release/history/2026-10-20-v11-native-upgrade-failure/db-before.json",
+      "bytes": 1859,
+      "sha256": "055090feb9a5705f00b121482da2c93e6e402c5518e04a09775150a00618e663"
+    },
+    "prepared-release-verification.json": {
+      "path": "release/history/2026-10-20-v11-native-upgrade-failure/prepared-release-verification.json",
+      "bytes": 133649,
+      "sha256": "8aa400f2848731f3b6f0c834c9a14c4bb20ad652b53daefe403aee5a42787075"
+    }
+  },
+  "diagnosis": "Actual get_active_content response took636ms while driver fixed settle is600ms. Initial empty UI is not proof of data loss; synthetic scope must remain preserved. New strict completed-IPC/UI regression is required."
+}

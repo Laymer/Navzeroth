@@ -1,0 +1,6 @@
+   Compiling azeroth-core v1.0.0 (/tmp/navzeroth-stable-1.0.0-version/crates/core)
+   Compiling azeroth-local-data v1.0.0 (/tmp/navzeroth-stable-1.0.0-version/crates/local-data)
+   Compiling azeroth-storage v1.0.0 (/tmp/navzeroth-stable-1.0.0-version/crates/storage)
+   Compiling azeroth-ingest v1.0.0 (/tmp/navzeroth-stable-1.0.0-version/crates/ingest)
+   Compiling azeroth-app v1.0.0 (/tmp/navzeroth-stable-1.0.0-version/crates/app)
+    Finished `release` profile [optimized] target(s) in 1m 33s

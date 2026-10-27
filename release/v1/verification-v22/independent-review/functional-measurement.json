@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "returncode": 0,
+  "seconds": 80.66834407800161,
+  "peak_child_rss_kib": 6205284,
+  "executable_sha256": "d1745d726af2c24457973e1153134b4df24baa5c57d0861f48fd573d1496c5b1",
+  "proof_sha256": "2e601431669d08724669865eaef2e403bfd904b6b996020d67e20adb704eef12",
+  "scope": "Independent reviewer actual full-pack assertion rerun using Cargo-confirmed cached binary. Shared Linux/WSL2; no new compiler build, Windows or ordinary-PC acceptance. Launch and proof-time HEAD differ only by the coordinator approval-claim documentation commit; production bytes identical, independently recomputed. No exact equality of those metadata HEADs is asserted.",
+  "launch_source_commit": "4dfe71ca71a7f09639c3805fc9394537f60230b1",
+  "proof_recorded_source_commit": "3609c2b574d5302711a40cc08128b1e9c76f8955"
+}

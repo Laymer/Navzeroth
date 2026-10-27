@@ -226,6 +226,12 @@ fn main() -> ExitCode {
         return ExitCode::from(azeroth_local_data::media::worker_entry() as u8);
     }
     match args.as_slice() {
+        [command, rest @ ..] if command == "assemble-bundled-content" => {
+            azeroth_cli::bundled_content::run_assembly(rest)
+        }
+        [command, rest @ ..] if command == "check-bundled-content" => {
+            azeroth_cli::bundled_content::run(rest)
+        }
         [command, rest @ ..]
             if command == "bundle-receipt-sign"
                 || command == "bundle-receipt-assemble"
@@ -387,6 +393,28 @@ fn main() -> ExitCode {
                 }
                 Err(message) => {
                     eprintln!("release-readiness: {message}");
+                    ExitCode::FAILURE
+                }
+            }
+        }
+        [command, rest @ ..] if command == "enumerate-release-packs" => {
+            use azeroth_cli::release::enumeration;
+            let Some(args) = enumeration::Arguments::parse(rest) else {
+                eprintln!(
+                    "enumerate-release-packs --root <dir> --pack <relative-dir> [--pack <relative-dir>] --output <new-relative-json>"
+                );
+                return ExitCode::from(2);
+            };
+            match enumeration::run(&args) {
+                Ok(summary) => {
+                    println!(
+                        "{}",
+                        serde_json::to_string_pretty(&summary).expect("enumeration summary")
+                    );
+                    ExitCode::SUCCESS
+                }
+                Err(message) => {
+                    eprintln!("enumerate-release-packs: {message}");
                     ExitCode::FAILURE
                 }
             }

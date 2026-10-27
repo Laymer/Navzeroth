@@ -79,6 +79,7 @@ fn check(i: &Inventory, e: &Evidence) -> Readiness {
             target: Some(&target),
             origins: Some(&origins),
             origin_policy_sha256: Some(POLICY_HASH),
+            verified_non_observational_sources: None,
         },
     )
 }
@@ -165,6 +166,7 @@ fn the_target_must_equal_the_world_data_target_file() {
             target: None,
             origins: Some(&origins),
             origin_policy_sha256: Some(POLICY_HASH),
+            verified_non_observational_sources: None,
         },
     );
     assert!(has(&missing, "World-data target file is missing"));
@@ -191,6 +193,7 @@ fn evidence_must_bind_the_applied_policy() {
             target: Some(&target),
             origins: None,
             origin_policy_sha256: None,
+            verified_non_observational_sources: None,
         },
     );
     assert!(has(&none, "Accepted-origin policy is missing"));
@@ -210,6 +213,7 @@ fn evidence_must_bind_the_applied_policy() {
             target: Some(&target),
             origins: Some(&origins),
             origin_policy_sha256: Some(HASH),
+            verified_non_observational_sources: None,
         },
     );
     assert!(has(
@@ -228,6 +232,7 @@ fn evidence_must_bind_the_applied_policy() {
             target: Some(&target),
             origins: Some(&other),
             origin_policy_sha256: Some(POLICY_HASH),
+            verified_non_observational_sources: None,
         },
     );
     assert!(has(&report, "different target edition"));
@@ -248,6 +253,7 @@ fn an_accepted_origin_satisfies_target_validation_and_others_do_not() {
         target: Some(&target),
         origins: Some(&origins),
         origin_policy_sha256: Some(POLICY_HASH),
+        verified_non_observational_sources: None,
     };
     assert_eq!(
         origin_accepted_sources(&i, &e, &policy)
@@ -276,6 +282,7 @@ fn an_accepted_origin_satisfies_target_validation_and_others_do_not() {
             target: Some(&target),
             origins: Some(&narrow),
             origin_policy_sha256: Some(POLICY_HASH),
+            verified_non_observational_sources: None,
         },
     );
     assert!(has(&report, "target validation is incomplete"));
@@ -402,11 +409,46 @@ fn record_limit_admits_a_whole_world_inventory_and_refuses_one_more() {
     );
 }
 
+#[test]
+fn exact_historical_forever_build_can_satisfy_source_target_validation() {
+    for (build, accepted) in [
+        (Some("1.60.1.70245"), true),
+        (Some("1.60.1.70246"), false),
+        (None, false),
+    ] {
+        let mut evidence = evidence_value();
+        evidence["sources"][0]["origin_edition"] = json!("wow_forever");
+        evidence["sources"][0]["origin_build"] = json!(build);
+        let (i, e) = decode(&inventory_value(), &evidence);
+        let (target, origins) = (target(), origins());
+        let policy = ReleasePolicy {
+            target: Some(&target),
+            origins: Some(&origins),
+            origin_policy_sha256: Some(POLICY_HASH),
+            verified_non_observational_sources: None,
+        };
+        assert_eq!(
+            origin_accepted_sources(&i, &e, &policy).contains("synthetic"),
+            accepted
+        );
+        assert_eq!(
+            has(&check(&i, &e), "target validation is incomplete"),
+            !accepted
+        );
+    }
+}
+
 fn stable_values() -> (Value, Value) {
     let mut inventory = inventory_value();
     let mut evidence = evidence_value();
     inventory["schema_version"] = json!(SCHEMA_STABLE);
     evidence["schema_version"] = json!(SCHEMA_STABLE);
+    let bundle_file = |path: &str| {
+        let mut value = file();
+        value["path"] = json!(path);
+        value
+    };
+    evidence["bundled_content"] = json!({"manifest":bundle_file("release/bundle-manifest.json"),"receipt":bundle_file("release/bundle-receipt.json"),"review":bundle_file("docs/review.json")});
     evidence["candidate_installer_sha256"] = json!(HASH);
     evidence["checks"] =
         json!(required_checks(SCHEMA_STABLE).into_iter().map(|(id, method)| {
@@ -436,7 +478,7 @@ fn schema4_requires_hosted_windows_and_separate_exact_installer_owner_smoke() {
             .all(|(_, m)| *m == Method::HostedWindows)
     );
     assert!(is_world_schema(3) && is_world_schema(4));
-    assert!(!is_world_schema(2) && !is_world_schema(5));
+    assert!(!is_world_schema(2) && is_world_schema(5) && !is_world_schema(6));
 }
 
 #[test]
@@ -571,30 +613,307 @@ fn preparation_never_admits_failed_partial_stale_or_content_blockers() {
     let stale = check(&i, &e);
     assert!(!BuildPhase::Prebuild.ready(&stale) && !BuildPhase::Draft.ready(&stale));
 }
+
 #[test]
-fn exact_historical_forever_build_can_satisfy_source_target_validation() {
-    for (build, accepted) in [
-        (Some("1.60.1.70245"), true),
-        (Some("1.60.1.70246"), false),
-        (None, false),
+fn signed_bundle_binding_is_required_and_new_fields_never_promote_historical_evidence() {
+    let (inventory, mut evidence) = stable_values();
+    evidence.as_object_mut().unwrap().remove("bundled_content");
+    let (i, e) = decode(&inventory, &evidence);
+    let report = check(&i, &e);
+    assert!(!report.candidate_ready);
+    assert!(report.blockers.iter().any(|b| b.contains("signed bundle")));
+    for version in [1, 2, 3] {
+        let mut old = evidence_value();
+        old["schema_version"] = json!(version);
+        old["bundled_content"] = Value::Null;
+        assert!(decode_evidence(&serde_json::to_vec(&old).unwrap()).is_err());
+    }
+    for change in [
+        "duplicate",
+        "manifest-size",
+        "receipt-size",
+        "review-size",
+        "production-metadata",
     ] {
-        let mut evidence = evidence_value();
-        evidence["sources"][0]["origin_edition"] = json!("wow_forever");
-        evidence["sources"][0]["origin_build"] = json!(build);
-        let (i, e) = decode(&inventory_value(), &evidence);
-        let (target, origins) = (target(), origins());
-        let policy = ReleasePolicy {
-            target: Some(&target),
-            origins: Some(&origins),
-            origin_policy_sha256: Some(POLICY_HASH),
+        let (_, mut value) = stable_values();
+        match change {
+            "duplicate" => {
+                value["bundled_content"]["receipt"] = value["bundled_content"]["manifest"].clone()
+            }
+            "manifest-size" => {
+                value["bundled_content"]["manifest"]["bytes"] = json!(4 * 1024 * 1024 + 1)
+            }
+            "receipt-size" => value["bundled_content"]["receipt"]["bytes"] = json!(64 * 1024 + 1),
+            "review-size" => {
+                value["bundled_content"]["review"]["bytes"] = json!(MAX_RELEASE_BYTES + 1)
+            }
+            _ => {
+                value["bundled_content"]["receipt"]["path"] = json!("content/circular-receipt.json")
+            }
+        }
+        assert!(
+            decode_evidence(&serde_json::to_vec(&value).unwrap()).is_err(),
+            "{change}"
+        );
+    }
+}
+
+#[test]
+fn only_schema4_accepts_checked_non_observational_source_contracts_without_promoting_observations()
+{
+    let (mut i, mut e) = stable_values();
+    e["sources"][0]["origin_edition"] = json!("wow_forever");
+    e["sources"][0]["origin_build"] = Value::Null;
+    e["sources"][0]["target_validation"] = json!("unverified");
+    e["sources"][0]["target_evidence"] = json!([]);
+    let (target, origins) = (target(), origins());
+    let ids = std::collections::BTreeSet::from(["synthetic".to_owned()]);
+    let policy = ReleasePolicy {
+        target: Some(&target),
+        origins: Some(&origins),
+        origin_policy_sha256: Some(POLICY_HASH),
+        verified_non_observational_sources: Some(&ids),
+    };
+    let (inventory, evidence) = decode(&i, &e);
+    assert!(!has(
+        &check_with(&inventory, &evidence, &policy),
+        "target validation is incomplete"
+    ));
+    assert_eq!(evidence.sources[0].target_validation, Status::Unverified);
+    for schema in [3, 4] {
+        i["schema_version"] = json!(schema);
+        e["schema_version"] = json!(schema);
+        if schema == 3 {
+            e.as_object_mut().unwrap().remove("bundled_content");
+            e.as_object_mut()
+                .unwrap()
+                .remove("candidate_installer_sha256");
+            e["checks"] = evidence_value()["checks"].clone();
+        }
+        let (inventory, evidence) = decode(&i, &e);
+        if schema == 3 {
+            assert!(has(
+                &check_with(&inventory, &evidence, &policy),
+                "target validation is incomplete"
+            ));
+        }
+        let empty = ReleasePolicy {
+            verified_non_observational_sources: None,
+            ..policy
         };
-        assert_eq!(
-            origin_accepted_sources(&i, &e, &policy).contains("synthetic"),
-            accepted
+        assert!(has(
+            &check_with(&inventory, &evidence, &empty),
+            "target validation is incomplete"
+        ));
+    }
+}
+
+#[test]
+fn schema4_manifest_ceiling_and_world_scope_do_not_expand_historical_contracts() {
+    let mut inventory = inventory_value();
+    inventory["schema_version"] = json!(4);
+    inventory["slice"] = Value::Null;
+    let mut raw = serde_json::to_vec(&inventory).unwrap();
+    raw.resize(MAX_RELEASE_BYTES + 1, b' ');
+    assert!(decode_inventory(&raw).is_ok());
+    inventory["schema_version"] = json!(3);
+    let mut historical = serde_json::to_vec(&inventory).unwrap();
+    historical.resize(MAX_RELEASE_BYTES + 1, b' ');
+    assert_eq!(
+        decode_inventory(&historical).unwrap_err(),
+        "Release manifest exceeds historical size limit"
+    );
+    assert!(decode_inventory(&serde_json::to_vec(&inventory).unwrap()).is_err());
+    let raw = vec![b' '; MAX_STABLE_RELEASE_BYTES + 1];
+    assert!(decode_inventory(&raw).is_err());
+}
+
+#[test]
+fn unsigned_preparation_reuses_full_accounting_without_allowing_publication() {
+    let (inventory, mut evidence) = stable_values();
+    evidence["bundled_content"] = Value::Null;
+    evidence["candidate_installer_sha256"] = Value::Null;
+    for row in evidence["checks"].as_array_mut().unwrap() {
+        row["status"] = json!("unverified");
+        row["artifacts"] = json!([]);
+        for field in ["operator", "recorded_at", "environment", "installer_sha256"] {
+            row[field] = Value::Null;
+        }
+    }
+    let (i, e) = decode(&inventory, &evidence);
+    let (target, origins) = (target(), origins());
+    let policy = ReleasePolicy {
+        target: Some(&target),
+        origins: Some(&origins),
+        origin_policy_sha256: Some(POLICY_HASH),
+        verified_non_observational_sources: None,
+    };
+    let prepare = |i: &Inventory, e: &Evidence| {
+        assess_unsigned_bundle_preparation("1.0.0", i, e, &bindings(), &policy).unwrap()
+    };
+    let ready = prepare(&i, &e);
+    assert!(BuildPhase::Prebuild.ready(&ready), "{:?}", ready.blockers);
+    assert!(!ready.publication_allowed && !ready.stable_ready);
+    assert!(!BuildPhase::Prebuild.ready(&check(&i, &e)));
+    for mutation in 0..10 {
+        let mut bad = evidence.clone();
+        match mutation {
+            0 => bad["coverage"] = json!([]),
+            1 => {
+                let duplicate = bad["coverage"][0].clone();
+                bad["coverage"].as_array_mut().unwrap().push(duplicate);
+            }
+            2 => bad["coverage"][0]["included_record_ids"] = json!([]),
+            3 => bad["coverage"][0]["included_record_ids"] = json!(["synthetic:1", "invented:2"]),
+            4 => bad["coverage"][0]["source_ids"] = json!([]),
+            5 => bad["coverage"][0]["validation_evidence"] = json!([]),
+            6 => bad["coverage"][0]["unsupported_corrections"] = json!(1),
+            7 => bad["checks"][0]["operator"] = json!("partial pending"),
+            8 => bad["coverage"][0]["status"] = json!("unverified"),
+            _ => bad["production_sha256"] = json!(POLICY_HASH),
+        }
+        let (_, e) = decode(&inventory, &bad);
+        assert!(
+            !BuildPhase::Prebuild.ready(&prepare(&i, &e)),
+            "mutation{mutation}"
         );
-        assert_eq!(
-            has(&check(&i, &e), "target validation is incomplete"),
-            !accepted
+    }
+    let prerelease =
+        assess_unsigned_bundle_preparation("1.0.0-rc.1", &i, &e, &bindings(), &policy).unwrap();
+    assert!(!BuildPhase::Prebuild.ready(&prerelease) && !prerelease.publication_allowed);
+    assert!(assess_unsigned_bundle_preparation("1.0", &i, &e, &bindings(), &policy).is_err());
+    let mut historical = i.clone();
+    historical.schema_version = 3;
+    assert!(
+        assess_unsigned_bundle_preparation("1.0.0", &historical, &e, &bindings(), &policy).is_err()
+    );
+}
+
+fn automated_values() -> (Value, Value) {
+    let (mut i, mut e) = stable_values();
+    i["schema_version"] = json!(5);
+    e["schema_version"] = json!(5);
+    e["checks"][8]["id"] = json!(DRAFT_INSTALLER_SMOKE);
+    e["checks"][8]["method"] = json!("automated_draft_windows");
+    let reference = |path: &str| json!({"path":path,"bytes":1,"sha256":HASH});
+    let refs = [
+        reference("evidence/raw.json"),
+        reference("evidence/provenance.json"),
+        reference("evidence/review.json"),
+    ];
+    e["draft_installer_smoke"] =
+        json!({"raw_result":refs[0],"provenance":refs[1],"independent_review":refs[2]});
+    e["checks"][8]["artifacts"] = json!(refs);
+    (i, e)
+}
+#[test]
+fn schema5_replaces_only_final_row_and_preserves_all_phase_boundaries() {
+    let (i, e) = automated_values();
+    let (i, e) = decode(&i, &e);
+    let r = check(&i, &e);
+    assert!(r.stable_ready && r.publication_allowed, "{:?}", r.blockers);
+    assert_eq!(r.report_version, 5);
+    assert_eq!(
+        required_checks(5).last(),
+        Some(&(DRAFT_INSTALLER_SMOKE, Method::AutomatedDraftWindows))
+    );
+    assert_eq!(
+        required_checks(4).last(),
+        Some(&(OWNER_INSTALLER_SMOKE, Method::InteractiveWindows))
+    );
+    for version in [4, 5] {
+        assert!(is_stable_schema(version));
+    }
+    assert!(!is_stable_schema(3));
+    let (iv, mut ev) = automated_values();
+    ev.as_object_mut().unwrap().remove("draft_installer_smoke");
+    for row in ev["checks"].as_array_mut().unwrap() {
+        row["status"] = json!("unverified");
+        row["operator"] = Value::Null;
+        row["recorded_at"] = Value::Null;
+        row["environment"] = Value::Null;
+        row["artifacts"] = json!([]);
+        row.as_object_mut().unwrap().remove("installer_sha256");
+    }
+    let (i, e) = decode(&iv, &ev);
+    let r = check(&i, &e);
+    assert!(BuildPhase::Prebuild.ready(&r));
+    assert!(!BuildPhase::Draft.ready(&r));
+    assert!(!r.publication_allowed);
+    let (_, passed) = automated_values();
+    ev["checks"] = passed["checks"].clone();
+    ev["checks"][8] = json!({"id":DRAFT_INSTALLER_SMOKE,"method":"automated_draft_windows","status":"unverified","operator":null,"recorded_at":null,"environment":null,"artifacts":[]});
+    let (i, e) = decode(&iv, &ev);
+    let r = check(&i, &e);
+    assert!(BuildPhase::Draft.ready(&r));
+    assert!(!r.stable_ready && !r.publication_allowed);
+}
+#[test]
+fn schema5_refuses_partial_or_foreign_final_results_and_historical_coercion() {
+    let (i, e) = automated_values();
+    for mutation in [
+        "absent",
+        "wrong_ref",
+        "wrong_method",
+        "owner",
+        "failed",
+        "extra",
+    ] {
+        let mut e = e.clone();
+        match mutation {
+            "absent" => {
+                e.as_object_mut().unwrap().remove("draft_installer_smoke");
+            }
+            "wrong_ref" => e["draft_installer_smoke"]["raw_result"]["sha256"] = json!(POLICY_HASH),
+            "wrong_method" => e["checks"][8]["method"] = json!("hosted_windows"),
+            "owner" => e["checks"][8]["id"] = json!(OWNER_INSTALLER_SMOKE),
+            "failed" => e["checks"][8]["status"] = json!("fail"),
+            _ => {
+                let row = e["checks"][8].clone();
+                e["checks"].as_array_mut().unwrap().push(row);
+            }
+        }
+        let (i, e) = decode(&i, &e);
+        let r = check(&i, &e);
+        assert!(
+            !r.stable_ready && !BuildPhase::Draft.ready(&r),
+            "{mutation}"
         );
+    }
+    for version in 1..=4 {
+        let mut e = e.clone();
+        e["schema_version"] = json!(version);
+        assert!(decode_evidence(&serde_json::to_vec(&e).unwrap()).is_err());
+    }
+    for invalid in [
+        Value::Null,
+        json!({}),
+        json!({"raw_result":file(),"provenance":file(),"independent_review":file()}),
+    ] {
+        let mut e = e.clone();
+        e["draft_installer_smoke"] = invalid;
+        assert!(decode_evidence(&serde_json::to_vec(&e).unwrap()).is_err());
+    }
+}
+
+#[test]
+fn generated_release_structural_schemas_are_current_and_versioned() {
+    for (evidence, path) in [
+        (false, "schemas/release/inventory.schema.json"),
+        (true, "schemas/release/evidence.schema.json"),
+    ] {
+        let text = release_contract_schema_text(evidence);
+        assert_eq!(text.as_bytes(), repository(path));
+        let value: Value = serde_json::from_str(&text).unwrap();
+        assert_eq!(
+            value["properties"]["schema_version"]["enum"],
+            json!([1, 2, 3, 4, 5])
+        );
+        if evidence {
+            assert_eq!(
+                value["allOf"][0]["if"]["properties"]["schema_version"]["const"],
+                5
+            );
+        }
     }
 }

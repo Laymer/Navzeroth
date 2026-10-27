@@ -11,11 +11,13 @@ pub const MANIFEST: &str = "RELEASE_MATERIALS.json";
 pub const MAX_MATERIAL_FILES: usize = 16_384;
 static NEXT: AtomicU64 = AtomicU64::new(0);
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Kind {
     ContentPack,
     SourceMaterial,
+    CorrespondingSource,
+    NormalizationConflicts,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -24,6 +26,9 @@ pub struct MaterialFile {
     pub input: FileRef,
     pub archive_path: AssetPath,
     pub kind: Kind,
+    /// Schema-2 manifest: additional roles for one deduplicated archive file.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub additional_kinds: Vec<Kind>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -40,7 +45,20 @@ pub struct SourceMaterial {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub struct Preparation {
+    pub ready: bool,
+    pub evidence_sha256: String,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Manifest {
+    /// Schema2 only; same core assessment plus actual catalog accounting.
+    /// This permits unsigned preparation and never authorizes publication.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub unsigned_preparation: Option<Preparation>,
+    /// Schema2 only: keys derived from the validated catalog, never caller guesses.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub bundled_packs: Vec<azeroth_app::bundled_content::Pack>,
     pub schema_version: u32,
     pub version: String,
     pub candidate_source_commit: String,
@@ -51,6 +69,13 @@ pub struct Manifest {
     pub packs: Vec<release::PackRef>,
     pub sources: Vec<SourceMaterial>,
     pub files: Vec<MaterialFile>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub corresponding_source_files: Vec<FileRef>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub normalization_conflict_files: Vec<FileRef>,
+    /// Schema2 exact verified catalog pins eligible for the larger bound.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub catalog_files: Vec<FileRef>,
 }
 impl Manifest {
     pub fn bytes(&self) -> Result<Vec<u8>> {
@@ -98,7 +123,10 @@ fn sorted(files: &[FileRef]) -> Vec<FileRef> {
     result.sort_by(|a, b| a.path.cmp(&b.path));
     result
 }
-fn private_refs<'a>(inventory: &'a Inventory, evidence: &'a Evidence) -> Vec<&'a FileRef> {
+pub(super) fn private_refs<'a>(
+    inventory: &'a Inventory,
+    evidence: &'a Evidence,
+) -> Vec<&'a FileRef> {
     inventory
         .domains
         .iter()
@@ -119,6 +147,16 @@ fn private_refs<'a>(inventory: &'a Inventory, evidence: &'a Evidence) -> Vec<&'a
         )
         .collect()
 }
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct NormalizationConflicts {
+    format: String,
+    schema_version: u32,
+    revision: String,
+    precedence: Vec<String>,
+    conflicts: Vec<Value>,
+}
+
 fn source_valid(source: &SourceEvidence, origin_accepted: &BTreeSet<String>) -> bool {
     let text =
         |v: &str| !v.trim().is_empty() && v.len() <= 4096 && !v.chars().any(char::is_control);
@@ -161,7 +199,10 @@ pub(super) fn selected_files(
     catalog: &Catalog,
     budget: &mut Budget,
 ) -> Result<(Vec<MaterialFile>, Vec<SourceMaterial>)> {
-    let origin_accepted = release::origin_accepted_sources(inventory, evidence, policy);
+    let mut origin_accepted = release::origin_accepted_sources(inventory, evidence, policy);
+    if release::is_stable_schema(inventory.schema_version) {
+        origin_accepted.extend(catalog.verified_non_observational());
+    }
     if evidence.sources.len() != inventory.sources.len()
         || inventory.sources.len() > release::MAX_UNITS
     {
@@ -221,7 +262,7 @@ pub(super) fn selected_files(
                 "Release materials must be tracked production files outside docs and release",
             );
         }
-        budget.verify(root, reference)?;
+        budget.verify_material(root, reference, kind == Kind::ContentPack)?;
         let prefix = if kind == Kind::ContentPack {
             "content-packs"
         } else {
@@ -233,12 +274,19 @@ pub(super) fn selected_files(
             input: reference.clone(),
             archive_path,
             kind,
+            additional_kinds: vec![],
         };
-        if let Some(previous) =
-            selected.insert(material.archive_path.as_str().into(), material.clone())
-            && previous != material
-        {
-            return Err("Conflicting material file references");
+        if let Some(previous) = selected.get_mut(material.archive_path.as_str()) {
+            if previous.input != material.input {
+                return Err("Conflicting material file references");
+            }
+            if previous.kind != material.kind && !previous.additional_kinds.contains(&material.kind)
+            {
+                previous.additional_kinds.push(material.kind);
+                previous.additional_kinds.sort();
+            }
+        } else {
+            selected.insert(material.archive_path.as_str().into(), material);
         }
         if selected.len() > MAX_MATERIAL_FILES {
             return Err("Too many release material files");
@@ -285,6 +333,30 @@ pub(super) fn selected_files(
             return Err("Duplicate material source");
         }
     }
+    release::validate_corresponding_sources(evidence)?;
+    let mut conflict_revisions = BTreeSet::new();
+    for reference in evidence.normalization_conflict_files.iter().flatten() {
+        let raw = checked_ref_bytes(budget, root, reference, MAX_FILE_BYTES as usize)?;
+        let value = azeroth_core::strict_json::value(&raw, MAX_FILE_BYTES as usize)
+            .map_err(|_| "Invalid normalization conflict JSON")?;
+        let report: NormalizationConflicts =
+            serde_json::from_value(value).map_err(|_| "Invalid normalization conflict report")?;
+        if report.format != "navzeroth-world-content-conflicts"
+            || report.schema_version != 1
+            || !catalog.revisions.contains(&report.revision)
+            || !conflict_revisions.insert(report.revision)
+            || report.conflicts.len() > release::MAX_RECORDS
+            || policy
+                .origins
+                .is_none_or(|policy| report.precedence != policy.precedence)
+        {
+            return Err("Normalization conflict report differs from selected pack or policy");
+        }
+        add(reference, Kind::NormalizationConflicts, budget)?;
+    }
+    for reference in evidence.corresponding_source_files.iter().flatten() {
+        add(reference, Kind::CorrespondingSource, budget)?;
+    }
     Ok((
         selected.into_values().collect(),
         sources.into_values().collect(),
@@ -300,6 +372,7 @@ pub fn plan(options: &Options) -> Result<Manifest> {
         inventory_bytes,
         inventory,
         evidence,
+        evidence_sha256,
         head,
         candidate,
         world,
@@ -382,8 +455,108 @@ pub fn plan(options: &Options) -> Result<Manifest> {
         pack.dataset_revisions.sort();
     }
     packs.sort_by(|a, b| a.manifest.path.cmp(&b.manifest.path));
+    let catalog_files = if release::is_stable_schema(inventory.schema_version) {
+        sorted(
+            &files
+                .iter()
+                .filter(|file| {
+                    file.kind == Kind::ContentPack
+                        && budget.catalogs.get(&root.join(file.input.path.as_str()))
+                            == Some(&(file.input.bytes, file.input.sha256.as_str().to_owned()))
+                })
+                .map(|file| file.input.clone())
+                .collect::<Vec<_>>(),
+        )
+    } else {
+        vec![]
+    };
+    let mut bundled_packs = if release::is_stable_schema(inventory.schema_version) {
+        catalog.bundled_packs.clone()
+    } else {
+        vec![]
+    };
+    for reference in evidence.normalization_conflict_files.iter().flatten() {
+        let report: NormalizationConflicts = serde_json::from_slice(&checked_ref_bytes(
+            &mut budget,
+            &root,
+            reference,
+            MAX_FILE_BYTES as usize,
+        )?)
+        .map_err(|_| "Invalid normalization conflict report")?;
+        let pack = bundled_packs
+            .iter_mut()
+            .find(|pack| pack.key.revision.as_str() == report.revision)
+            .ok_or("Normalization conflict pack is missing")?;
+        if pack
+            .normalization_conflicts
+            .replace(reference.clone())
+            .is_some()
+        {
+            return Err("Duplicate normalization conflict pack");
+        }
+    }
+    bundled_packs.sort_by(|a, b| a.manifest.path.cmp(&b.manifest.path));
+    let unsigned_preparation = if release::is_stable_schema(inventory.schema_version) {
+        let non_observational = catalog.verified_non_observational();
+        let preparation_policy = ReleasePolicy {
+            verified_non_observational_sources: Some(&non_observational),
+            ..policy
+        };
+        let mut readiness = release::assess_unsigned_bundle_preparation(
+            &options.version,
+            &inventory,
+            &evidence,
+            &Bindings {
+                inventory_sha256: &hash(&inventory_bytes),
+                production_sha256: &candidate.fingerprint,
+                tested_source_commit: evidence.tested_source_commit.as_deref().unwrap_or(""),
+            },
+            &preparation_policy,
+        )?;
+        bind_records(&mut readiness, &inventory, &evidence, &catalog);
+        for reference in release::evidence_files(&inventory, &evidence) {
+            if let Err(message) = budget.verify(&root, reference) {
+                readiness.block(message);
+            }
+        }
+        if let Err(message) = super::draft_smoke::verify(
+            &root,
+            &evidence,
+            &head,
+            &candidate.fingerprint,
+            &options.version,
+            &mut budget,
+        ) {
+            readiness.block(message);
+        }
+        Some(Preparation {
+            ready: release::BuildPhase::Prebuild.ready(&readiness),
+            evidence_sha256: evidence_sha256.ok_or("Preparation evidence identity missing")?,
+        })
+    } else {
+        None
+    };
     let manifest = Manifest {
-        schema_version: 1,
+        unsigned_preparation,
+        bundled_packs,
+        normalization_conflict_files: sorted(
+            evidence
+                .normalization_conflict_files
+                .as_deref()
+                .unwrap_or_default(),
+        ),
+        catalog_files,
+        schema_version: if release::is_stable_schema(inventory.schema_version) {
+            2
+        } else {
+            1
+        },
+        corresponding_source_files: sorted(
+            evidence
+                .corresponding_source_files
+                .as_deref()
+                .unwrap_or_default(),
+        ),
         version: options.version.clone(),
         candidate_source_commit: head,
         production_sha256: candidate.fingerprint,

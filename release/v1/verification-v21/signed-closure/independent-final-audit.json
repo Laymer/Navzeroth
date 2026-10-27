@@ -1,0 +1,87 @@
+{
+  "format": "navzeroth-independent-signed-closure-audit",
+  "schema_version": 1,
+  "review_revision": "v21",
+  "recorded_on": "2026-10-23",
+  "operator": "Claude Code independent subagent (V21 review)",
+  "verified_commit": "772608f874ab0fb58db7744218f5127dd4086b28",
+  "tested_source_commit": "1f972145f5adba8f253a92d924195563f24329dd",
+  "production_sha256": "7e1bb463d706584b78cd8d3d1b1a5856469eb389be4b1eec75d1ef200ef2ada5",
+  "production_entries_at_verified_commit": 3160,
+  "verdict": "signed_closure_verified_build_ready_publication_not_allowed",
+  "cli": {
+    "profile": "debug (dev, unoptimized + debuginfo)",
+    "cargo_target_dir": "/tmp/claude-1000/-home-laymer-Devel-repos-Navzeroth/e548feb5-b2a1-45e1-a8bc-cb5b5149261c/scratchpad/target-v21",
+    "built_from": "142dc213 by the reviewer's own prepare-bundle.py run (cargo 1.99.0, rustc 1.99.0); 'cargo build --locked -p azeroth-cli' at 772608f8 reported it up to date. Production is identical at both commits.",
+    "sha256": "a75b8bc6f34d267cea88e1ebf9d800f9be13226fa253adcf88a578a143fb0477",
+    "bytes": 339901632
+  },
+  "checks": {
+    "commit_delta": "git diff 9e5e4473 772608f8 touches only release/v1/bundled-content-receipt.json (added, 1080 B, eccd6b63f20e67af6d1cc8ede1864d826bbf6ca38f3c84da00a04ac0817cf29c) and release/v1/acceptance-evidence.json (27970550 B, 83d435a2e939f1fe4b63e3e3f3d4db647f1cd11e7b0dd9fbf88b6b778ee682b9). Structural JSON diff of the evidence: only the bundled_content key is added, with manifest (17187 B, 1ce2b626...), receipt (1080 B, eccd6b63...) and review (142226 B, 7542fb89...) FileRefs. Matches the coordinator's statement.",
+    "policy": "content/bundled/signers-v1.json 610 B c4bbc54f59a8fc3fa382a31b1b8c6f5b9b2f47a7fcd420af0db3057e255bf568, unchanged (production unchanged since 1f972145).",
+    "crypto": {
+      "command": "azeroth-cli bundle-receipt-verify --receipt release/v1/bundled-content-receipt.json --policy content/bundled/signers-v1.json --expected /tmp/navzeroth-reviewer-v21-expected-identity.json",
+      "returncode": 0,
+      "result": "verified receipt echoed; payload equals the reviewer's independently built expected identity (528 B, b6336b30...); signers navzeroth-1.0.0-operator-r2 and navzeroth-1.0.0-review-evidence-r2",
+      "negative_control": "same command on a scratch copy with one operator signature hex digit changed: returncode 1, 'Bundled-content signature verification failed'",
+      "output": {
+        "bytes": 1080,
+        "file": "independent-crypto.json",
+        "sha256": "eccd6b63f20e67af6d1cc8ede1864d826bbf6ca38f3c84da00a04ac0817cf29c"
+      }
+    },
+    "assembly": {
+      "command": "azeroth-cli assemble-bundled-content --root . --output <reviewer scratch dir assembled-v21> --identity release/v1/bundled-content-build-identity.json",
+      "returncode": 0,
+      "seconds": 96.88,
+      "output": {
+        "bytes": 46,
+        "file": "independent-assembly.json",
+        "sha256": "124665f8e2760b90f9f03abc574e4e75898f24d65d594525cc3d9007754f1103"
+      }
+    },
+    "default_trust": {
+      "command": "azeroth-cli check-bundled-content --input <assembled-v21> --identity release/v1/bundled-content-build-identity.json (no --policy)",
+      "returncode": 0,
+      "result": "verified true, signed-resource-closure, 84 files, 2 packs",
+      "output": {
+        "bytes": 111,
+        "file": "independent-default-trust.json",
+        "sha256": "c1a8adfd4c5f29d4a33bade6f05e68cb295b10ee6838a4f6c0da3eeb941789b1"
+      }
+    },
+    "assembled_tree": {
+      "regular_files": 86,
+      "resources": 84,
+      "resource_bytes": 395865580,
+      "resource_mismatches": 0,
+      "missing": 0,
+      "extras": 0,
+      "symlinks_or_special": 0,
+      "manifest_json_equals_committed_manifest": true,
+      "receipt_json_equals_committed_receipt": true,
+      "method": "Python streaming SHA256 and length of every regular file under the assembled directory against the committed manifest files list"
+    },
+    "prebuild_readiness": {
+      "command": "azeroth-cli release-build-readiness --root . --version 1.0.0",
+      "returncode": 0,
+      "seconds": 84.9,
+      "phase": "prebuild",
+      "build_ready": true,
+      "publication_allowed": false,
+      "candidate_ready": true,
+      "stable_ready": false,
+      "candidate_source_commit": "772608f874ab0fb58db7744218f5127dd4086b28",
+      "verified_evidence_files": 89,
+      "verified_content_packs": 2,
+      "blockers": 9,
+      "blocker_kinds": "all 'Required acceptance observation is pending' for HOSTED-INSTALL, HOSTED-FIRST-START, HOSTED-UPGRADE-RC1, HOSTED-DOWNGRADE-REFUSAL, HOSTED-PERSISTENCE-RECOVERY, HOSTED-RESOURCES, HOSTED-OFFLINE, HOSTED-PERFORMANCE, DRAFT-INSTALLER-SMOKE; nothing else",
+      "output": {
+        "bytes": 1014320,
+        "file": "independent-prebuild.json",
+        "sha256": "eabcdef814fa08eb6477bf6121308c52cac698d272bc7ffaa4fe7a481c3099cc"
+      }
+    }
+  },
+  "limits": "No private key was read, listed or used; nothing was signed. The reviewer's worktree was detached at 772608f8 only for these reads and restored clean. Same operator controls both signing keys and this subagent; no third-party certification. No Windows installer, hosted acceptance, live-client or publication result is claimed; all nine acceptance observations remain pending."
+}

@@ -739,6 +739,14 @@
         "preparation_quests": {
           "$ref": "#/$defs/Observation_Array_of_QuestId"
         },
+        "reference_contract_version": {
+          "description": "Absent means historical 1024 quest/reward references; version2 permits4096.",
+          "enum": [
+            1,
+            2
+          ],
+          "type": "integer"
+        },
         "rewards": {
           "$ref": "#/$defs/Observation_Array_of_AcquisitionId"
         },

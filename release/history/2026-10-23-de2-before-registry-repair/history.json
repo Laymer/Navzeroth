@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "kind": "historical_de2_prebundle_preparation_before_registry_repair",
+  "archive_baseline_commit": "c39f71d0151c1b93da31fcc36d406e5048b28c13",
+  "tested_source_commit": "de2fd3e69bcce8db55c73d98fed492e2ee485261",
+  "production_sha256": "02c1012cfb6d413f93e6406c3327d2118769121f5655fa9a410956245999a713",
+  "scope": "Exact immutable bytes from de2 preparation. Checks/preview retain their original paths and prebundle evidence SHA as historical claims, not claims about later regenerated canonical files. This mapping relocates those exact originals without editing their embedded JSON. No duplicate coverage inventory is copied.",
+  "functional_execution": {
+    "operator": "coordinator root",
+    "seconds": 80.04390392999994,
+    "peak_child_rss_kib": 6205684,
+    "binary_sha256": "d1745d726af2c24457973e1153134b4df24baa5c57d0861f48fd573d1496c5b1",
+    "scope": "Cargo --no-run at exact final production confirmed the cached coordinator-built executable from ca94; application/core/storage/ingest/local-data/CLI/content/Cargo bytes were independently compared unchanged. Actual full-pack functional assertions executed against final committed source and explicit manual engineering facts. No new compiler build, Windows installer or ordinary-PC acceptance is claimed.",
+    "independent_reviewer_execution": "Independent ca94 replay is separately archived under 2026-10-23-v20-ca94-functional; this de2 execution was root only."
+  },
+  "material_preparation": {
+    "ready": true,
+    "selected_files": 82,
+    "selected_packs": 2,
+    "selected_bytes": 395722450,
+    "prebundle_evidence_sha256": "aa8884049a777e540187e767f89a5809a01e63b4ae694605998b1ba4f1c3cc7b",
+    "publication_allowed": false,
+    "nine_observations": "All pristine unverified; no bundled content, signature or acceptance result."
+  },
+  "probe_failure": {
+    "run_id": 39916898751,
+    "scope": "Actual Windows probe failed on missing HKCU uninstall root before marker/install/recovery workload. Build passed1128.766s; fixture preflight exit1 at0.516s. Separate committed failure archive retains original reports. No recovery execution or acceptance promoted."
+  },
+  "files": [
+    {
+      "path": "release/history/2026-10-23-de2-before-registry-repair/functional-scenarios.json",
+      "bytes": 15568,
+      "sha256": "fea08eda898c71a043a629eba69df66b53b9429f783d4b2bb8d381e772d53f7a",
+      "original_path": "release/v1/functional-scenarios.json",
+      "original_commit": "c39f71d0151c1b93da31fcc36d406e5048b28c13",
+      "original_git_blob": "94a172a0a0b4e2565ed22fbabc31b8d07f8e5c46"
+    },
+    {
+      "path": "release/history/2026-10-23-de2-before-registry-repair/functional-linux-measurement.json",
+      "bytes": 1188,
+      "sha256": "e871fa7dc27e05849b14e10fee6535209c61da43f4edfa391d008f2c4efb6451",
+      "original_path": "release/v1/functional-linux-measurement.json",
+      "original_commit": "c39f71d0151c1b93da31fcc36d406e5048b28c13",
+      "original_git_blob": "8a6d9613cdc27c0b72f954e29122d92d6a7d1054"
+    },
+    {
+      "path": "release/history/2026-10-23-de2-before-registry-repair/verification-v20/checks.json",
+      "bytes": 2361,
+      "sha256": "7e615ff130752040c7f9ef84d6d916b728f7a5d656a547213a0c08c68998424f",
+      "original_path": "release/v1/verification-v20/checks.json",
+      "original_commit": "c39f71d0151c1b93da31fcc36d406e5048b28c13",
+      "original_git_blob": "e27b359172eb6f5146272a082b17b814187648e3"
+    },
+    {
+      "path": "release/history/2026-10-23-de2-before-registry-repair/verification-v20/cli-build.log",
+      "bytes": 62,
+      "sha256": "79ebf1c9ff5e05f48fb0c6ea52b184a87bded725e977ad03d405ba503c7f18b6",
+      "original_path": "release/v1/verification-v20/cli-build.log",
+      "original_commit": "c39f71d0151c1b93da31fcc36d406e5048b28c13",
+      "original_git_blob": "5809448806b84b28cc8e6cf10850ee3ad66b2b6d"
+    },
+    {
+      "path": "release/history/2026-10-23-de2-before-registry-repair/verification-v20/functional-build.log",
+      "bytes": 62,
+      "sha256": "1ff8bbcb4151dc887e69b78a29bc241d5062cba4757aa5f4639926ae712a8181",
+      "original_path": "release/v1/verification-v20/functional-build.log",
+      "original_commit": "c39f71d0151c1b93da31fcc36d406e5048b28c13",
+      "original_git_blob": "b1740f44ae6f31a8b02531bb37dbd929a8993ed9"
+    },
+    {
+      "path": "release/history/2026-10-23-de2-before-registry-repair/verification-v20/functional-run.log",
+      "bytes": 843,
+      "sha256": "49b3aec32eae0851a7bb9260f7b320303d1ce3c5482c947131ec8d4d88c80dc4",
+      "original_path": "release/v1/verification-v20/functional-run.log",
+      "original_commit": "c39f71d0151c1b93da31fcc36d406e5048b28c13",
+      "original_git_blob": "a748c60b7bf7ce90871df22422acc23e0d1837b4"
+    },
+    {
+      "path": "release/history/2026-10-23-de2-before-registry-repair/verification-v20/inventory-generation.json",
+      "bytes": 444,
+      "sha256": "222d547e9e91149f05fc5be50b886b4b32250017607e888227599346507de134",
+      "original_path": "release/v1/verification-v20/inventory-generation.json",
+      "original_commit": "c39f71d0151c1b93da31fcc36d406e5048b28c13",
+      "original_git_blob": "6d0c26399026c1c4934bb37acd1637e37a26db4c"
+    },
+    {
+      "path": "release/history/2026-10-23-de2-before-registry-repair/verification-v20/prebundle-evidence.json",
+      "bytes": 27970074,
+      "sha256": "aa8884049a777e540187e767f89a5809a01e63b4ae694605998b1ba4f1c3cc7b",
+      "original_path": "release/v1/verification-v20/prebundle-evidence.json",
+      "original_commit": "c39f71d0151c1b93da31fcc36d406e5048b28c13",
+      "original_git_blob": "17c4cf0b4564aa5b7a46a3a0f750bac2d0b952a2"
+    },
+    {
+      "path": "release/history/2026-10-23-de2-before-registry-repair/verification-v20/unsigned-material-preview.json",
+      "bytes": 55727,
+      "sha256": "c0fdfd22a7d4b205b8d2aaefe4c5d0bba3cc165e3be72a0226d0536cbe3287dd",
+      "original_path": "release/v1/verification-v20/unsigned-material-preview.json",
+      "original_commit": "c39f71d0151c1b93da31fcc36d406e5048b28c13",
+      "original_git_blob": "cf20a11fde3bd59af2180371d9e8e5b12f9ab087"
+    }
+  ]
+}

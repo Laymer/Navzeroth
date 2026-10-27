@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "kind": "historical_f391_full_pack_linux_proof_before_windows_file_identity_repair",
+  "actual_source_commit": "f3917490f35bad61de2f1b46008596286943635b",
+  "historical_proof_sha256": "ed9d1ad4b64dbd084a7bfae58f8b7498431d4a93b15c9c324b2f36940b738d93",
+  "replacement_source_commit": "fcf170ad50722d8406f4662e6b2173c3c1c756a2",
+  "limitation": "Historical Linux engineering execution, no Windows or installer acceptance. Prior reviews retain their exact checked-commit scope."
+}

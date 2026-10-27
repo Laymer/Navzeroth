@@ -63,11 +63,12 @@ Validation:
   acquisitions also exercise expansion refusal before overflow. The synthetic
   maximum4096-reference single-member report measures3496777bytes; a complete
   report that exceeds4194304bytes still refuses.
-- Full app coverage suite passed; authored_content450/494=91.09%,
+- Full app coverage suite277passed/3existingignored; authored_content450/494=91.09%,
   dungeon_preparation927/999=92.79% executable lines, unchanged90% gate.
 - Desktop focused8tests passed, including first/next/last/previous pages and
   all provenance requests≤48 visible member refs. DungeonsScreen69/74=93.24%
-  executable lines. Typecheck/lint passed.
+  executable lines. Typecheck/lint, app all-target Clippy, Rust format and
+  whitespace checks passed.
 
 Test fixture mistakes encountered during development were corrected: preserve
 the existing acquisition referenced by an objective, use a positive fixture

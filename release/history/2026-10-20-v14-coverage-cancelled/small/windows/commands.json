@@ -1,0 +1,61 @@
+[
+  {
+    "name": "cargo-llvm-cov-version",
+    "executable": "cargo",
+    "arguments": [
+      "llvm-cov",
+      "--version"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "rust-version",
+    "executable": "rustc",
+    "arguments": [
+      "-vV"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "rust-sysroot",
+    "executable": "rustc",
+    "arguments": [
+      "--print",
+      "sysroot"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "llvm-tools-version",
+    "executable": "llvm-profdata.exe",
+    "arguments": [
+      "--version"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  {
+    "name": "role-audit-inputs",
+    "executable": "python",
+    "arguments": [
+      "D:\\a\\Navzeroth\\Navzeroth\\scripts\\hydrate-role-audit-inputs.py",
+      "--root",
+      "D:\\a\\Navzeroth\\Navzeroth"
+    ],
+    "expected_exit_code": 0,
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  }
+]

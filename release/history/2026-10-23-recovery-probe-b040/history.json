@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "kind": "successful_engineering_probe_not_acceptance",
+  "run_id": 39925184911,
+  "source_commit": "b040778acfdf8ba621df193dc5f914ee8b9b6bda",
+  "job_id": 120319692769,
+  "conclusion": "success",
+  "native_python_tests_passed": 12,
+  "inert_ownership_checks_passed": 6,
+  "inert_registry_checks_passed": 12,
+  "native_git_transport_tests_passed": 18,
+  "tests_skipped": 0,
+  "build_elapsed_seconds": 353.64000000000004,
+  "build_root_exit": {
+    "elapsed_ms": 353640.00000000006,
+    "exit_code": 0,
+    "owned_tree_active": true,
+    "stdout_eof": true,
+    "stderr_eof": true
+  },
+  "build_cleanup": {
+    "attempted": true,
+    "completed": true,
+    "job_inactive": true
+  },
+  "binary_sha256": "11d50b73f49fcf7baada7bd195756f9a64ffb7dc45ca92dfdfcc907e953d32da",
+  "workload_elapsed_seconds": 915.9839999999999,
+  "cleanup_passed": true,
+  "peak_memory_bytes": null,
+  "acceptance_observations_promoted": false,
+  "artifact_id": 12489614534,
+  "artifact_zip_sha256": "5b20b4f79e7cb2558467c1251f3a88e19e0d0216be0615c0ca3b597fd9530dec",
+  "artifact_member_count": 14,
+  "files": [
+    {
+      "path": "release/history/2026-10-23-recovery-probe-b040/artifact-api.stdout",
+      "bytes": 752,
+      "sha256": "8ff61535d3a83d156635708adddde5f4282d8bd3f79b6301e79293f44c9227d9"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-b040/artifact.zip",
+      "bytes": 17489,
+      "sha256": "5b20b4f79e7cb2558467c1251f3a88e19e0d0216be0615c0ca3b597fd9530dec"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-b040/artifacts-api.json",
+      "bytes": 796,
+      "sha256": "0c7cefa53ee7a24aa99f6f7fd994ba70030dd13babd159ac4f43fe74b919f2d4"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-b040/build.json",
+      "bytes": 690,
+      "sha256": "8c1287eabbfdc525ddcaed655c13c9866a1c4a2b47b067f5f53da8c6ec581927"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-b040/build.stderr",
+      "bytes": 5208,
+      "sha256": "d2ba25c3d52d6fe525e51a43dc420a3ed9ccae2a5df75b531b74ea9c05018a8f"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-b040/build.stdout",
+      "bytes": 103862,
+      "sha256": "e31e642be64092bddd3a99144285a33582b659ce71e8d631440d952a106a17c4"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-b040/cleanup.json",
+      "bytes": 888,
+      "sha256": "08765ae5aefc441924efa89b0af3f15528aca3724ef2b00967f4bc3d602a18da"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-b040/cleanup.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-b040/engineering-result.json",
+      "bytes": 8184,
+      "sha256": "9d8003137ad528a2bbf1b819919c52170e9f7d00b3d61bc7bd009b3ea77072ee"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-b040/fixture-commit-api.stdout",
+      "bytes": 2583,
+      "sha256": "6a551829a372955de6ca1e003c90b8cb5806c53a2039eec05ca04bbe3b1369a7"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-b040/install-fixture.json",
+      "bytes": 983,
+      "sha256": "8f0cf3aa6cbeed171fbd6d3762a5b7565ed9c67699061f895ab73273c290fb09"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-b040/install-fixture.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-b040/job.log",
+      "bytes": 164963,
+      "sha256": "23705bed7a61c1e529f14390b187fc501c3afd6b73ec0d06270c7f76451111fe"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-b040/jobs.json",
+      "bytes": 2727,
+      "sha256": "a1f956f45876d2f384de16d7cc6df3a205e386966ed1597b860293f4c1be95e2"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-b040/run.json",
+      "bytes": 11814,
+      "sha256": "5f73d8d8fbb8ffc1ed04421e94cd8212a8a63cb9813f6c3d2bbfd5765412d635"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-b040/rustc-identity.stdout",
+      "bytes": 194,
+      "sha256": "5477f9bad65b15c4c5b31fc050fc72feba651ea1b330bc75cf356a4d6b0fbc80"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-b040/whole-recovery.json",
+      "bytes": 725,
+      "sha256": "3f8387077549aa9f6770645fff58c3f0ad990fd4a043d7b2adf01fb3414e1f76"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-b040/whole-recovery.stderr",
+      "bytes": 4031,
+      "sha256": "e8ef930bfbb027d2d4964073aa843e6173ec7f9ee0cd2ccb5e4ddd77e93201a0"
+    },
+    {
+      "path": "release/history/2026-10-23-recovery-probe-b040/whole-recovery.stdout",
+      "bytes": 162,
+      "sha256": "293a2e3f7edfcae2d8601e24796946275454df6f435c3de210c15431f605cc58"
+    }
+  ]
+}

@@ -466,3 +466,147 @@ fn loot_tables_bind_their_own_release_identity() {
     assert!(!records["acquisition"][&key(json!(["loot_tables", "loot:creature:448"]))].is_empty());
     assert!(!records["geography"][&key(json!(["entities", "npc:448"]))].is_empty());
 }
+
+fn dungeon_refs(count: usize) -> Value {
+    let mut value = fixture();
+    for (collection, field) in [
+        ("quests", "preparation_quests"),
+        ("acquisitions", "rewards"),
+    ] {
+        let template = value["reference"]["payload"][collection][0].clone();
+        let mut ids = vec![];
+        for n in 0..count {
+            let id = format!("extra-{collection}-{n}");
+            let mut record = template.clone();
+            record["id"] = json!(id);
+            value["reference"]["payload"][collection]
+                .as_array_mut()
+                .unwrap()
+                .push(record);
+            ids.push(id);
+        }
+        value["dungeons"][0][field] = json!({"status":"known", "value":ids});
+    }
+    value
+}
+#[test]
+fn dungeon_reference_versions_preserve_canonical_legacy_and_explicit_one() {
+    let legacy = parse(&fixture()).unwrap();
+    assert!(
+        serde_json::to_value(&legacy).unwrap()["dungeons"][0]
+            .get("reference_contract_version")
+            .is_none()
+    );
+    for version in [1, 2] {
+        let mut v = fixture();
+        v["dungeons"][0]["reference_contract_version"] = json!(version);
+        let decoded = parse(&v).unwrap();
+        let encoded = serde_json::to_vec(&decoded).unwrap();
+        let roundtrip = decode(&encoded).unwrap();
+        assert_eq!(
+            roundtrip.dungeons[0].reference_contract_version,
+            Some(version)
+        );
+    }
+    for invalid in [
+        json!(null),
+        json!(0),
+        json!(3),
+        json!("2"),
+        json!(-1),
+        json!(2.5),
+        json!(true),
+    ] {
+        let mut v = fixture();
+        v["dungeons"][0]["reference_contract_version"] = invalid;
+        assert!(parse(&v).is_err());
+    }
+}
+#[test]
+fn dungeon_reference_bounds_are_scoped_and_keep_resolution_and_uniqueness() {
+    let mut v = dungeon_refs(4096);
+    assert!(parse(&v).is_err());
+    v["dungeons"][0]["reference_contract_version"] = json!(2);
+    let content = parse(&v).unwrap();
+    assert_eq!(content.dungeons[0].rewards.value().unwrap().len(), 4096);
+    assert_eq!(
+        content.dungeons[0]
+            .preparation_quests
+            .value()
+            .unwrap()
+            .len(),
+        4096
+    );
+    let extended = content.dungeons[0].clone();
+    let mut legacy = extended.clone();
+    legacy.reference_contract_version = None;
+    legacy.preparation_quests = azeroth_core::observation::Observation::unknown();
+    legacy.rewards = azeroth_core::observation::Observation::unknown();
+    for (a, b) in [(&legacy, &extended), (&extended, &legacy)] {
+        let (merged, _) = azeroth_core::dungeon_composition::enrich(a, b).unwrap();
+        let mut composed = content.clone();
+        composed.dungeons[0] = merged;
+        let decoded = decode(&serde_json::to_vec(&composed).unwrap()).unwrap();
+        assert_eq!(decoded.dungeons[0].rewards.value().unwrap().len(), 4096);
+    }
+    for field in ["preparation_quests", "rewards"] {
+        let original = v["dungeons"][0][field].clone();
+        let refs = v["dungeons"][0][field]["value"].as_array_mut().unwrap();
+        refs[1] = refs[0].clone();
+        assert!(parse(&v).is_err());
+        v["dungeons"][0][field] = original.clone();
+        v["dungeons"][0][field]["value"][0] = json!("unresolved");
+        assert!(parse(&v).is_err());
+        v["dungeons"][0][field] = original;
+    }
+    v["dungeons"][0]["travel_edges"] = json!({"status":"known", "value":vec!["demo-edge-1";1025]});
+    assert!(parse(&v).is_err());
+    let mut oversized = dungeon_refs(4097);
+    oversized["dungeons"][0]["reference_contract_version"] = json!(2);
+    assert!(parse(&oversized).is_err());
+    assert!(parse(&dungeon_refs(1024)).is_ok());
+    assert!(parse(&dungeon_refs(1025)).is_err());
+}
+
+#[test]
+fn dungeon_reference_schema_is_optional_and_nonnullable() {
+    let schema = azeroth_core::content_v2::schema::reference_content_schema();
+    let dungeon = &schema["$defs"]["Dungeon"];
+    assert_eq!(
+        dungeon["properties"]["reference_contract_version"]["type"],
+        json!("integer")
+    );
+    assert_eq!(
+        dungeon["properties"]["reference_contract_version"]["enum"],
+        json!([1, 2])
+    );
+    assert!(
+        !dungeon["required"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("reference_contract_version"))
+    );
+}
+
+#[test]
+fn borrowed_value_decode_matches_historical_consuming_deserializer_for_optional_forms() {
+    let original = fixture();
+    for explicit_empty in [false, true] {
+        let mut value = original.clone();
+        if explicit_empty {
+            for key in ["node_facts", "entities", "loot_tables"] {
+                value[key] = json!([]);
+            }
+            value["reference"]["payload"]["map_images"] = json!([]);
+            value["reference"]["payload"]["map_embeddings"] = json!([]);
+            value["reference"]["dependencies"] = json!([]);
+        }
+        let legacy: azeroth_core::content_v2::ReferenceContent =
+            serde_json::from_value(value.clone()).unwrap();
+        let current = parse(&value).unwrap();
+        assert_eq!(
+            serde_json::to_vec(&current).unwrap(),
+            serde_json::to_vec(&legacy).unwrap()
+        );
+    }
+}

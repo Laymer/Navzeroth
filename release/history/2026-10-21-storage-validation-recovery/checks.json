@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "kind": "local_engineering_checks_not_acceptance",
+  "runtime_commit": "419fcaecfcb208867e280140215c6e5e01891e27",
+  "commands": [
+    {
+      "command": "cargo test --locked --release -p azeroth-storage --lib capacity_checks -- --nocapture",
+      "passed": 3,
+      "scope": "fd722 private decode/capacity/typed-validation tests"
+    },
+    {
+      "command": "cargo test --locked --release -p azeroth-storage --lib canonical_stream_tests -- --nocapture",
+      "passed": 2,
+      "scope": "336745 fixed canonical bytes/hash, short writes and every sink-failure boundary"
+    },
+    {
+      "command": "cargo test --locked --release -p azeroth-storage --test catalog_v2 --test snapshots -- --nocapture",
+      "passed": 29,
+      "scope": "10 catalog tests include independent pre-change SQLite byte/hash/coverage golden;19 snapshot tests"
+    },
+    {
+      "command": "cargo clippy --locked -p azeroth-storage --all-targets -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo fmt --all --check; git diff --check",
+      "exit_code": 0
+    },
+    {
+      "command": "CARGO_BUILD_JOBS=2 CARGO_INCREMENTAL=0 CARGO_TARGET_DIR=/tmp/navzeroth-windows-file-identity-coverage-target CARGO_LLVM_COV_TARGET_DIR=/tmp/navzeroth-windows-file-identity-coverage-target cargo llvm-cov test --locked -p azeroth-storage -p azeroth-app --all-targets --no-report",
+      "passed": 475,
+      "failed": 0,
+      "ignored": 3,
+      "binaries": 64
+    },
+    {
+      "command": "same LLVM environment cargo llvm-cov report --lcov --output-path /tmp/navzeroth-storage-validation-union.lcov",
+      "exit_code": 0
+    }
+  ],
+  "environment_failures": [
+    "First union LLVM build ENOSPC before tests. Current LLVM incremental cache removed only after processes ended; raw log retained externally.",
+    "Second union LLVM build ENOSPC/linker SIGBUS before tests after disabling incremental compilation changed artifact hashes. Root removed only confirmed idle incremental caches; no binaries, raw profiles or evidence removed. Third same-profile attempt passed.",
+    "Initial coverage derivation import failed missing TypeScript in isolated worktree. Used byte-identical existing inventory/gate modules from root worktree with installed dependency; same exact-current-source filtering and unchanged test-range exclusions."
+  ],
+  "corrected_development_compile_failures": [
+    "Invalid graph fixture attempted mutation through Validated wrapper; replaced with typed node_facts absent-node fixture. Helper name shadowing corrected.",
+    "Generic writer initially reused a monomorphic error closure for IO and JSON errors; replaced with generic error adapter preserving message."
+  ],
+  "external_raw_lcov_sha256": "f0cc98ea39cce35b79002942cebdfbadff2aec0d9fa0d52435d341a098898193",
+  "external_test_log_sha256": "39116791962a8cc10f4de685bf9c039329a84511fe68476abe31401c4c525d62",
+  "coverage_policy": "Unchanged existing lcovLines + rustTestRanges; exact current worktree source only; per-file integer covered*100 >= executable*90, no rounding or weakening. See production-coverage.json.",
+  "limitations": [
+    "Local affected tests/coverage, not final protected-main checks.",
+    "No Windows performance, installer/owner acceptance, or publication result."
+  ]
+}

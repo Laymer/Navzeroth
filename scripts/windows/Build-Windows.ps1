@@ -59,7 +59,10 @@ param(
     [string] $OutputDirectory,
     [switch] $AllowDirty,
     [switch] $AddonOnly,
-    [switch] $AcceptanceCandidate
+    [switch] $AcceptanceCandidate,
+    [ValidateSet('public','prebuild')][string] $ReadinessPhase = 'public',
+    [string] $BundledContentDirectory,
+    [string] $BundleBuildIdentityPath
 )
 
 Set-StrictMode -Version 3.0
@@ -330,13 +333,9 @@ function Assert-ReleaseReadiness([string] $Version) {
             if ($entry.PSIsContainer) { $pending.Push($entry.FullName) }
         }
     }
-    if (-not (Test-Command 'cargo')) { throw 'Stable packaging requires the locked Rust release-readiness gate.' }
-    Push-Location $RepoRoot
-    try {
-        Invoke-Native 'cargo' @('run', '--locked', '-p', 'azeroth-cli', '--', 'release-readiness',
-            '--root', $RepoRoot, '--version', $Version)
-    }
-    finally { Pop-Location }
+    if (-not (Test-Command 'cargo')) { throw 'Stable packaging requires the locked Rust readiness gate.' }
+    Assert-StablePhaseReadiness $RepoRoot $Version $ReadinessPhase
+
 }
 
 function Build-Installer([string] $Version) {
@@ -353,25 +352,41 @@ function Build-Installer([string] $Version) {
         }
 
         $tauriArguments = @('--dir', 'apps/desktop', 'exec', 'tauri', 'build', '--ci', '--bundles', 'nsis')
-        $signConfig = $null
-        if ($env:NAVZEROTH_SIGN_COMMAND) {
-            # Tauri splits the string on ' ' and substitutes only an argument equal to %1.
-            if (@($env:NAVZEROTH_SIGN_COMMAND.Split(' ')) -notcontains '%1') {
-                throw 'NAVZEROTH_SIGN_COMMAND must contain %1 as a separate, unquoted word (the file to sign).'
+        $buildConfig = $null
+        $savedBundleIdentity = $env:NAVZEROTH_BUNDLE_IDENTITY_JSON
+        try {
+            $bundleOptions = @{}
+            if ($BundledContentDirectory) {
+                # Check again immediately before bundling; never trust an earlier
+                # successful report if resource bytes changed during other tests.
+                Assert-VerifiedBundleInputs $RepoRoot $Version $BundledContentDirectory $BundleBuildIdentityPath
+                $resources = @{}
+                $resources[([IO.Path]::GetFullPath($BundledContentDirectory).Replace('\','/').TrimEnd('/') + '/')] = 'bundled-content/'
+                $bundleOptions['resources'] = $resources
+                $env:NAVZEROTH_BUNDLE_IDENTITY_JSON = Read-BoundedBundleIdentity $BundleBuildIdentityPath
+            } else { $env:NAVZEROTH_BUNDLE_IDENTITY_JSON = $null }
+            if ($env:NAVZEROTH_SIGN_COMMAND) {
+                # Tauri splits the string on spaces and substitutes a separate %1.
+                if (@($env:NAVZEROTH_SIGN_COMMAND.Split(' ')) -notcontains '%1') {
+                    throw 'NAVZEROTH_SIGN_COMMAND must contain %1 as a separate, unquoted word (the file to sign).'
+                }
+                $bundleOptions['windows'] = @{ signCommand = $env:NAVZEROTH_SIGN_COMMAND }
+                Write-Step 'Signing enabled (NAVZEROTH_SIGN_COMMAND)'
+            } else {
+                Write-Warning 'NAVZEROTH_SIGN_COMMAND is not set: the installer is unsigned and SmartScreen will warn users.'
             }
-            $signConfig = Join-Path ([IO.Path]::GetTempPath()) "navzeroth-sign-$([Guid]::NewGuid().ToString('N')).json"
-            $json = @{ bundle = @{ windows = @{ signCommand = $env:NAVZEROTH_SIGN_COMMAND } } } | ConvertTo-Json -Depth 4
-            [IO.File]::WriteAllText($signConfig, $json, (New-Object Text.UTF8Encoding($false)))
-            $tauriArguments += @('--config', $signConfig)
-            Write-Step 'Signing enabled (NAVZEROTH_SIGN_COMMAND)'
+            if ($bundleOptions.Count -gt 0) {
+                $buildConfig = Join-Path ([IO.Path]::GetTempPath()) "navzeroth-build-$([Guid]::NewGuid().ToString('N')).json"
+                $json = @{ bundle = $bundleOptions } | ConvertTo-Json -Depth 8
+                [IO.File]::WriteAllText($buildConfig, $json, (New-Object Text.UTF8Encoding($false)))
+                $tauriArguments += @('--config', $buildConfig)
+            }
+            Write-Step 'tauri build --bundles nsis'
+            Invoke-Native 'pnpm' $tauriArguments
+        } finally {
+            $env:NAVZEROTH_BUNDLE_IDENTITY_JSON = $savedBundleIdentity
+            if ($buildConfig) { Remove-Item -LiteralPath $buildConfig -ErrorAction SilentlyContinue }
         }
-        else {
-            Write-Warning 'NAVZEROTH_SIGN_COMMAND is not set: the installer is unsigned and SmartScreen will warn users.'
-        }
-
-        Write-Step 'tauri build --bundles nsis'
-        try { Invoke-Native 'pnpm' $tauriArguments }
-        finally { if ($signConfig) { Remove-Item -LiteralPath $signConfig -ErrorAction SilentlyContinue } }
     }
     finally { Pop-Location }
 
@@ -400,7 +415,9 @@ if (-not $AddonOnly) {
     Assert-Pnpm $pins.Pnpm
 }
 # Refuse an unready stable version before removing or writing any output files.
+if ($AcceptanceCandidate -and $ReadinessPhase -ne 'public') { throw 'Acceptance candidates cannot use stable preparation phases.' }
 Assert-ReleaseReadiness $version
+if (-not $AddonOnly) { Assert-VerifiedBundleInputs $RepoRoot $version $BundledContentDirectory $BundleBuildIdentityPath }
 $materialSelection = Get-ReleaseMaterialSelection $RepoRoot $version
 Assert-ReleaseDestination $OutputDirectory
 
@@ -432,6 +449,7 @@ if (Test-Path -LiteralPath $notesPath -PathType Leaf) {
 }
 # Tool-driven builds must not add packaging inputs or modify tested production
 # bytes after the first gate. Refuse before checksums/upload can finalize them.
+if ($AcceptanceCandidate -and $ReadinessPhase -ne 'public') { throw 'Acceptance candidates cannot use stable preparation phases.' }
 Assert-ReleaseReadiness $version
 if ($AcceptanceCandidate) {
     $markerPath = Join-Path $OutputDirectory 'ACCEPTANCE_CANDIDATE.json'
@@ -440,7 +458,7 @@ if ($AcceptanceCandidate) {
 }
 $artifacts += Write-ReleaseArtifactManifest $RepoRoot $version $OutputDirectory ([bool]$AddonOnly) $materialSelection
 Write-Checksums $artifacts
-Assert-ReleaseArtifacts $RepoRoot $version $OutputDirectory ([bool]$AddonOnly) ([bool]$AcceptanceCandidate)
+Assert-ReleaseArtifacts $RepoRoot $version $OutputDirectory ([bool]$AddonOnly) ([bool]$AcceptanceCandidate) $ReadinessPhase
 Assert-CleanTree 'after the build'
 
 Write-Step ("Done in {0:N0} s. Release files are in {1}" -f ((Get-Date) - $started).TotalSeconds, $OutputDirectory)

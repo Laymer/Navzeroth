@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "source_commit": "ca94ec5d749519b7b656f34f9c9a3739b322020e",
+  "production_sha256": "eb6025b1457ede1ba2df727a8bf5b708e0059861598edbe73bbae67144d28ee0",
+  "returncode": 0,
+  "timed_out": false,
+  "seconds": 76.78983961199992,
+  "peak_child_rss_kib": 6205296,
+  "executable": "/tmp/navzeroth-stable-inventory/target/release/deps/stable_bundled_functional-590f7a3b5a7e3bb6",
+  "executable_sha256": "d1745d726af2c24457973e1153134b4df24baa5c57d0861f48fd573d1496c5b1",
+  "platform": "shared Linux/WSL2",
+  "hardware_limits": "32 logical processors; MemTotal:       32675956 kB; shared host and uncontrolled cache. No Windows or ordinary-PC performance claim.",
+  "scope": "Genuinely rebuilt exact committed integrated runtime/schema5 code; actual full-pack functional assertions with explicit manual engineering facts. This execution does not establish Windows installer acceptance.",
+  "proof_sha256": "cbbdb705a2b1e6fea3fc3506205994dbf033c940efd667cf2e667899652ff13a"
+}

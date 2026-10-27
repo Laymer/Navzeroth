@@ -169,3 +169,27 @@ fn equal_records_are_idempotent_and_other_identities_or_contexts_refuse() {
     other["map"]["context"]["build"]["build"] = json!("different-build");
     assert!(enrich(&dungeon(&original), &dungeon(&other)).is_err());
 }
+
+#[test]
+fn enrichment_propagates_structural_reference_contract_in_both_orders() {
+    let mut legacy = value();
+    legacy["preparation_quests"] = json!({"status":"unknown"});
+    legacy["rewards"] = json!({"status":"unknown"});
+    let mut extended = value();
+    extended["reference_contract_version"] = json!(2);
+    extended["preparation_quests"] = known(json!(
+        (0..4096).map(|n| format!("quest-{n}")).collect::<Vec<_>>()
+    ));
+    for (a, b) in [(&legacy, &extended), (&extended, &legacy)] {
+        let (result, conflicts) = enrich(&dungeon(a), &dungeon(b)).unwrap();
+        assert_eq!(result.reference_contract_version, Some(2));
+        assert_eq!(result.preparation_quests.value().unwrap().len(), 4096);
+        assert!(conflicts.is_empty());
+    }
+    let mut invalid = extended.clone();
+    invalid["reference_contract_version"] = json!(3);
+    assert!(enrich(&dungeon(&invalid), &dungeon(&legacy)).is_err());
+    assert!(enrich(&dungeon(&legacy), &dungeon(&invalid)).is_err());
+    let (legacy_result, _) = enrich(&dungeon(&legacy), &dungeon(&legacy)).unwrap();
+    assert_eq!(legacy_result.reference_contract_version, None);
+}

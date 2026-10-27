@@ -2,10 +2,14 @@
 //! A passing report checks declarations; the I/O boundary must also verify file
 //! hashes, pack contents and the tested Git revision before publication.
 use crate::types::{AssetPath, Sha256Hex};
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 
 pub const MAX_RELEASE_BYTES: usize = 16 * 1024 * 1024;
+/// Measured whole-world canonical inventory/evidence is approximately28MiB each.
+/// Historical schemas retain16MiB; only explicit stable schema4 uses64MiB.
+pub const MAX_STABLE_RELEASE_BYTES: usize = 64 * 1024 * 1024;
 pub const MAX_UNITS: usize = 4096;
 /// Required and shipped record identities. ADR 0007 §7: a whole-world pack
 /// (expected at 350,000 to 800,000 identities) plus the authored pack fits
@@ -17,8 +21,23 @@ pub const MAX_RECORDS: usize = 2_000_000;
 pub const SCHEMA_WORLD_DATA: u32 = 3;
 /// ADR 0008: hosted Windows acceptance and exact-installer owner smoke.
 pub const SCHEMA_STABLE: u32 = 4;
+/// Automated independently reviewed downloaded-draft acceptance; historical 4 is unchanged.
+pub const SCHEMA_AUTOMATED_DRAFT: u32 = 5;
+pub fn is_stable_schema(version: u32) -> bool {
+    matches!(version, SCHEMA_STABLE | SCHEMA_AUTOMATED_DRAFT)
+}
+pub fn final_installer_check(version: u32) -> &'static str {
+    if version == SCHEMA_AUTOMATED_DRAFT {
+        DRAFT_INSTALLER_SMOKE
+    } else {
+        OWNER_INSTALLER_SMOKE
+    }
+}
 pub fn is_world_schema(version: u32) -> bool {
-    matches!(version, SCHEMA_WORLD_DATA | SCHEMA_STABLE)
+    matches!(
+        version,
+        SCHEMA_WORLD_DATA | SCHEMA_STABLE | SCHEMA_AUTOMATED_DRAFT
+    )
 }
 pub const HOSTED_WINDOWS_CHECKS: [&str; 8] = [
     "HOSTED-INSTALL",
@@ -30,6 +49,7 @@ pub const HOSTED_WINDOWS_CHECKS: [&str; 8] = [
     "HOSTED-OFFLINE",
     "HOSTED-PERFORMANCE",
 ];
+pub const DRAFT_INSTALLER_SMOKE: &str = "DRAFT-INSTALLER-SMOKE";
 pub const OWNER_INSTALLER_SMOKE: &str = "OWNER-INSTALLER-SMOKE";
 pub const DOMAINS: [&str; 9] = [
     "quests",
@@ -72,7 +92,7 @@ pub const WINDOWS_CHECKS: [&str; 10] = [
     "WIN-PERFORMANCE",
 ];
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Target {
     pub edition: String,
@@ -165,6 +185,10 @@ pub struct ReleasePolicy<'a> {
     pub origins: Option<&'a crate::origin_policy::OriginPolicy>,
     /// SHA-256 of the exact policy bytes, which evidence must bind.
     pub origin_policy_sha256: Option<&'a str>,
+    /// Schema4 only, supplied after I/O validates all pack/source occurrences,
+    /// exact admission and authored-only or wholly inferred content constraints.
+    /// This does not alter any source observation's target_validation status.
+    pub verified_non_observational_sources: Option<&'a BTreeSet<String>>,
 }
 /// The target a manifest must declare under the supplied release inputs.
 pub fn expected_target_with(schema_version: u32, policy: &ReleasePolicy<'_>) -> Option<Target> {
@@ -177,11 +201,18 @@ pub fn expected_target_with(schema_version: u32, policy: &ReleasePolicy<'_>) -> 
 /// Mandatory acceptance rows and their methods for each versioned contract.
 /// Schema 3 removes live checks; schema 4 replaces Windows rows under ADR 0008.
 pub fn required_checks(schema_version: u32) -> Vec<(&'static str, Method)> {
-    if schema_version == SCHEMA_STABLE {
+    if is_stable_schema(schema_version) {
         return HOSTED_WINDOWS_CHECKS
             .into_iter()
             .map(|id| (id, Method::HostedWindows))
-            .chain([(OWNER_INSTALLER_SMOKE, Method::InteractiveWindows)])
+            .chain([(
+                final_installer_check(schema_version),
+                if schema_version == SCHEMA_AUTOMATED_DRAFT {
+                    Method::AutomatedDraftWindows
+                } else {
+                    Method::InteractiveWindows
+                },
+            )])
             .collect();
     }
     let windows = WINDOWS_CHECKS
@@ -247,35 +278,36 @@ pub fn origin_accepted_sources(
         .map(|s| s.id.clone())
         .collect()
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct FileRef {
     pub path: AssetPath,
     pub bytes: u64,
     pub sha256: Sha256Hex,
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum Completeness {
     Unknown,
     Complete,
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum Status {
     Unverified,
     Fail,
     Pass,
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum Method {
     LiveGame,
     InteractiveWindows,
     HostedWindows,
+    AutomatedDraftWindows,
     Automated,
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum Permission {
     Unknown,
@@ -283,7 +315,7 @@ pub enum Permission {
     Prohibited,
     Permitted,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Unit {
     pub id: String,
@@ -293,14 +325,14 @@ pub struct Unit {
 }
 /// Schema 2: content deliberately outside the declared slice. This is neither
 /// `unknown` (unassessed) nor `unsupported`; release notes list every boundary.
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Boundary {
     pub id: String,
     pub scope: String,
     pub reason: String,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct DomainInventory {
     pub domain: String,
@@ -311,7 +343,7 @@ pub struct DomainInventory {
     pub out_of_scope: Vec<Boundary>,
 }
 /// Schema 2: the declared release slice (ADR 0006 section 2).
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Slice {
     pub id: String,
@@ -324,13 +356,13 @@ pub struct Slice {
     pub classes: Option<Vec<String>>,
     pub party_sizes: Vec<u8>,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct SourceRequirement {
     pub id: String,
     pub revision: String,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Inventory {
     pub schema_version: u32,
@@ -342,7 +374,7 @@ pub struct Inventory {
     pub domains: Vec<DomainInventory>,
     pub sources: Vec<SourceRequirement>,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Acceptance {
     /// Schema 4 only: exact installer exercised by this observation.
@@ -356,7 +388,7 @@ pub struct Acceptance {
     pub environment: Option<String>,
     pub artifacts: Vec<FileRef>,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct UnitCoverage {
     pub unit_id: String,
@@ -367,7 +399,7 @@ pub struct UnitCoverage {
     pub unsupported_corrections: u32,
     pub validation_evidence: Vec<FileRef>,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct SourceEvidence {
     pub id: String,
@@ -382,13 +414,15 @@ pub struct SourceEvidence {
     pub target_validation: Status,
     pub target_evidence: Vec<FileRef>,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct PackRef {
     pub manifest: FileRef,
     pub dataset_revisions: Vec<String>,
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[derive(
+    Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, JsonSchema,
+)]
 #[serde(rename_all = "snake_case")]
 pub enum OptionalFeature {
     OfficialApi,
@@ -396,15 +430,46 @@ pub enum OptionalFeature {
     CombatLogAnalysis,
     HostedDistribution,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Deferral {
     pub feature: OptionalFeature,
     pub reason: String,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+/// Schema4 public bundle receipts bind exact source resources to independent review.
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct BundledContentEvidence {
+    pub manifest: FileRef,
+    pub receipt: FileRef,
+    pub review: FileRef,
+}
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct DraftInstallerSmoke {
+    pub raw_result: FileRef,
+    pub provenance: FileRef,
+    pub independent_review: FileRef,
+}
+impl DraftInstallerSmoke {
+    pub fn files(&self) -> [&FileRef; 3] {
+        [&self.raw_result, &self.provenance, &self.independent_review]
+    }
+}
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Evidence {
+    /// Schema 5 only; external downloaded-draft results, never signed bundled resources.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub draft_installer_smoke: Option<DraftInstallerSmoke>,
+    /// Schema 4 only: reviewed public corresponding-source resources.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub corresponding_source_files: Option<Vec<FileRef>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bundled_content: Option<BundledContentEvidence>,
+    /// Schema4 raw normalization conflict reports.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub normalization_conflict_files: Option<Vec<FileRef>>,
     /// Schema 4 only: independently verified draft installer identity.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub candidate_installer_sha256: Option<Sha256Hex>,
@@ -431,7 +496,7 @@ pub struct Evidence {
 }
 /// One live acceptance run inside the slice: a class in a level band, in a
 /// zone, at a party size. Coverage is derived in code from the slice.
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct MatrixRow {
     pub id: String,
@@ -501,16 +566,16 @@ pub enum BuildPhase {
 }
 impl BuildPhase {
     pub fn ready(self, report: &Readiness) -> bool {
-        report.report_version == SCHEMA_STABLE
+        is_stable_schema(report.report_version)
             && report.stable
             && report.candidate_ready
             && report.pending.iter().all(|requirement| match requirement {
                 PendingRequirement::InitialTestedBinding => false,
                 PendingRequirement::Observation { check_id } => match self {
-                    Self::Prebuild => required_checks(SCHEMA_STABLE)
+                    Self::Prebuild => required_checks(report.report_version)
                         .iter()
                         .any(|(id, _)| *id == check_id),
-                    Self::Draft => check_id == OWNER_INSTALLER_SMOKE,
+                    Self::Draft => check_id == final_installer_check(report.report_version),
                 },
             })
     }
@@ -580,7 +645,8 @@ pub fn decode_inventory(bytes: &[u8]) -> Result<Inventory, &'static str> {
         1 => {
             inventory.slice.is_none() && inventory.domains.iter().all(|d| d.out_of_scope.is_empty())
         }
-        2 | SCHEMA_WORLD_DATA | SCHEMA_STABLE => inventory.slice.is_some(),
+        2 | SCHEMA_WORLD_DATA => inventory.slice.is_some(),
+        SCHEMA_STABLE | SCHEMA_AUTOMATED_DRAFT => true,
         _ => false,
     };
     if !shape_matches {
@@ -590,29 +656,112 @@ pub fn decode_inventory(bytes: &[u8]) -> Result<Inventory, &'static str> {
 }
 pub fn decode_evidence(bytes: &[u8]) -> Result<Evidence, &'static str> {
     let evidence: Evidence = decode(bytes)?;
+    let object: serde_json::Value =
+        serde_json::from_slice(bytes).map_err(|_| "Invalid release manifest")?;
+    if object.get("draft_installer_smoke").is_some()
+        && (evidence.schema_version != SCHEMA_AUTOMATED_DRAFT
+            || evidence.draft_installer_smoke.is_none())
+    {
+        return Err("Downloaded-draft evidence requires a nonnull schema5 collection");
+    }
+    if let Some(smoke) = &evidence.draft_installer_smoke {
+        let refs = smoke.files();
+        if !files_present(&refs.into_iter().cloned().collect::<Vec<_>>())
+            || refs.iter().any(|r| r.bytes > 1024 * 1024)
+        {
+            return Err("Invalid downloaded-draft evidence collection");
+        }
+    }
+    if !is_stable_schema(evidence.schema_version)
+        && serde_json::from_slice::<serde_json::Value>(bytes)
+            .map_err(|_| "Invalid release manifest")?
+            .as_object()
+            .is_some_and(|o| {
+                o.contains_key("corresponding_source_files")
+                    || o.contains_key("bundled_content")
+                    || o.contains_key("normalization_conflict_files")
+            })
+    {
+        return Err("Corresponding-source fields require evidence schema 4");
+    }
     let world = is_world_schema(evidence.schema_version);
     if !matches!(
         evidence.schema_version,
-        1 | 2 | SCHEMA_WORLD_DATA | SCHEMA_STABLE
+        1 | 2 | SCHEMA_WORLD_DATA | SCHEMA_STABLE | SCHEMA_AUTOMATED_DRAFT
     ) || (matches!(
         evidence.schema_version,
-        1 | SCHEMA_WORLD_DATA | SCHEMA_STABLE
+        1 | SCHEMA_WORLD_DATA | SCHEMA_STABLE | SCHEMA_AUTOMATED_DRAFT
     ) && !evidence.matrix.is_empty())
         || world != evidence.origin_policy.is_some()
-        || (evidence.schema_version != SCHEMA_STABLE
-            && (evidence.candidate_installer_sha256.is_some()
-                || evidence
-                    .checks
-                    .iter()
-                    .any(|c| c.installer_sha256.is_some() || c.method == Method::HostedWindows)))
+        || (!is_stable_schema(evidence.schema_version)
+            && (evidence.corresponding_source_files.is_some()
+                || evidence.normalization_conflict_files.is_some()
+                || evidence.candidate_installer_sha256.is_some()
+                || evidence.checks.iter().any(|c| {
+                    c.installer_sha256.is_some()
+                        || matches!(
+                            c.method,
+                            Method::HostedWindows | Method::AutomatedDraftWindows
+                        )
+                })))
     {
         return Err("Unsupported evidence version");
     }
+    if evidence.schema_version != SCHEMA_AUTOMATED_DRAFT
+        && evidence
+            .checks
+            .iter()
+            .any(|c| c.method == Method::AutomatedDraftWindows)
+    {
+        return Err("Automated draft method requires schema5");
+    }
+    validate_corresponding_sources(&evidence)?;
+    if let Some(bundle) = &evidence.bundled_content {
+        let refs = [&bundle.manifest, &bundle.receipt, &bundle.review];
+        if !is_stable_schema(evidence.schema_version)
+            || !files_present(&refs.into_iter().cloned().collect::<Vec<_>>())
+            || !bundle.manifest.path.as_str().starts_with("release/")
+            || !bundle.receipt.path.as_str().starts_with("release/")
+            || bundle.manifest.bytes > 4 * 1024 * 1024
+            || bundle.receipt.bytes > 64 * 1024
+            || bundle.review.bytes > MAX_RELEASE_BYTES as u64
+        {
+            return Err("Invalid bundled-content evidence collection");
+        }
+    }
     Ok(evidence)
 }
+/// Explicit schema-4 collection; historical schemas cannot acquire this field.
+pub fn validate_corresponding_sources(evidence: &Evidence) -> Result<(), &'static str> {
+    if let Some(files) = &evidence.normalization_conflict_files
+        && (!is_stable_schema(evidence.schema_version)
+            || files.is_empty()
+            || files.len() > MAX_UNITS
+            || !files_present(files))
+    {
+        return Err("Invalid normalization-conflict file collection");
+    }
+    if let Some(files) = &evidence.corresponding_source_files
+        && (!is_stable_schema(evidence.schema_version)
+            || files.is_empty()
+            || files.len() > MAX_UNITS
+            || !files_present(files))
+    {
+        return Err("Invalid corresponding-source file collection");
+    }
+    Ok(())
+}
 fn decode<T: serde::de::DeserializeOwned>(bytes: &[u8]) -> Result<T, &'static str> {
-    if bytes.len() > MAX_RELEASE_BYTES {
+    if bytes.len() > MAX_STABLE_RELEASE_BYTES {
         return Err("Release manifest exceeds size limit");
+    }
+    #[derive(Deserialize)]
+    struct Version {
+        schema_version: u32,
+    }
+    let version: Version = serde_json::from_slice(bytes).map_err(|_| "Invalid release manifest")?;
+    if !is_stable_schema(version.schema_version) && bytes.len() > MAX_RELEASE_BYTES {
+        return Err("Release manifest exceeds historical size limit");
     }
     // Typed structs reject duplicate and unknown fields. Arrays are checked below.
     let value = serde_json::from_slice(bytes).map_err(|_| "Invalid release manifest")?;
@@ -777,20 +926,58 @@ pub fn assess_with(
     bindings: &Bindings<'_>,
     policy: &ReleasePolicy<'_>,
 ) -> Result<Readiness, &'static str> {
+    assess_inputs(version, inventory, evidence, bindings, policy, true)
+}
+/// Unsigned bundle preparation only: all ordinary content/source/accounting
+/// requirements remain; absent bundle artifacts cannot authorize publication.
+pub fn assess_unsigned_bundle_preparation(
+    version: &str,
+    inventory: &Inventory,
+    evidence: &Evidence,
+    bindings: &Bindings<'_>,
+    policy: &ReleasePolicy<'_>,
+) -> Result<Readiness, &'static str> {
+    if !is_stable_schema(inventory.schema_version) {
+        return Err("Unsigned bundle preparation requires schema4");
+    }
+    let mut report = assess_inputs(version, inventory, Some(evidence), bindings, policy, false)?;
+    report.publication_allowed = false;
+    report.stable_ready = false;
+    Ok(report)
+}
+fn assess_inputs(
+    version: &str,
+    inventory: &Inventory,
+    evidence: Option<&Evidence>,
+    bindings: &Bindings<'_>,
+    policy: &ReleasePolicy<'_>,
+    require_bundle: bool,
+) -> Result<Readiness, &'static str> {
     let stable = is_stable(version)?;
+    if let Some(evidence) = evidence {
+        validate_corresponding_sources(evidence)?;
+    }
+    if evidence.is_some_and(|e| {
+        e.draft_installer_smoke.is_some() && e.schema_version != SCHEMA_AUTOMATED_DRAFT
+    }) {
+        return Err("Downloaded-draft evidence requires schema5");
+    }
     check_limits(inventory, evidence)?;
     if !matches!(
         inventory.schema_version,
-        1 | 2 | SCHEMA_WORLD_DATA | SCHEMA_STABLE
-    ) || evidence
-        .is_some_and(|e| !matches!(e.schema_version, 1 | 2 | SCHEMA_WORLD_DATA | SCHEMA_STABLE))
-    {
+        1 | 2 | SCHEMA_WORLD_DATA | SCHEMA_STABLE | SCHEMA_AUTOMATED_DRAFT
+    ) || evidence.is_some_and(|e| {
+        !matches!(
+            e.schema_version,
+            1 | 2 | SCHEMA_WORLD_DATA | SCHEMA_STABLE | SCHEMA_AUTOMATED_DRAFT
+        )
+    }) {
         return Err("Unsupported release manifest version");
     }
     let world = is_world_schema(inventory.schema_version);
     let mut report = Readiness {
-        report_version: if inventory.schema_version == SCHEMA_STABLE {
-            4
+        report_version: if is_stable_schema(inventory.schema_version) {
+            inventory.schema_version
         } else if world {
             3
         } else {
@@ -824,7 +1011,7 @@ pub fn assess_with(
     }
     if matches!(
         inventory.schema_version,
-        2 | SCHEMA_WORLD_DATA | SCHEMA_STABLE
+        2 | SCHEMA_WORLD_DATA | SCHEMA_STABLE | SCHEMA_AUTOMATED_DRAFT
     ) {
         if !world && frozen_release_target().is_none() {
             report.block(
@@ -832,6 +1019,7 @@ pub fn assess_with(
             );
         }
         match &inventory.slice {
+            None if is_stable_schema(inventory.schema_version) => {}
             Some(slice) if slice_valid(slice) => {
                 if slice.classes.is_none() {
                     report.block("Release slice classes are unknown");
@@ -844,7 +1032,7 @@ pub fn assess_with(
     // merge "not declared" into "nothing outside" (ADR 0006 section 2).
     if matches!(
         inventory.schema_version,
-        2 | SCHEMA_WORLD_DATA | SCHEMA_STABLE
+        2 | SCHEMA_WORLD_DATA | SCHEMA_STABLE | SCHEMA_AUTOMATED_DRAFT
     ) {
         for domain in inventory
             .domains
@@ -929,6 +1117,14 @@ pub fn assess_with(
         report.block("Acceptance evidence is missing");
         return Ok(report);
     };
+    if require_bundle
+        && is_stable_schema(inventory.schema_version)
+        && evidence.bundled_content.is_none()
+    {
+        report.block(
+            "Stable content requires a signed bundle manifest and independent review binding",
+        );
+    }
     if !inventory.sources.is_empty() && evidence.admission_registry.is_none() {
         report.block("Accepted sources require a pinned admission registry");
     }
@@ -996,7 +1192,7 @@ pub fn assess_with(
             continue;
         }
         if initial_binding
-            || (inventory.schema_version == SCHEMA_STABLE
+            || (is_stable_schema(inventory.schema_version)
                 && (evidence.candidate_installer_sha256.is_none()
                     || check.installer_sha256 != evidence.candidate_installer_sha256))
             || check.status != Status::Pass
@@ -1010,6 +1206,32 @@ pub fn assess_with(
                 "Required acceptance has not passed with recorded environment evidence: {}",
                 check.id
             ));
+        }
+    }
+    if inventory.schema_version == SCHEMA_AUTOMATED_DRAFT {
+        let final_row = evidence
+            .checks
+            .iter()
+            .find(|c| c.id == DRAFT_INSTALLER_SMOKE);
+        match (&evidence.draft_installer_smoke, final_row) {
+            (Some(smoke), Some(row))
+                if files_present(&smoke.files().into_iter().cloned().collect::<Vec<_>>())
+                    && smoke.files().iter().all(|f| f.bytes <= 1024 * 1024)
+                    && row.status == Status::Pass
+                    && smoke.files().iter().all(|f| {
+                        row.artifacts
+                            .iter()
+                            .any(|a| a.path == f.path && a.sha256 == f.sha256 && a.bytes == f.bytes)
+                    }) => {}
+            (None, Some(row))
+                if row.status == Status::Unverified
+                    && row.operator.is_none()
+                    && row.recorded_at.is_none()
+                    && row.environment.is_none()
+                    && row.artifacts.is_empty()
+                    && row.installer_sha256.is_none() => {}
+            _ => report
+                .block("Downloaded-draft structured evidence is absent, partial or mismatched"),
         }
     }
     // Schema 3 has no live slice matrix: 1.0.0 ships without live-client
@@ -1067,7 +1289,11 @@ pub fn assess_with(
         if sources_by_id.get(required.id.as_str()).is_none_or(|s| {
             let target_ok = (s.target_validation == Status::Pass
                 && files_present(&s.target_evidence))
-                || origin_accepted.contains(&s.id);
+                || origin_accepted.contains(&s.id)
+                || (is_stable_schema(inventory.schema_version)
+                    && policy
+                        .verified_non_observational_sources
+                        .is_some_and(|ids| ids.contains(&s.id)));
             s.revision != required.revision
                 || s.redistribution != Permission::Permitted
                 || !bounded_text(&s.origin_edition)
@@ -1220,9 +1446,36 @@ pub fn evidence_files<'a>(inventory: &'a Inventory, evidence: &'a Evidence) -> V
                 .chain(&s.permission_evidence)
                 .chain(&s.target_evidence)
         }))
+        .chain(
+            evidence
+                .draft_installer_smoke
+                .iter()
+                .flat_map(|s| s.files()),
+        )
         .chain(evidence.admission_registry.iter())
         .chain(evidence.origin_policy.iter())
+        .chain(evidence.corresponding_source_files.iter().flatten())
+        .chain(evidence.normalization_conflict_files.iter().flatten())
         .chain(evidence.packs.iter().map(|p| &p.manifest))
         .chain(evidence.matrix.iter().flat_map(|r| &r.artifacts))
         .collect()
+}
+
+/// Generated structural schemas. Runtime assessment additionally enforces exact
+/// required rows, source/accounting identities and versioned phase semantics.
+pub fn release_contract_schema_text(evidence: bool) -> String {
+    let mut schema = if evidence {
+        serde_json::to_value(schemars::schema_for!(Evidence)).expect("schema is JSON")
+    } else {
+        serde_json::to_value(schemars::schema_for!(Inventory)).expect("schema is JSON")
+    };
+    schema["properties"]["schema_version"]["enum"] = serde_json::json!([1, 2, 3, 4, 5]);
+    if evidence {
+        schema["allOf"] = serde_json::json!([{
+            "if":{"properties":{"schema_version":{"const":5}}},
+            "then":{"properties":{"draft_installer_smoke":{"$ref":"#/$defs/DraftInstallerSmoke"}}},
+            "else":{"not":{"required":["draft_installer_smoke"]}}
+        }]);
+    }
+    serde_json::to_string_pretty(&schema).expect("schema is JSON") + "\n"
 }

@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "candidate_commit": "728a9198cb2d72212d39cf06771f807a412967f3",
+  "actual_pr_merge_checkout": "fdf83a2961eb66ac04021e6de6721cab6a188dba",
+  "production_sha256": "b378b34159da86084cb20e4fc11741cd3f6d167656c4532fff50da7727f73266",
+  "package_run_id": 39454144270,
+  "package_conclusion": "failure",
+  "stable_hosted_suite": "skipped_all_eight_cases",
+  "owner_smoke": "unverified",
+  "publication_allowed": false,
+  "kind": "actual_native_ui_selection_timeout_before_stable_acceptance",
+  "installer_sha256": "90866757d5d13154f8e1ad961fe395057dab679f2b1705d292dfe1cd0fc54d11",
+  "installer_bytes": 26117754,
+  "declared_signature": "unsigned",
+  "actual_native_smoke": "success_32_passed",
+  "actual_native_upgrade": "failure_6_passed_1_failed",
+  "baseline_tag": "v0.9.2",
+  "files": {
+    "native-smoke.json": {
+      "path": "release/history/2026-10-20-v12-native-selection-failure/native-smoke.json",
+      "bytes": 27443,
+      "sha256": "755f1552eee81cce8645e0e5b8b4bc256bd1dca19683078cae3326bb04e493e5"
+    },
+    "baseline-populate.json": {
+      "path": "release/history/2026-10-20-v12-native-selection-failure/baseline-populate.json",
+      "bytes": 4482,
+      "sha256": "8f422655a7b0483ec36f69c3e97c30a13eb18c6d6fa6f4d458535c116452f094"
+    },
+    "candidate-verify.json": {
+      "path": "release/history/2026-10-20-v12-native-selection-failure/candidate-verify.json",
+      "bytes": 17651,
+      "sha256": "ccd7a3ad3b3422108cadf279d1945a172d6145d641fdd5f9d1f5d96980b6d6dc"
+    },
+    "db-before.json": {
+      "path": "release/history/2026-10-20-v12-native-selection-failure/db-before.json",
+      "bytes": 1859,
+      "sha256": "bf2582b413bb8712ccac393a05eede4cd2fcacf3a852f6abf8effb4481534a34"
+    },
+    "prepared-release-verification.json": {
+      "path": "release/history/2026-10-20-v12-native-selection-failure/prepared-release-verification.json",
+      "bytes": 133649,
+      "sha256": "669aca0895b040fe1022819fe9a2cba67b2afd621d69fc2f41755a4423f0797a"
+    }
+  },
+  "diagnosis": "Strict profile/active IPC completed with both presence diagnostics true; timeout occurred during UI wait. Unconditional same-value selectOption fires ContentScreen clear without effect refetch. Actual component/browser old-control and repair verification required; no data-loss or policy-exception claim."
+}

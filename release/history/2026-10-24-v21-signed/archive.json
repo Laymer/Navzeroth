@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "source_commit": "2d33c2fd935c6b91754170862eda36b2d64561cc",
+  "scope": "Exact V21 signed and functional bytes, superseded for V22; no acceptance promotion.",
+  "files": [
+    {
+      "path": "release/v1/bundled-content-manifest.json",
+      "bytes": 17187,
+      "sha256": "1ce2b62650bea680e6ff019475b544ce5be8e980c9be099883f8b2be24b0bfa4"
+    },
+    {
+      "path": "release/v1/bundled-content-build-identity.json",
+      "bytes": 528,
+      "sha256": "b6336b301aa26ed7cb727c8fce43c0dbee63ac2068b68e231e1388bae879fc22"
+    },
+    {
+      "path": "release/v1/bundled-content-receipt.json",
+      "bytes": 1080,
+      "sha256": "eccd6b63f20e67af6d1cc8ede1864d826bbf6ca38f3c84da00a04ac0817cf29c"
+    },
+    {
+      "path": "release/v1/functional-scenarios.json",
+      "bytes": 15568,
+      "sha256": "ad963dcb68c54392d1bca98e7f43e9965d25db26968b4ce1d22ff2f179fb9cda"
+    },
+    {
+      "path": "release/v1/functional-linux-measurement.json",
+      "bytes": 1328,
+      "sha256": "f9667a67ef63144f3fdff7f4ff10c464d0c6d9d03c1a63ad9d313148a090f769"
+    },
+    {
+      "path": "release/v1/acceptance-evidence.json",
+      "bytes": 27970550,
+      "sha256": "83d435a2e939f1fe4b63e3e3f3d4db647f1cd11e7b0dd9fbf88b6b778ee682b9"
+    },
+    {
+      "path": "release/v1/public-content-review-v21.json",
+      "bytes": 142226,
+      "sha256": "7542fb89ed8954c648f5df48d548cf99b25a8dbae6804a78421db3f111919257"
+    }
+  ]
+}

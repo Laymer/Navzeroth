@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "kind": "preserved_prior_functional_evidence",
+  "runtime_source": "d636c539ef90fed43d237d04bbacc1ab74071ad7",
+  "archived_by": "root",
+  "scope": "Exact existing V15 canonical functional proof and Linux measurement before storage repair integration; no new execution or acceptance claim.",
+  "files": [
+    {
+      "path": "release/history/2026-10-21-pre-repair-functional-v15/functional-scenarios.json",
+      "bytes": 15568,
+      "sha256": "d9c409844872f8369050cd22054aa9a99c498ce6c015f0ab4ca1e0e97bb72070"
+    },
+    {
+      "path": "release/history/2026-10-21-pre-repair-functional-v15/functional-linux-measurement.json",
+      "bytes": 863,
+      "sha256": "36361d5771b012562ff0feb95c5e2034d7323486b198d58326fae012c9750266"
+    }
+  ]
+}

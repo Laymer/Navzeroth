@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "kind": "synthetic_package_powershell_helper_sequence",
+  "tested_source_commit": "9f2d57bfd88df71278f656ff6c436e18dd612b74",
+  "shell": "Windows PowerShell5.1.26100.9711",
+  "wrapper": "powershell.exe -Command dot-source wrapper; call test then propagate LASTEXITCODE",
+  "limitations": "Git operations forwarded to WSL only for synthetic Git fixtures; actual native PowerShell/file/ZIP/process checks. No actual installer, hosted acceptance or owner smoke. PowerShell7 remains unverified locally.",
+  "results": [
+    {
+      "script": "Test-AddonInstaller.ps1",
+      "exit_code": 0,
+      "log": "/tmp/navzeroth-legacy-full-helper-sequence/Test-AddonInstaller.ps1.log",
+      "log_sha256": "8025ee390630f6d26d1954cad110d68f9468dbb5309294c3d1cfe0b6f04d880d",
+      "summary": "All 30 checks passed."
+    },
+    {
+      "script": "Test-ReleaseGate.ps1",
+      "exit_code": 0,
+      "log": "/tmp/navzeroth-legacy-full-helper-sequence/Test-ReleaseGate.ps1.log",
+      "log_sha256": "06d9d03699e2a07233ffaf85873b332689bd1d1c78a2b1a7e34a44ee185f4263",
+      "summary": "All 29 release packaging checks passed."
+    },
+    {
+      "script": "Test-ReleaseMaterials.ps1",
+      "exit_code": 0,
+      "log": "/tmp/navzeroth-legacy-full-helper-sequence/Test-ReleaseMaterials.ps1.log",
+      "log_sha256": "97dce466ea35a7064abc29737d9a1b98bfc38051e67e6d7ef977974f95338704",
+      "summary": "All 19 material delivery checks passed."
+    },
+    {
+      "script": "Test-ReleaseContractBounds.ps1",
+      "exit_code": 0,
+      "log": "/tmp/navzeroth-legacy-full-helper-sequence/Test-ReleaseContractBounds.ps1.log",
+      "log_sha256": "7c339bdb6c7671be08ae4b5db11d071c83cfe118c178f8da0cfbd05784726526",
+      "summary": "23 checks passed; PowerShell 5.1.26100.9711"
+    },
+    {
+      "script": "Test-AcceptanceCandidate.ps1",
+      "exit_code": 0,
+      "log": "/tmp/navzeroth-legacy-full-helper-sequence/Test-AcceptanceCandidate.ps1.log",
+      "log_sha256": "1cd3b0e32d096e647814ee49f4bac8ac9ac03c6f3766590031a98359c7d73098",
+      "summary": "All 14 synthetic candidate transport checks passed. Real content readiness/live acceptance remains unverified."
+    },
+    {
+      "script": "Test-StablePreparation.ps1",
+      "exit_code": 0,
+      "log": "/tmp/navzeroth-legacy-full-helper-sequence/Test-StablePreparation.ps1.log",
+      "log_sha256": "6f01fafcc19112b4f0eee52f19f27ea31f57734919380fa23190267b6b9a8ec8",
+      "summary": "Passed 42 stable preparation/hosted evidence checks."
+    },
+    {
+      "script": "Test-StableAcceptanceHelpers.ps1",
+      "exit_code": 0,
+      "log": "/tmp/navzeroth-legacy-full-helper-sequence/Test-StableAcceptanceHelpers.ps1.log",
+      "log_sha256": "253656be52811441675491cd6ef00b656ec0901e1ea9e1fda9e65dfde95b5943",
+      "summary": "Passed 10 hosted producer helper checks."
+    },
+    {
+      "script": "Test-StableWorkflowGate.ps1",
+      "exit_code": 0,
+      "log": "/tmp/navzeroth-legacy-full-helper-sequence/Test-StableWorkflowGate.ps1.log",
+      "log_sha256": "1f0ff04518b4fdbf96b43bc0789816169117f27be2c92f5651e712d67205dbdb",
+      "summary": "PASS 12 actual workflow gate checks (synthetic verifier only)."
+    },
+    {
+      "script": "Test-AcceptanceKit.ps1",
+      "exit_code": 0,
+      "log": "/tmp/navzeroth-legacy-full-helper-sequence/Test-AcceptanceKit.ps1.log",
+      "log_sha256": "f9670302646ca969c6293eb9b2ec191a1a64a337ec92db15ad91b1c5f28b6a76",
+      "summary": "All 21 synthetic acceptance-kit checks passed. Native/live acceptance was not run."
+    },
+    {
+      "script": "Test-NativeSmokeHelpers.ps1",
+      "exit_code": 0,
+      "log": "/tmp/navzeroth-legacy-full-helper-sequence/Test-NativeSmokeHelpers.ps1.log",
+      "log_sha256": "37e37b5e901209ad3cdd01c5f3de13ba774b4026eaeb702332ebfd7c6d84c977",
+      "summary": "10 native smoke helper checks passed (synthetic processes, not native acceptance)"
+    },
+    {
+      "script": "Test-ReleasePolicy.ps1",
+      "exit_code": 0,
+      "log": "/tmp/navzeroth-legacy-full-helper-sequence/Test-ReleasePolicy.ps1.log",
+      "log_sha256": "d3ca0e64a72c1ed428417c7b4d1383cd84d82d7a00c48bd4617abfbf6d78c9b9",
+      "summary": "17 release policy checks passed"
+    },
+    {
+      "script": "Test-Signing.ps1",
+      "exit_code": 0,
+      "log": "/tmp/navzeroth-legacy-full-helper-sequence/Test-Signing.ps1.log",
+      "log_sha256": "a6f920fec77587f978fc16485f641a8af51913a134da581a177433fbc64592fb",
+      "summary": "11 signing checks passed (synthetic PE files, not a real signature)"
+    }
+  ]
+}

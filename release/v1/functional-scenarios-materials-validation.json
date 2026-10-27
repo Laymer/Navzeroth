@@ -1,0 +1,17 @@
+{
+  "status": "pass",
+  "scope": "Staged material exact tree/bytes/SHA256,22public source paths and exact pinned Git bytes; private proof excluded. No installer/Windows/current-game acceptance claim.",
+  "source_commit": "f72abcab67707e4d15aca2cb0890547f7f7cd82d",
+  "production_sha256": "df9e7120620c3852889c00a65202b7011d1bc1ecfbb08435ae1bf1baf79c7ea2",
+  "inventory_sha256": "f7030627acbc61fbbec32deeacc9bfc4dc1f8adc8fb6a183771559c656ce9eac",
+  "manifest_sha256": "e17d67cc5668d1bbde40154245df4756c2da6a1e40a76febea5142e8731ac5cd",
+  "files": 82,
+  "bytes": 395722450,
+  "corresponding_code_files": 22,
+  "kinds": {
+    "content_pack": 21,
+    "corresponding_source": 19,
+    "source_material": 41,
+    "normalization_conflicts": 1
+  }
+}

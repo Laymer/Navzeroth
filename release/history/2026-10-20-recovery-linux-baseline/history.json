@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "kind": "actual_linux_diagnostic_not_acceptance",
+  "runtime_source": "1ddaa8d66b0fe6ccfdbef2dbf57263afcab03611",
+  "runtime_byte_equivalent_baseline": "d271bba67e8fa274e44953c9f78198b1d8fc5f6d",
+  "harness_commit": "41f013c6c2ba1135c939f7c93d2554e112819c99",
+  "performed_by": "tooling_review",
+  "independent_raw_identity_review": "root",
+  "scope": "Existing optimized dependencies; actual full signed V13 bundle, manual engineering profile, no current plan. Shared Linux/WSL host, uncontrolled OS cache and concurrent small engineering checks. Not a Windows acceptance or ordinary-PC performance claim. Prior setup failure retained; subsequent bounded execution actually passed.",
+  "files": [
+    {
+      "path": "release/history/2026-10-20-recovery-linux-baseline/diagnostic.log",
+      "bytes": 2500,
+      "sha256": "9e4dbba2f355dd6879c29bae761faef17ab1fe8e08f9eb3a201601e6dd272a39"
+    },
+    {
+      "path": "release/history/2026-10-20-recovery-linux-baseline/measurement.json",
+      "bytes": 298,
+      "sha256": "279425e2e9e3ff205019d4393e812d04a82e7af04055ca9426bd7d02456d3e87"
+    },
+    {
+      "path": "release/history/2026-10-20-recovery-linux-baseline/audit.json",
+      "bytes": 4378,
+      "sha256": "f205f24d46274b14cb4e857a33a0ede76195f6f7b2f2f9fb7e412c28aca42134"
+    },
+    {
+      "path": "release/history/2026-10-20-recovery-linux-baseline/initial-setup-failure.log",
+      "bytes": 48,
+      "sha256": "a4e3b1f5b313280fa0ecd696f5b03c7e6f97fd4f56f45edeb07588cf9d81de4d"
+    },
+    {
+      "path": "release/history/2026-10-20-recovery-linux-baseline/actual-diagnostic-source.rs.txt",
+      "bytes": 4595,
+      "sha256": "b6a07a33721a2d1a0ab39087d5abe90f29e9cfd151cca6d32b822d119644a884"
+    }
+  ]
+}

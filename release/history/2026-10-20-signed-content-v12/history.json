@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "candidate_commit": "728a9198cb2d72212d39cf06771f807a412967f3",
+  "actual_pr_merge_checkout": "fdf83a2961eb66ac04021e6de6721cab6a188dba",
+  "production_sha256": "b378b34159da86084cb20e4fc11741cd3f6d167656c4532fff50da7727f73266",
+  "package_run_id": 39454144270,
+  "package_conclusion": "failure",
+  "stable_hosted_suite": "skipped_all_eight_cases",
+  "owner_smoke": "unverified",
+  "publication_allowed": false,
+  "kind": "historical_signed_content_before_native_ui_selection_repair",
+  "signed_source_commit": "bc43318b89641f830c0dab1ff430bf38d4656de1",
+  "prepared_before_key_use_commit": "bc7a18195bdd24d651dba87f8ed0b0e3a218d529",
+  "tested_source_commit": "b615d6f944748b474dce4e0ebd8f1af2dce66f68",
+  "files": {
+    "bundled-content-manifest.json": {
+      "path": "release/history/2026-10-20-signed-content-v12/bundled-content-manifest.json",
+      "bytes": 17185,
+      "sha256": "0968db00eb41a0735ea6d13b0d1c133b1ad57582bee008dd34fc10f12ac124a2"
+    },
+    "bundled-content-build-identity.json": {
+      "path": "release/history/2026-10-20-signed-content-v12/bundled-content-build-identity.json",
+      "bytes": 527,
+      "sha256": "dfd0b27e896ad8f5a727bae221cbbd694ef7d179906a54f58e29e07a3d2a5b0c"
+    },
+    "bundled-content-receipt.json": {
+      "path": "release/history/2026-10-20-signed-content-v12/bundled-content-receipt.json",
+      "bytes": 1073,
+      "sha256": "254c39d239f2cdd55352f0c0ea022461bfe6a6e8d2d1a1f095c268977bfb9835"
+    }
+  },
+  "review": {
+    "path": "release/v1/public-content-review-v12.json",
+    "bytes": 69881,
+    "sha256": "b22e2dbf570eb5968d64e246a9fb4a47d2e7ec3c51262917850ef230226cd98d"
+  },
+  "ci_run_id": 39454144194,
+  "coverage_run_id": 39454144203,
+  "source_run_id": 39454144199,
+  "limitation": "CI, coverage and actual full-source parity passed. Native upgrade failed the driver UI wait; all eight stable cases skipped, all nine canonical observations unverified."
+}

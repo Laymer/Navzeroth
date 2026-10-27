@@ -1,0 +1,9 @@
+{
+  "kind": "upgrade",
+  "baseline": "0.9.2",
+  "candidate": "1.0.0",
+  "attempted": true,
+  "exit_code": 2,
+  "timed_out": false,
+  "installed_version_after": "1.0.0"
+}

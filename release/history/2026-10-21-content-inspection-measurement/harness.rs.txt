@@ -1,0 +1,17 @@
+use azeroth_storage::{SqliteStore,content::ContentRevisionKey};
+use azeroth_core::coverage::content_report;
+use sha2::{Digest,Sha256};
+use std::{path::Path,time::Instant};
+fn main(){
+ let key:ContentRevisionKey=serde_json::from_str(r#"{"scope":{"context":{"build":{"edition":"wow_forever","build":"1.60.1.70450","interface":"16001"},"namespace":"reference"},"fixture":false},"revision":"set-88fc99070bf008b1e07b63bda9bd99f0"}"#).unwrap();
+ let args:Vec<_>=std::env::args().collect(); let store=SqliteStore::open(Path::new(&args[1])).unwrap();
+ let start=Instant::now(); let loaded=store.active_catalog_revision(&key.scope).unwrap().unwrap(); assert_eq!(loaded.key(),key);
+ println!("{}",serde_json::json!({"phase":"cold_active_catalog_revision","elapsed_ms":start.elapsed().as_millis()}));
+ for sample in 0..3 {
+ let start=Instant::now(); let warm=store.active_catalog_revision(&key.scope).unwrap().unwrap();
+ let same=match(&loaded,&warm){(azeroth_storage::content::ActiveContentRevision::V2(a),azeroth_storage::content::ActiveContentRevision::V2(b))=>std::sync::Arc::ptr_eq(a,b),_=>false}; assert!(same);
+ println!("{}",serde_json::json!({"phase":"warm_active_catalog_revision","sample":sample,"same_arc":same,"elapsed_ms":start.elapsed().as_millis()}));
+ let start=Instant::now(); let report=content_report(&loaded.content_v2().unwrap().reference); println!("{}",serde_json::json!({"phase":"report","sample":sample,"elapsed_ms":start.elapsed().as_millis(),"gaps":report.gaps.len(),"errors":report.errors.len()}));
+ let start=Instant::now(); let hash=match &loaded { azeroth_storage::content::ActiveContentRevision::V2(v)=>format!("{:x}",Sha256::digest(serde_json::to_vec(v.as_ref()).unwrap())),_=>panic!("v2 required") }; println!("{}",serde_json::json!({"phase":"app_compact_hash","sample":sample,"elapsed_ms":start.elapsed().as_millis(),"hash":hash}));
+ }
+}

@@ -7,6 +7,16 @@ on:
         type: string
         default: 1.0.0-rc.1
         required: true
+      evidence_run_id:
+        description: Optional reviewed workflow run containing stable-acceptance-evidence-<source_commit>
+        type: string
+        default: ''
+        required: false
+      reviewed_evidence_commit:
+        description: Public stable only, independently reviewed inert evidence commit (excludes evidence_run_id)
+        type: string
+        default: ''
+        required: false
       phase:
         description: Release state to verify
         type: choice
@@ -22,6 +32,7 @@ on:
         required: true
 permissions:
   contents: read
+  actions: read
 jobs:
   verify:
     name: Verify downloaded unsigned release
@@ -29,8 +40,11 @@ jobs:
     # verifier only reads/downloads; write scope is needed for draft visibility.
     permissions:
       contents: write
+      actions: read
     runs-on: windows-2025
-    timeout-minutes: 30
+    # Includes dependency/source checks and the new bounded native UI suite.
+    # Each workload remains capped at 20 minutes; the UI suite at 60 minutes.
+    timeout-minutes: 90
     steps:
       - shell: bash
         run: git config --global core.autocrlf false
@@ -49,6 +63,30 @@ jobs:
           npm install --prefix "$RUNNER_TEMP/corepack" --no-package-lock --no-audit --no-fund corepack@0.36.0
           "$RUNNER_TEMP/corepack/node_modules/.bin/corepack" pnpm install --frozen-lockfile
           cargo fetch --locked
+      - name: Test inert reviewed evidence transport
+        shell: pwsh
+        run: |
+          python -m unittest discover -s scripts/windows -p test_import_reviewed_evidence.py
+          if ($LASTEXITCODE -ne 0) { throw 'Reviewed evidence transport regression failed' }
+      - name: Import explicitly reviewed public evidence data
+        shell: pwsh
+        env:
+          REVIEWED_EVIDENCE_COMMIT: ${{ inputs.reviewed_evidence_commit }}
+          EVIDENCE_RUN_ID: ${{ inputs.evidence_run_id }}
+          EXPECTED_SOURCE: ${{ inputs.source_commit }}
+          RELEASE_VERSION: ${{ inputs.version }}
+          RELEASE_PHASE: ${{ inputs.phase }}
+        run: |
+          python scripts/windows/import-reviewed-evidence.py --commit "$env:REVIEWED_EVIDENCE_COMMIT" --expected-source "$env:EXPECTED_SOURCE" --repository "$env:GITHUB_REPOSITORY" --version "$env:RELEASE_VERSION" --phase "$env:RELEASE_PHASE" --evidence-run "$env:EVIDENCE_RUN_ID"
+          if ($LASTEXITCODE -ne 0) { throw 'Reviewed evidence data transport refused' }
+      - name: Download separately reviewed acceptance evidence
+        if: inputs.evidence_run_id != ''
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: stable-acceptance-evidence-${{ inputs.source_commit }}
+          path: dist/acceptance-evidence
+          run-id: ${{ inputs.evidence_run_id }}
+          github-token: ${{ github.token }}
       - name: Download and verify exact release
         shell: pwsh
         env:
@@ -60,6 +98,7 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           if ($env:EXPECTED_COMMIT -cnotmatch '^[a-f0-9]{40}$') { throw 'Expected a full source commit' }
+          if ($env:GITHUB_SHA -cne $env:EXPECTED_COMMIT) { throw 'Dispatch this workflow on the exact release tag' }
           . ./scripts/windows/Release-Policy.ps1
           $version = $env:RELEASE_VERSION
           $policy = Get-UnsignedReleasePolicy $PWD $version
@@ -75,14 +114,33 @@ jobs:
           New-Item -ItemType Directory -Path $downloads | Out-Null
           gh release download $tag --repo $env:GITHUB_REPOSITORY --dir $downloads
           if ($LASTEXITCODE -ne 0) { throw 'Release download failed' }
-          $receiptDir = Join-Path $env:RUNNER_TEMP 'download-receipt'
+          $receiptPath = if ($env:RELEASE_PHASE -ceq 'public') { 'dist/public-download-evidence' } else { 'dist/draft-evidence' }
+          $receiptDir = Join-Path $PWD $receiptPath
           New-Item -ItemType Directory -Path $receiptDir | Out-Null
           $json | Set-Content -LiteralPath (Join-Path $receiptDir 'github-release.json') -Encoding utf8
-          ./scripts/windows/Verify-DownloadedRelease.ps1 -Directory $downloads -Version $version -InstallerSha256 $env:EXPECTED_INSTALLER -Receipt (Join-Path $receiptDir 'verification.json')
+          $options = @{}
+          if (Test-Path -LiteralPath 'dist/acceptance-evidence/acceptance-evidence.json') { $options['Evidence'] = 'dist/acceptance-evidence/acceptance-evidence.json' }
+          ./scripts/windows/Verify-DownloadedRelease.ps1 -Directory $downloads -Version $version -InstallerSha256 $env:EXPECTED_INSTALLER -Receipt (Join-Path $receiptDir 'verification.json') -Phase $env:RELEASE_PHASE @options
           if ($LASTEXITCODE -ne 0) { throw 'Downloaded release verification failed' }
+          $contract=Read-BoundedReleaseContractText (Join-Path $PWD 'release/v1/acceptance-evidence.json') | ConvertFrom-Json
+          if ($env:RELEASE_PHASE -ceq 'draft' -and $contract.schema_version -eq 5) {
+            . ./scripts/windows/Draft-Installer-Smoke.ps1
+            $releaseJson=gh api "repos/$env:GITHUB_REPOSITORY/releases/tags/$tag"
+            if ($LASTEXITCODE -ne 0) { throw 'Cannot obtain draft release API identity' }
+            $releaseApi=$releaseJson | ConvertFrom-Json
+            $jobsJson=gh api "repos/$env:GITHUB_REPOSITORY/actions/runs/$env:GITHUB_RUN_ID/attempts/$env:GITHUB_RUN_ATTEMPT/jobs?per_page=100"
+            if ($LASTEXITCODE -ne 0) { throw 'Cannot obtain current workflow job identity' }
+            $jobs=$jobsJson | ConvertFrom-Json
+            if ($jobs.total_count -gt 100) { throw 'Workflow job list exceeds the bounded query' }
+            $current=@($jobs.jobs | Where-Object { $_.name -ceq 'Verify downloaded unsigned release' })
+            if ($current.Count -ne 1) { throw 'Current verifier job is absent or ambiguous' }
+            $raw=New-DraftDownloadResult -Root $PWD -ReceiptDirectory $receiptDir -Release $releaseApi -Job $current[0] -SourceCommit $env:EXPECTED_COMMIT -InstallerSha256 $env:EXPECTED_INSTALLER -RunId ([long]$env:GITHUB_RUN_ID) -RunAttempt ([long]$env:GITHUB_RUN_ATTEMPT)
+            [IO.File]::WriteAllText((Join-Path $receiptDir 'raw-result.json'),(($raw | ConvertTo-Json -Depth 16)+"`n"),(New-Object Text.UTF8Encoding($false)))
+          }
           [ordered]@{ schema_version = 2; version = $version; signature = $policy.signature; prerelease = $policy.prerelease; phase = $env:RELEASE_PHASE; tag = $tag; commit = $env:EXPECTED_COMMIT; run_id = $env:GITHUB_RUN_ID; repository = $env:GITHUB_REPOSITORY } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $receiptDir 'identity.json') -Encoding utf8
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
         with:
           name: release-download-receipt-${{ inputs.phase }}-${{ github.run_id }}
-          path: ${{ runner.temp }}/download-receipt
+          path: ${{ inputs.phase == 'public' && 'dist/public-download-evidence' || 'dist/draft-evidence' }}
           if-no-files-found: error

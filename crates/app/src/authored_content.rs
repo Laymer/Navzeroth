@@ -498,7 +498,7 @@ pub(crate) fn dungeon_package(
         unavailable(&dungeon.checklist)?
     };
     Ok(LocalPreparationPackage {
-        schema_version: 2,
+        schema_version: 3,
         id: dungeon.id.clone(),
         title: dungeon.title.clone(),
         context: content.context(),

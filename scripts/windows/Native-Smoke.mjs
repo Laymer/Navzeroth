@@ -19,12 +19,12 @@ import {
   SCREEN_LABELS, MODES, parseArgs, isCspViolationText, isNonNativeAlert, parseSha256Sums,
   verifyAgainstSums, cspFromHeaders, parseCsp, Recorder, policyAddArgs, policyDeleteArgs,
   IpcLog, freshenSnapshotText, migrationSummary, gracefulCloseArgs,
-  invokeNative, waitForDatabaseReady,
+  invokeNative, waitForDatabaseReady, verifyPreservedSyntheticContent, waitForSyntheticContentInspection,
 } from "./native-smoke-lib.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, "..", "..");
-const OPTIONS = ["mode", "exe", "port", "out", "label", "file", "sums", "name", "db", "shutdown", "release-commit", "release-tag", "installer-sha256"];
+const OPTIONS = ["mode", "exe", "port", "out", "label", "file", "sums", "name", "db", "shutdown", "release-commit", "release-tag", "installer-sha256", "startup-timeout-ms"];
 const args = parseArgs(process.argv.slice(2), OPTIONS);
 const mode = args.mode ?? "smoke";
 if (args.shutdown !== undefined && args.shutdown !== "graceful") throw new Error("Unknown shutdown mode");
@@ -35,6 +35,8 @@ if (mode === "capture" && (process.env.GITHUB_ACTIONS !== "true" || process.env.
     args["release-tag"] !== "v1.0.0-rc.1" || !/^[a-f0-9]{40}$/.test(args["release-commit"] ?? "") || !/^[a-f0-9]{64}$/.test(args["installer-sha256"] ?? ""))) {
   throw new Error("Release capture requires a bound public RC on a disposable hosted runner");
 }
+const startupTimeoutMs = Number(args["startup-timeout-ms"] ?? process.env.NAVZEROTH_NATIVE_STARTUP_MS ?? 30000);
+if (!Number.isSafeInteger(startupTimeoutMs) || startupTimeoutMs < 1000 || startupTimeoutMs > 1200000) throw new Error("Invalid native startup deadline");
 const rec = new Recorder();
 const evidence = { label, mode, platform: process.platform, node: process.version, startedAt: new Date().toISOString() };
 
@@ -290,12 +292,12 @@ async function stageAndActivate(page) {
 
 async function run() {
   launch();
-  const version = await waitForEndpoint(90000);
+  const version = await waitForEndpoint(Math.max(90000, startupTimeoutMs));
   evidence.cdp = { browser: version.Browser, protocol: version["Protocol-Version"], attach: "WebView2 AdditionalBrowserArguments machine policy (remote-debugging-port) + playwright connectOverCDP" };
   rec.add("attach over CDP (WebView2 remote debugging)", "passed", evidence.cdp);
   const browser = await chromium.connectOverCDP(`http://127.0.0.1:${port}`);
   try {
-    const { context, page } = await findMainPage(browser, 60000);
+    const { context, page } = await findMainPage(browser, Math.max(60000, startupTimeoutMs));
     await context.addInitScript(() => {
       window.__anavCsp = window.__anavCsp ?? [];
       document.addEventListener("securitypolicyviolation", (e) => window.__anavCsp.push(`${e.violatedDirective} blocked ${e.blockedURI}`));
@@ -315,7 +317,7 @@ async function run() {
     evidence.url = page.url();
 
     const startup = await rec.run("native database becomes ready within deadline", () =>
-      waitForDatabaseReady(() => invokeNative(page, "get_database_status")));
+      waitForDatabaseReady(() => invokeNative(page, "get_database_status"), startupTimeoutMs));
     if (startup.status !== "passed") return;
 
     if (mode === "capture") {
@@ -590,8 +592,19 @@ async function verify(page) {
   });
   await rec.run("verify: active content revision survived", async () => {
     await go(page, "Content");
-    if ((await page.getByText("No active content for this profile.").count()) !== 0) throw new Error("Active content was lost");
-    return { alerts: await alertTexts(page) };
+    // Derive expected identity from the exact fixtures used by populate(), not bundled defaults.
+    const fixture = JSON.parse(readFileSync(join(repoRoot, "fixtures/desktop/planning/synthetic-revision.json"), "utf8")).envelope;
+    const snapshot = JSON.parse(snapshotText.slice("ANAV1:".length));
+    const expected = { character: snapshot.payload.character, revision: fixture.payload.revision,
+      scope: { fixture: fixture.fixture, context: { build: {
+        edition: fixture.game.edition, build: fixture.game.build, interface: fixture.game.interface,
+      }, namespace: fixture.namespace } } };
+    const identity = await verifyPreservedSyntheticContent({ expected,
+      readProfiles: () => invokeNative(page, "list_profiles"),
+      readActive: (profile_id) => invokeNative(page, "get_active_content", { profile_id }),
+      waitForInspection: (value) => waitForSyntheticContentInspection(page, value),
+    });
+    return { identity, alerts: await alertTexts(page) };
   });
   await rec.run("verify: Today shows the imported synthetic character", async () => {
     await go(page, "Today");

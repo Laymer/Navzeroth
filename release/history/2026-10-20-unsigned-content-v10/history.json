@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "kind": "historical_unsigned_preparation_before_outer_workflow_budget_repair",
+  "prepared_at_source": "f1d8372694e22b02d46fc74719d32a303464c25e",
+  "tested_source_commit": "1ddaa8d66b0fe6ccfdbef2dbf57263afcab03611",
+  "production_sha256": "b9d5c2938b11967e214f36435e6dd9d6b0d9d376fa29cc00196285ccea88742e",
+  "candidate_pushed": false,
+  "receipt_issued": false,
+  "keys_used_for_this_preparation": false,
+  "files": {
+    "bundled-content-manifest.json": {
+      "path": "release/history/2026-10-20-unsigned-content-v10/bundled-content-manifest.json",
+      "bytes": 17185,
+      "sha256": "435e96c68160f946240123e90549bef27a28eecdc4b0353d9354513328949e84"
+    },
+    "bundled-content-build-identity.json": {
+      "path": "release/history/2026-10-20-unsigned-content-v10/bundled-content-build-identity.json",
+      "bytes": 527,
+      "sha256": "58268b6ac6c4172c79e28b69d527d5cc8612e258fb193230478b9f175edc3ce0"
+    }
+  },
+  "review": {
+    "path": "release/v1/public-content-review-v10.json",
+    "bytes": 52715,
+    "sha256": "41540385fcdb88c9912fdac19e978fc9ad3f18ddcd53037402d7adaac7482c46"
+  },
+  "actual_preparation": {
+    "prepared": true,
+    "independent_canonical_reproduction": true,
+    "streamed_resources": 84,
+    "resource_bytes": 395776069,
+    "all_nine_observations": "unverified",
+    "publication_allowed": false
+  },
+  "limitation": "No signatures, compiled signed-bundle assembly/source prebuild, hosted V10 run or installer/owner acceptance occurred. Source workflow outer budget repair changes production and requires renewed binding. Fresh actual runtime proofef3 remains its original1dd/b9 execution; no rerun/restamp for workflow-only repair."
+}

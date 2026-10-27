@@ -1,0 +1,10 @@
+{"elapsed_ms":10000,"phase":"cold_active_catalog_revision"}
+{"elapsed_ms":0,"phase":"warm_active_catalog_revision","same_arc":true,"sample":0}
+{"elapsed_ms":78,"errors":0,"gaps":132618,"phase":"report","sample":0}
+{"elapsed_ms":206,"hash":"8031efc4e6fb0156b1c92bafe7e7c32339231b7c5c7f9144985db190e62d15d3","phase":"app_compact_hash","sample":0}
+{"elapsed_ms":0,"phase":"warm_active_catalog_revision","same_arc":true,"sample":1}
+{"elapsed_ms":78,"errors":0,"gaps":132618,"phase":"report","sample":1}
+{"elapsed_ms":210,"hash":"8031efc4e6fb0156b1c92bafe7e7c32339231b7c5c7f9144985db190e62d15d3","phase":"app_compact_hash","sample":1}
+{"elapsed_ms":0,"phase":"warm_active_catalog_revision","same_arc":true,"sample":2}
+{"elapsed_ms":79,"errors":0,"gaps":132618,"phase":"report","sample":2}
+{"elapsed_ms":210,"hash":"8031efc4e6fb0156b1c92bafe7e7c32339231b7c5c7f9144985db190e62d15d3","phase":"app_compact_hash","sample":2}

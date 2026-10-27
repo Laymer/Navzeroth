@@ -1,0 +1,4 @@
+   Compiling azeroth-cli v1.0.0 (D:\a\Navzeroth\Navzeroth\crates\cli)
+    Finished `dev` profile [unoptimized] target(s) in 6.96s
+     Running `D:\a\_temp\coverage-rust\build\debug\azeroth-cli.exe assemble-bundled-content --root D:\a\Navzeroth\Navzeroth --output D:\a\_temp\coverage-rust\bundled-content --identity D:\a\Navzeroth\Navzeroth\release\v1\bundled-content-build-identity.json`
+{"assembled":true,"publication_allowed":false}
