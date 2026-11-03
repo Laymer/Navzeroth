@@ -188,20 +188,20 @@ Attribution: CMaNGOS Classic-DB contributors; https://github.com/cmangos/classic
 
 ### gen-world-db2-wow-forever-1.60.1.70245
 
-Publisher: Navzeroth data generators (gen_world_db2); https://github.com/Laymer/Navzeroth. Origin: `wow_forever`, build `1.60.1.70245`. Revision `b7aca0cd91444ae3ac68ce48fa508beea80c57ec171b67a68e424c044b99e89c`.
+Publisher: Navzeroth data generators (gen_world_db2); https://github.com/Laymer/Navzeroth. Origin: `wow_forever`, build `1.60.1.70245`. Revision `aa8028eab0995b68d8655ebaec50095da46792b17bd8e79870edaae11b88281f`.
 
 Licence: LicenseRef-Blizzard-client-data-via-wago-tools.
 Attribution: World of Warcraft Forever 1.60.1 client data (Blizzard Entertainment) via wago.tools DB2 exports; https://wago.tools.
 
-8 documents, 59175351 bytes:
+8 documents, 59314235 bytes:
 
-- `gen_world_db2/wow_forever/1.60.1.70245/part-0000.json` → [`50f9365281e023836b097022aaa8ec46c307feffbde04a5204e7560c76f43046`](objects/50f9365281e023836b097022aaa8ec46c307feffbde04a5204e7560c76f43046) (8322977 bytes)
-- `gen_world_db2/wow_forever/1.60.1.70245/part-0001.json` → [`dbf1a2b03f5ddad98bc72f97ba83f1b7f8f435d1b85cfdf3be123454ca0a34db`](objects/dbf1a2b03f5ddad98bc72f97ba83f1b7f8f435d1b85cfdf3be123454ca0a34db) (8322963 bytes)
-- `gen_world_db2/wow_forever/1.60.1.70245/part-0002.json` → [`f62447d93970d3dfaa63ca82778921d4b85f7438d1b507f82e243db7963b87bc`](objects/f62447d93970d3dfaa63ca82778921d4b85f7438d1b507f82e243db7963b87bc) (8323010 bytes)
-- `gen_world_db2/wow_forever/1.60.1.70245/part-0003.json` → [`66ec2a8f1ffde30e702e3bfeb0969a1b6335b8978f1b425de152e12a85aefd2c`](objects/66ec2a8f1ffde30e702e3bfeb0969a1b6335b8978f1b425de152e12a85aefd2c) (8322987 bytes)
-- `gen_world_db2/wow_forever/1.60.1.70245/part-0004.json` → [`e6bbd70695a91f163b4013aadf3a0bce8c8726884d46fc7f0e7d8dec183f5234`](objects/e6bbd70695a91f163b4013aadf3a0bce8c8726884d46fc7f0e7d8dec183f5234) (8323046 bytes)
-- `gen_world_db2/wow_forever/1.60.1.70245/part-0005.json` → [`d349259fe58820cd2bde3d30d54fc018a2f5b03727156717b765eafbf57d520c`](objects/d349259fe58820cd2bde3d30d54fc018a2f5b03727156717b765eafbf57d520c) (8323020 bytes)
-- `gen_world_db2/wow_forever/1.60.1.70245/part-0006.json` → [`466e614a6dffa9597b180896e90db6c1bcecb1afffcd1e5693c09e950578e1de`](objects/466e614a6dffa9597b180896e90db6c1bcecb1afffcd1e5693c09e950578e1de) (8323075 bytes)
-- `gen_world_db2/wow_forever/1.60.1.70245/part-0007.json` → [`a099ab263f5c59e9ba03f6582e8242e7f21135b3e540abc2bdc7b759a7322c99`](objects/a099ab263f5c59e9ba03f6582e8242e7f21135b3e540abc2bdc7b759a7322c99) (914273 bytes)
+- `gen_world_db2/wow_forever/1.60.1.70245/part-0000.json` → [`29faf6d258ab66dc100f3b067d4d45dd58dbe26a65ea36908315377a331ec4e0`](objects/29faf6d258ab66dc100f3b067d4d45dd58dbe26a65ea36908315377a331ec4e0) (8322993 bytes)
+- `gen_world_db2/wow_forever/1.60.1.70245/part-0001.json` → [`d905bed559c0827a8907552604138ee1ee6358fa476dc7e488947061bd528505`](objects/d905bed559c0827a8907552604138ee1ee6358fa476dc7e488947061bd528505) (8322983 bytes)
+- `gen_world_db2/wow_forever/1.60.1.70245/part-0002.json` → [`f3df31fc8b778fe0fdaa72b5a2f63484852cd2ca2ee6d4807a7010071b4ab426`](objects/f3df31fc8b778fe0fdaa72b5a2f63484852cd2ca2ee6d4807a7010071b4ab426) (8323018 bytes)
+- `gen_world_db2/wow_forever/1.60.1.70245/part-0003.json` → [`84b7b7e0204ba94f8a1a511f3fca987bf287eeb5bba37dbce25197416ff7c730`](objects/84b7b7e0204ba94f8a1a511f3fca987bf287eeb5bba37dbce25197416ff7c730) (8323086 bytes)
+- `gen_world_db2/wow_forever/1.60.1.70245/part-0004.json` → [`90b8a3aca7d8508dd9642e523a97db0f042e96b0c731f6aa07c7b99a9914de9e`](objects/90b8a3aca7d8508dd9642e523a97db0f042e96b0c731f6aa07c7b99a9914de9e) (8323053 bytes)
+- `gen_world_db2/wow_forever/1.60.1.70245/part-0005.json` → [`78d0d8afc10b61f5e7670e5fd321252e9479b8a3f9510036aa996a83b54a60df`](objects/78d0d8afc10b61f5e7670e5fd321252e9479b8a3f9510036aa996a83b54a60df) (8322937 bytes)
+- `gen_world_db2/wow_forever/1.60.1.70245/part-0006.json` → [`fccdab63bcf6eb4c036a17e841a719e640bb90de23d0666d223cac1451188331`](objects/fccdab63bcf6eb4c036a17e841a719e640bb90de23d0666d223cac1451188331) (8322999 bytes)
+- `gen_world_db2/wow_forever/1.60.1.70245/part-0007.json` → [`383972b3281d29d6ecebbcf2138cb7bced11130fd66361a655fe539c655ce3ea`](objects/383972b3281d29d6ecebbcf2138cb7bced11130fd66361a655fe539c655ce3ea) (1053166 bytes)
 
 <!-- END generated fact sources -->
