@@ -23,9 +23,11 @@ V110.4e adds [desktop companion/manual inputs](handoffs/2026-11-10-v110-progress
 with guarded bindings, separate origins and explicit unknown fields. Catalog-backed
 manual editors, addon capture and saved workflow plans follow.
 V110.9b isolates [reviewed evidence by release version](handoffs/2026-11-10-v110-evidence-version.md).
-Current d823b0df Windows packaging attempt stopped at obsolete1.0.0 signed-content
+Current d823b0df Windows packaging attempt stopped at obsolete 1.0.0 signed-content
 binding; installer acceptance did not run. Fresh closure follows feature freeze.
-V110.9c records the approved [unsigned1.1.0 policy](handoffs/2026-11-10-v110-unsigned-policy.md)
+Windows Rust coverage collection on that head stopped at the same bundle assembly
+binding check; its per-file verdict is unavailable, not passed.
+V110.9c records the approved [unsigned 1.1.0 policy](handoffs/2026-11-10-v110-unsigned-policy.md)
 in artifact-policy.json; downstream readiness remains mandatory.
 See [tracker](../TODO.md), [claim](claims/2026-11-10-v110-contract.md) and
 [handoff](handoffs/2026-11-10-v110-contract.md). No 1.1.0 readiness is claimed.
@@ -114,7 +116,7 @@ acceptance. No main merge, stable tag or publication at this checkpoint.
 [Actual engineering probe](handoffs/2026-10-23-recovery-probe-b040-result.md).
 [Current source and checks](handoffs/2026-10-23-cargo-completion-source-v20.md).
 
-2026-10-23: V19 attempt1 cancelled; attempt2 recovery1200s timeout, four hosted
+2026-10-23: V19 attempt 1 cancelled; attempt2 recovery1200s timeout, four hosted
 passes and three later cases unrun. Exact attempt evidence preserved/verified.
 Approved schema5 replaces mandatory owner smoke with independently reviewed
 automated exact downloaded-draft UI/native acceptance. Bounds unchanged. Actual

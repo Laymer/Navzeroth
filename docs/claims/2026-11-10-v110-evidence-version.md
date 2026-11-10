@@ -11,9 +11,9 @@ Validation: Python transport regression tests, negative cross-version cases,
 focused coverage and independent read-only review. Remaining Windows workloads,
 inventory and release workflow versioning remain separate required work.
 
-Trigger recorded: Windows package run42836215251 attempt1, head d823b0df,
-checkout merge84def34e against aaa73b94, stopped at assemble-bundled-content with
-`Bundle production differs from candidate`. Existing1.0.0 receipt pins a947d2f0;
+Trigger recorded: Windows package run 42836215251 attempt 1, head d823b0df,
+checkout merge 84def34e against aaa73b94, stopped at assemble-bundled-content with
+`Bundle production differs from candidate`. Existing 1.0.0 receipt pins a947d2f0;
 the source changed. Installer/acceptance never ran. Read-only recovery_review
 confirmed this expected binding refusal. No rerun or gate weakening is authorized
-by this failure; fresh1.1.0 closure follows feature/content freeze.
+by this failure; fresh 1.1.0 closure follows feature/content freeze.
