@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 // tooling change; publication of the already-supported stable needs only site data.
 export function validateRelease(release, policy) {
   assert.equal(release.schema_version, 1);
-  assert.ok(['1.0.0-rc.1', '1.0.0'].includes(release.version));
+  assert.ok(['1.0.0-rc.1', '1.0.0', '1.1.0'].includes(release.version));
   const allowed = policy.releases.find(row => row.version === release.version);
   assert.equal(policy.schema_version, 1);
   assert.ok(allowed, 'Release needs an explicit source-bound artifact policy');
@@ -17,7 +17,7 @@ export function validateRelease(release, policy) {
   assert.match(release.application_sha256, /^[a-f0-9]{64}$/);
   assert.match(release.public_verification_run_id, /^\d+$/);
   const names = [`AzerothNavigator-${release.version}-x64-setup.exe`, `AzerothNavigator-addon-${release.version}.zip`, 'CANDIDATE_NOTES.md', 'SHA256SUMS.txt', 'SOURCE_COMMIT.txt'];
-  if (release.version === '1.0.0') names.push(`AzerothNavigator-materials-${release.version}.zip`, 'RELEASE_MATERIALS.json', 'RELEASE_ASSETS.json');
+  if (['1.0.0', '1.1.0'].includes(release.version)) names.push(`AzerothNavigator-materials-${release.version}.zip`, 'RELEASE_MATERIALS.json', 'RELEASE_ASSETS.json');
   assert.deepEqual(release.assets.map(asset => asset.name).sort(), names.sort());
   for (const asset of release.assets) {
     assert.ok(Number.isSafeInteger(asset.bytes) && asset.bytes > 0);
