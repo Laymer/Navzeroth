@@ -12,8 +12,10 @@ function Refuses([string] $Name, [scriptblock] $Action) {
     Check $Name $failed
 }
 $stable = Get-UnsignedReleasePolicy $root '1.0.0'
+$guided = Get-UnsignedReleasePolicy $root '1.1.0'
 $rc = Get-UnsignedReleasePolicy $root '1.0.0-rc.1'
 Check 'stable explicitly unsigned' ($stable.signature -ceq 'unsigned' -and -not $stable.prerelease)
+Check 'guided1.1.0 explicitly unsigned' ($guided.signature -ceq 'unsigned' -and -not $guided.prerelease)
 Check 'historical RC remains prerelease' ($rc.signature -ceq 'unsigned' -and $rc.prerelease)
 Check 'another stable version has no exception' ($null -eq (Get-UnsignedReleasePolicy $root '1.0.1'))
 $release = [pscustomobject]@{ tagName = 'v1.0.0'; isDraft = $true; isPrerelease = $false }
@@ -31,6 +33,15 @@ Check 'historical RC public accepted' $true
 Refuses 'wrong tag refused' { Assert-UnsignedReleaseState $stable $release '1.0.0' 'public' }
 Refuses 'missing exception refused' { Assert-UnsignedReleaseState $null $release '1.0.1' 'public' }
 Refuses 'invalid phase refused' { Assert-UnsignedReleaseState $rc $release '1.0.0-rc.1' 'other' }
+$guidedRelease = [pscustomobject]@{ tagName = 'v1.1.0'; isDraft = $true; isPrerelease = $false }
+Assert-UnsignedReleaseState $guided $guidedRelease '1.1.0' 'draft'
+Check 'guided stable draft accepted' $true
+$guidedRelease.isDraft = $false
+Assert-UnsignedReleaseState $guided $guidedRelease '1.1.0' 'public'
+Check 'guided stable public accepted' $true
+Refuses 'old policy cannot authorize guided release' { Assert-UnsignedReleaseState $stable $guidedRelease '1.1.0' 'public' }
+$guidedRelease.tagName = 'v1.0.0'
+Refuses 'old release cannot impersonate guided release' { Assert-UnsignedReleaseState $guided $guidedRelease '1.1.0' 'public' }
 $temp = Join-Path ([IO.Path]::GetTempPath()) ('anav-policy-' + [Guid]::NewGuid().ToString('N'))
 try {
     New-Item -ItemType Directory -Path (Join-Path $temp 'release/v1') -Force | Out-Null

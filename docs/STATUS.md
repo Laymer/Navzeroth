@@ -25,6 +25,8 @@ manual editors, addon capture and saved workflow plans follow.
 V110.9b isolates [reviewed evidence by release version](handoffs/2026-11-10-v110-evidence-version.md).
 Current d823b0df Windows packaging attempt stopped at obsolete1.0.0 signed-content
 binding; installer acceptance did not run. Fresh closure follows feature freeze.
+V110.9c records the approved [unsigned1.1.0 policy](handoffs/2026-11-10-v110-unsigned-policy.md)
+in artifact-policy.json; downstream readiness remains mandatory.
 See [tracker](../TODO.md), [claim](claims/2026-11-10-v110-contract.md) and
 [handoff](handoffs/2026-11-10-v110-contract.md). No 1.1.0 readiness is claimed.
 
