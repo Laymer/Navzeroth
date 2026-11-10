@@ -296,3 +296,22 @@ All maps retain the 1024-entry ceiling; documents retain the 4 MiB byte and 32-l
 nesting ceilings. No captured state or live build admission is established by the
 synthetic progression fixture. Its predecessor hash pins the character fixture's
 file bytes for illustration; runtime bindings use the actual persisted identity.
+
+## Progression application DTOs
+
+`progression-api.schema.json` and `progression-api.ts` describe desktop application
+requests/views, not a new addon exchange format. Regenerate with:
+
+```sh
+cargo run --locked -p azeroth-app --example export_progression_schema > schemas/v1/progression-api.schema.json
+pnpm contracts:types
+```
+
+Rust app tests compare the schema artifact; `pnpm contracts:check` checks representative
+input rules. Manual requests carry exact expected SnapshotBinding, a new immutable
+companion ID, and explicit known/unknown values. They cannot provide provenance or
+timestamps: the app supplies those at explicit capture. Imports accept only ANAV1
+progression companions and require the same expected binding. Requests are limited
+to 8 MiB (including escaped ANAV1 text) and 32 JSON levels; inner exchange keeps
+its existing 4 MiB ceiling. Duplicate/unknown request members are refused. Views
+keep imported and manual records separate and expose capture freshness.

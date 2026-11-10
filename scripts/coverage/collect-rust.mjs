@@ -59,6 +59,7 @@ export function collectRust(destination){
   run('workspace-tests','cargo',['llvm-cov','test','--locked','--workspace','--all-targets','--no-report']);
   instrumented={...environment,...coverageEnvironment(run('instrumentation-environment','cargo',['llvm-cov','show-env','--sh'],{stdoutOnly:true}))};
   if(path.resolve(instrumented.CARGO_LLVM_COV_TARGET_DIR)!==target||path.resolve(instrumented.CARGO_LLVM_COV_BUILD_DIR)!==target)throw new Error('Instrumentation escaped its owned build directory');
+  cargoExample('progression-api-schema-export','azeroth-app','export_progression_schema');
   cargoExample('schema-export','azeroth-core','export_content_schema');
   cargoExample('world-data-schema-export','azeroth-core','export_world_data_schema');
   cargoExample('release-inventory-schema-export','azeroth-core','export_release_schema',['inventory']);

@@ -90,6 +90,7 @@ dependencies = [
  "azeroth-ingest",
  "azeroth-local-data",
  "azeroth-storage",
+ "schemars 1.2.2",
  "serde",
  "serde_json",
  "sha2",

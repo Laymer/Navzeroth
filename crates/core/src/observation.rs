@@ -213,14 +213,14 @@ pub struct FreshnessContext {
     pub session: Option<(SessionId, Millis)>,
     pub max_age_ms: Millis,
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum ClockUncertainty {
     MissingOrUntrustedTime,
     ClockReversed,
     AgeOutOfRange,
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "status", rename_all = "snake_case")]
 pub enum Freshness {
     Fresh { age_ms: Millis },

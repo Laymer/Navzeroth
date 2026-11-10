@@ -18,7 +18,8 @@ content refresh and all 1.1.0 release evidence remain pending. V110.4b adds the
 bounded opt-in decoding and generated contracts. V110.4c adds
 [immutable companion storage](handoffs/2026-11-10-v110-progression-storage.md) with
 manual/import separation and full-history recovery validation (190 storage tests pass).
-Application/UI integration and saved workflow plans follow.
+V110.4d adds [application commands and generated DTOs](handoffs/2026-11-10-v110-progression-application.md).
+UI integration and saved workflow plans follow.
 See [tracker](../TODO.md), [claim](claims/2026-11-10-v110-contract.md) and
 [handoff](handoffs/2026-11-10-v110-contract.md). No 1.1.0 readiness is claimed.
 

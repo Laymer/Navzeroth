@@ -48,6 +48,9 @@ async function run<T>(call: () => Promise<T>): Promise<Result<T>> {
 /** Typed command wrappers: the only way UI code reaches the backend. */
 export function createClient(adapter: CommandAdapter) {
   return {
+    getProgressionView: (profileId: string) => run(() => adapter.invoke("get_progression_view", { profile_id: profileId })),
+    importProgression: (request: import("../../../../schemas/v1/progression-api").ImportProgressionRequest) => run(() => adapter.invoke("import_progression_text", { text: JSON.stringify(request) })),
+    saveManualProgression: (request: import("../../../../schemas/v1/progression-api").ManualProgressionRequest) => run(() => adapter.invoke("save_manual_progression", { text: JSON.stringify(request) })),
     prepareResearchDelivery:(catalog:string,locale:string,bindings?:import("./localData").LocalDeliveryChoices)=>run(()=>adapter.invoke("prepare_research_delivery",{catalog,locale,...(bindings===undefined?{}:{bindings})})),
     getResearchDeliveryPage:(revision:string,domain:string,offset:number)=>run(()=>adapter.invoke("get_research_delivery_page",{revision,domain,offset,limit:200})),
     getResearchDeliveryActivation:(revision:string)=>run(()=>adapter.invoke("get_research_delivery_activation",{revision})),

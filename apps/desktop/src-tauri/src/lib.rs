@@ -660,6 +660,37 @@ async fn get_calibration(
     blocking(state, move |app| app.get_calibration(&profile_id, &request)).await
 }
 #[tauri::command(rename_all = "snake_case")]
+async fn get_progression_view(
+    state: State<'_, Application>,
+    profile_id: String,
+) -> Result<azeroth_app::progression::ProgressionView, AppError> {
+    blocking(state, move |app| {
+        app.progression_view(&profile_id, system_now())
+    })
+    .await
+}
+#[tauri::command]
+async fn import_progression_text(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::progression::ProgressionReceipt, AppError> {
+    blocking(state, move |app| {
+        app.import_progression_text(&text, system_now())
+    })
+    .await
+}
+#[tauri::command]
+async fn save_manual_progression(
+    state: State<'_, Application>,
+    text: String,
+) -> Result<azeroth_app::progression::ProgressionReceipt, AppError> {
+    blocking(state, move |app| {
+        app.save_manual_progression(&text, system_now())
+    })
+    .await
+}
+
+#[tauri::command(rename_all = "snake_case")]
 async fn reminder_view(
     state: State<'_, Application>,
     profile_id: String,
@@ -1293,6 +1324,9 @@ pub fn run() -> i32 {
                 plan_joint_session,
                 set_session_calibration,
                 get_calibration,
+                get_progression_view,
+                import_progression_text,
+                save_manual_progression,
                 reminder_view,
                 mutate_reminders,
                 inspect_plan_route,

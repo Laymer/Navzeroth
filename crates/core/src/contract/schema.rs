@@ -39,7 +39,7 @@ pub fn exchange_schema() -> Value {
 /// schemars annotates primitive integers with non-standard formats such as
 /// "int16"; their ranges are already explicit, and default JSON Schema
 /// validators reject unknown formats, so they are removed.
-fn strip_numeric_formats(value: &mut Value) {
+pub fn strip_numeric_formats(value: &mut Value) {
     match value {
         Value::Object(o) => {
             if o.get("format").and_then(Value::as_str).is_some_and(|f| {
