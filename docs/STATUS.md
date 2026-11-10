@@ -22,6 +22,9 @@ V110.4d adds [application commands and generated DTOs](handoffs/2026-11-10-v110-
 V110.4e adds [desktop companion/manual inputs](handoffs/2026-11-10-v110-progression-inputs.md)
 with guarded bindings, separate origins and explicit unknown fields. Catalog-backed
 manual editors, addon capture and saved workflow plans follow.
+V110.9b isolates [reviewed evidence by release version](handoffs/2026-11-10-v110-evidence-version.md).
+Current d823b0df Windows packaging attempt stopped at obsolete1.0.0 signed-content
+binding; installer acceptance did not run. Fresh closure follows feature freeze.
 See [tracker](../TODO.md), [claim](claims/2026-11-10-v110-contract.md) and
 [handoff](handoffs/2026-11-10-v110-contract.md). No 1.1.0 readiness is claimed.
 

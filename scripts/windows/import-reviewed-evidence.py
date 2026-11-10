@@ -10,7 +10,7 @@ import threading
 import time
 from recovery_probe_process import OwnedTree
 
-PREFIX = 'release/evidence/1.0.0/'
+REVIEWED_RELEASES = ('1.0.0', '1.1.0')
 MAX_FILE = 64 * 1024 * 1024
 MAX_TOTAL = 256 * 1024 * 1024
 MAX_FILES = 1024
@@ -102,8 +102,15 @@ def identity(value):
 def validate_inputs(commit, version, phase, evidence_run):
     if commit:
         identity(commit)
-        if version != '1.0.0' or phase != 'public' or evidence_run:
-            raise ValueError('Reviewed commit is public stable1.0.0 only and excludes evidence_run_id')
+        evidence_prefix(version)
+        if phase != 'public' or evidence_run:
+            raise ValueError('Reviewed commit requires public stable evidence and excludes evidence_run_id')
+
+
+def evidence_prefix(version):
+    if version not in REVIEWED_RELEASES:
+        raise ValueError('Reviewed evidence release version is not explicitly permitted')
+    return f'release/evidence/{version}/'
 
 
 def safe_relative(raw):
@@ -127,22 +134,23 @@ def assert_clean(root, expected):
     return command(root, ['rev-parse', 'HEAD^{tree}'], 128)
 
 
-def inventory(root, commit):
+def inventory(root, commit, version):
+    prefix = evidence_prefix(version)
     # -t includes tree nodes, so links/submodules cannot hide behind a directory.
-    raw = command(root, ['ls-tree', '-r', '-t', '-z', '--full-tree', identity(commit), '--', PREFIX])
+    raw = command(root, ['ls-tree', '-r', '-t', '-z', '--full-tree', identity(commit), '--', prefix])
     files, names, total = [], set(), 0
     for row in raw.split(b'\0'):
         if not row:
             continue
         metadata, path = row.split(b'\t', 1)
         mode, kind, oid = metadata.decode('ascii').split(' ')
-        if path in (b'release', b'release/evidence', PREFIX.rstrip('/').encode()):
+        if path in (b'release', b'release/evidence', prefix.rstrip('/').encode()):
             if kind != 'tree' or mode != '040000':
                 raise ValueError('Evidence ancestor is not a tree')
             continue
-        if not path.startswith(PREFIX.encode()):
+        if not path.startswith(prefix.encode()):
             raise ValueError('Unexpected evidence tree path')
-        relative = path[len(PREFIX):]
+        relative = path[len(prefix):]
         if not relative:
             if kind != 'tree' or mode != '040000':
                 raise ValueError('Evidence root is not a tree')
@@ -169,10 +177,11 @@ def inventory(root, commit):
     return files
 
 
-def import_blobs(root, commit, expected):
+def import_blobs(root, commit, expected, version):
+    evidence_prefix(version)
     root = Path(root).resolve()
     before = assert_clean(root, expected)
-    files = inventory(root, commit)
+    files = inventory(root, commit, version)
     destination = root / 'dist'
     refuse_reparse(destination)
     if destination.exists() and not destination.is_dir():
@@ -237,7 +246,7 @@ def main():
                    'fetch', '--no-tags', '--no-recurse-submodules', 'origin', args.commit], timeout=180)
     if command(root, ['rev-parse', '--verify', args.commit + '^{commit}'], 128).decode().strip() != args.commit:
         raise ValueError('Evidence object is not the explicit commit')
-    count = import_blobs(root, args.commit, args.expected_source)
+    count = import_blobs(root, args.commit, args.expected_source, args.version)
     print(f'Imported {count} inert reviewed-evidence files; acceptance remains subject to full Rust readiness.')
 
 

@@ -19,7 +19,8 @@ below do not establish 1.1.0 readiness.
 - [ ] V110.7 Profession/crafting quantities, materials and acquisition workflow.
 - [ ] V110.8 Equipment enhancement advice and integrations.
 - [ ] V110.9 Version-aware release tooling and four-feature acceptance journeys.
-  Website metadata validator supports explicit 1.1.0 (V110.9a); other tooling pending.
+  Website metadata validator (V110.9a) and reviewed evidence import (V110.9b)
+  support explicit 1.1.0; inventory/Windows workloads and other tooling pending.
 - [ ] V110.10 Full checks/reviews, version freeze, inventory and fresh signed closure.
 - [ ] V110.11 Protected-main integration, stability, tag and eight-case packaging.
 - [ ] V110.12 Independent downloaded-draft UI acceptance, publication and receipt.

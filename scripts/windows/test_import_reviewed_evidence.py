@@ -35,10 +35,10 @@ class TransportTests(unittest.TestCase):
     def git(self, *args, data=None):
         return subprocess.check_output(['git', '-C', str(self.root), *args], input=data).decode()
 
-    def archive(self, extra=None):
+    def archive(self, extra=None, version='1.0.0'):
         for name, value in {'acceptance-evidence/acceptance-evidence.json': b'{"untrusted":"gate must check"}',
                             'draft-evidence/raw.json': b'{"passed":false}', **(extra or {})}.items():
-            path = self.root / transport.PREFIX / name
+            path = self.root / transport.evidence_prefix(version) / name
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(value)
         # A different commit may contain hostile code; it is never checked out/executed.
@@ -49,8 +49,8 @@ class TransportTests(unittest.TestCase):
         self.git('checkout', '-q', self.source)
         return commit
 
-    def import_archive(self, commit):
-        return transport.import_blobs(self.root, commit, self.source)
+    def import_archive(self, commit, version='1.0.0'):
+        return transport.import_blobs(self.root, commit, self.source, version)
 
     def test_positive_inert_source_preservation_and_failed_claim_not_promoted(self):
         commit = self.archive()
@@ -79,7 +79,7 @@ class TransportTests(unittest.TestCase):
         oid = self.git('hash-object', '-w', '--stdin', data=b'{}').strip()
         # Build the ambiguous tree in Git, never on a case-insensitive filesystem.
         self.git('-c', 'core.ignorecase=false', 'update-index', '--add', '--cacheinfo',
-                 f'100644,{oid},{transport.PREFIX}draft-evidence/RAW.json')
+                 f"100644,{oid},{transport.evidence_prefix('1.0.0')}draft-evidence/RAW.json")
         tree = self.git('write-tree').strip()
         ambiguous = self.git('commit-tree', tree, '-p', commit, '-m', 'ambiguous paths').strip()
         self.git('reset', '-q', commit)
@@ -105,7 +105,7 @@ class TransportTests(unittest.TestCase):
             self.import_archive(commit)
         self.git('checkout', '--', 'source.txt')
         with self.assertRaises(ValueError):
-            transport.import_blobs(self.root, commit, commit)
+            transport.import_blobs(self.root, commit, commit, '1.0.0')
 
     def test_unsafe_portable_paths(self):
         for name in [b'/absolute', b'../draft-evidence/file', b'draft-evidence/../file',
@@ -115,30 +115,58 @@ class TransportTests(unittest.TestCase):
                 transport.safe_relative(name)
 
     def test_scope_inputs(self):
-        transport.validate_inputs('a' * 40, '1.0.0', 'public', '')
+        for version in ('1.0.0', '1.1.0'):
+            transport.validate_inputs('a' * 40, version, 'public', '')
         for commit, version, phase, run in [('A'*40, '1.0.0', 'public', ''), ('a'*40, '1.0.0-rc.1', 'public', ''),
-                                           ('a'*40, '1.0.0', 'draft', ''), ('a'*40, '1.0.0', 'public', '123')]:
+                                           ('a'*40, '1.0.0', 'draft', ''), ('a'*40, '1.0.0', 'public', '123'),
+                                           ('a'*40, '1.1.0', 'draft', ''), ('a'*40, '1.1.0', 'public', '123')]:
             with self.assertRaises(ValueError):
                 transport.validate_inputs(commit, version, phase, run)
+
+    def test_unlisted_versions_refused_before_git_or_destination_creation(self):
+        for version in ('', '1.0.1', '2.0.0', '01.1.0', '1.1.0\n', 'v1.1.0', '../1.0.0', '1.1.0-rc.1'):
+            with self.subTest(version=version), patch.object(transport, 'command') as command:
+                with self.assertRaisesRegex(ValueError, 'not explicitly permitted'):
+                    self.import_archive('a' * 40, version)
+                with self.assertRaises(ValueError):
+                    transport.validate_inputs('a' * 40, version, 'public', '')
+                command.assert_not_called()
+                self.assertFalse((self.root / 'dist').exists())
+
+    def test_110_cannot_inherit_100_archive(self):
+        commit = self.archive()
+        with self.assertRaisesRegex(ValueError, 'Both exact evidence subtrees'):
+            self.import_archive(commit, '1.1.0')
+        self.assertFalse((self.root / 'dist').exists())
+
+    def test_requested_version_isolated_when_archive_contains_both(self):
+        old = self.root / transport.evidence_prefix('1.0.0') / 'acceptance-evidence/acceptance-evidence.json'
+        old.parent.mkdir(parents=True)
+        old.write_text('{"wrong_version":true}')
+        commit = self.archive(version='1.1.0')
+        self.assertEqual(self.import_archive(commit, '1.1.0'), 2)
+        self.assertEqual(json.loads((self.root / 'dist/acceptance-evidence/acceptance-evidence.json').read_text()),
+                         {'untrusted': 'gate must check'})
+        self.assertEqual(self.git('rev-parse', 'HEAD').strip(), self.source)
 
     def test_non_regular_git_modes(self):
         commit = self.archive()
         self.git('checkout', '-q', commit)
         for mode in ['120000', '160000', '100755']:
             oid = self.git('hash-object', '-w', '--stdin', data=b'source.txt').strip() if mode != '160000' else self.source
-            self.git('update-index', '--add', '--cacheinfo', f'{mode},{oid},{transport.PREFIX}draft-evidence/unsafe')
+            self.git('update-index', '--add', '--cacheinfo', f"{mode},{oid},{transport.evidence_prefix('1.0.0')}draft-evidence/unsafe")
             tree = self.git('write-tree').strip()
             special = self.git('commit-tree', tree, '-p', commit, '-m', 'unsafe metadata').strip()
             self.git('reset', '-q', commit)
             self.git('checkout', '-q', self.source)
             with self.subTest(mode=mode), self.assertRaises(ValueError):
-                transport.inventory(self.root, special)
+                transport.inventory(self.root, special, '1.0.0')
             self.git('checkout', '-q', commit)
 
     def test_missing_overlay(self):
         commit = self.archive()
         self.git('checkout', '-q', commit)
-        self.git('rm', '-q', transport.PREFIX + 'acceptance-evidence/acceptance-evidence.json')
+        self.git('rm', '-q', transport.evidence_prefix('1.0.0') + 'acceptance-evidence/acceptance-evidence.json')
         self.git('commit', '-qm', 'missing overlay')
         missing = self.git('rev-parse', 'HEAD').strip()
         self.git('checkout', '-q', self.source)
@@ -146,7 +174,7 @@ class TransportTests(unittest.TestCase):
             self.import_archive(missing)
 
     def test_cli_same_repo_fetch_is_data_only(self):
-        commit = self.archive()
+        commit = self.archive(version='1.1.0')
         self.git('remote', 'add', 'origin', 'https://github.com/example/project.git')
         original = transport.command
         calls = []
@@ -157,7 +185,7 @@ class TransportTests(unittest.TestCase):
             return original(root, args, *positional, **keywords)
         argv = ['transport', '--root', str(self.root), '--commit', commit,
                 '--expected-source', self.source, '--repository', 'example/project',
-                '--version', '1.0.0', '--phase', 'public']
+                '--version', '1.1.0', '--phase', 'public']
         with patch.object(sys, 'argv', argv), patch.object(transport, 'command', fake_fetch):
             transport.main()
         self.assertEqual(len(calls), 1)
