@@ -391,3 +391,42 @@ fn errors_do_not_echo_imported_content() {
         &[path_sentinel],
     );
 }
+
+#[test]
+fn progression_requires_explicit_opt_in_and_does_not_replace_character_summary() {
+    let json = include_str!("../../../fixtures/contracts/v1/progression-snapshot.json");
+    let legacy = no_clock();
+    assert!(normalize(json, &legacy).is_err());
+    let exchange = azeroth_core::contract::decode_any(json).unwrap();
+    let text = azeroth_ingest::anav1::encode_text(&exchange).unwrap();
+    assert!(import_text(&text, &legacy).is_err());
+    let mut companion = legacy;
+    companion
+        .accepted_kinds
+        .insert(ContractKind::ProgressionSnapshot);
+    let result = import_text(&text, &companion).unwrap();
+    assert_eq!(result.kind, ContractKind::ProgressionSnapshot);
+    assert!(result.snapshots.is_empty());
+    assert_eq!(result, normalize(json, &companion).unwrap());
+}
+
+#[test]
+fn progression_fixture_pins_the_actual_predecessor_bytes_and_metadata() {
+    use azeroth_core::{
+        contract::decode_envelope, entities::CharacterSnapshot, progression::ProgressionSnapshot,
+        types::Sha256Hex,
+    };
+    use sha2::{Digest, Sha256};
+    let predecessor = include_str!("../../../fixtures/contracts/v1/character-snapshot.json");
+    let character = decode_envelope::<CharacterSnapshot>(predecessor).unwrap();
+    let companion = decode_envelope::<ProgressionSnapshot>(include_str!(
+        "../../../fixtures/contracts/v1/progression-snapshot.json"
+    ))
+    .unwrap();
+    let hash = Sha256Hex::new(format!("{:x}", Sha256::digest(predecessor.as_bytes()))).unwrap();
+    companion
+        .payload
+        .binding
+        .ensure_matches(&character.payload, &hash)
+        .unwrap();
+}

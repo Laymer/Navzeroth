@@ -36,3 +36,41 @@ test('a historical RC capture cannot be relabelled as current stable', async () 
   assert.throws(() => validateCaptureCaption('Actual 1.0.0-rc.1 Windows app, synthetic fixture.', stable, stable));
   assert.throws(() => validateCaptureCaption('Historical 1.0.0-rc.1 Windows app.', stable, rc));
 });
+
+for (const version of ['1.0.0', '1.1.0']) {
+  test(`${version} requires all stable assets and an explicit matching policy`, () => {
+    const stable = clone(rc);
+    stable.version = version;
+    stable.tag = `v${version}`;
+    stable.prerelease = false;
+    stable.assets = rc.assets.map(asset => ({
+      ...asset,
+      name: asset.name.replaceAll(rc.version, version),
+      url: asset.url.replaceAll(rc.version, version),
+    }));
+    for (const name of [`AzerothNavigator-materials-${version}.zip`, 'RELEASE_MATERIALS.json', 'RELEASE_ASSETS.json']) {
+      stable.assets.push({ name, bytes: 1, sha256: 'a'.repeat(64), url: `https://github.com/Laymer/Navzeroth/releases/download/${stable.tag}/${name}` });
+    }
+    // Synthetic policy authorizes validation only; it is not published evidence.
+    const permitted = clone(policy);
+    permitted.releases = [{ ...policy.releases.find(row => row.version === '1.0.0'), version }];
+    assert.equal(validateRelease(stable, permitted), stable);
+    assert.throws(() => validateRelease(stable, { ...permitted, releases: [] }), /explicit source-bound artifact policy/);
+    for (const asset of stable.assets) {
+      const missing = clone(stable);
+      missing.assets = missing.assets.filter(row => row.name !== asset.name);
+      assert.throws(() => validateRelease(missing, permitted));
+    }
+    const stale = clone(stable);
+    stale.assets[0].url = rc.assets[0].url;
+    assert.throws(() => validateRelease(stale, permitted));
+  });
+}
+
+test('even a matching policy cannot admit malformed or unlisted versions', () => {
+  for (const version of ['1.1.1', '1.2.0', 'v1.1.0', '01.1.0', '1.1.0-rc.1', '1.1.0+build', '1.1.0\n', null]) {
+    const release = { ...clone(rc), version, tag: `v${version}` };
+    const matching = { ...clone(policy), releases: [{ version, prerelease: true, signature: 'unsigned' }] };
+    assert.throws(() => validateRelease(release, matching));
+  }
+});

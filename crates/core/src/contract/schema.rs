@@ -6,7 +6,7 @@ use serde_json::{Value, json};
 
 pub const SCHEMA_ID: &str = "https://github.com/Laymer/Navzeroth/schemas/v1/exchange.schema.json";
 
-/// The complete exchange schema: a root `oneOf` over the six envelope kinds
+/// The complete exchange schema: a root `oneOf` over the supported envelope kinds
 /// with shared `$defs`. Output is deterministic (sorted definitions).
 /// Rust validation remains authoritative for semantic invariants.
 pub fn exchange_schema() -> Value {
@@ -14,6 +14,7 @@ pub fn exchange_schema() -> Value {
         .for_deserialize()
         .into_generator();
     let roots = [
+        generator.subschema_for::<EnvelopeData<crate::progression::ProgressionSnapshot>>(),
         generator.subschema_for::<EnvelopeData<CharacterSnapshot>>(),
         generator.subschema_for::<EnvelopeData<PartySnapshot>>(),
         generator.subschema_for::<EnvelopeData<RoutePlan>>(),
@@ -38,7 +39,7 @@ pub fn exchange_schema() -> Value {
 /// schemars annotates primitive integers with non-standard formats such as
 /// "int16"; their ranges are already explicit, and default JSON Schema
 /// validators reject unknown formats, so they are removed.
-fn strip_numeric_formats(value: &mut Value) {
+pub fn strip_numeric_formats(value: &mut Value) {
     match value {
         Value::Object(o) => {
             if o.get("format").and_then(Value::as_str).is_some_and(|f| {

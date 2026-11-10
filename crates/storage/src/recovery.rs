@@ -24,6 +24,7 @@ fn row_limit(table: &str) -> usize {
 const TABLES: &[&str] = &[
     "profiles",
     "snapshots",
+    "progression_snapshots",
     "snapshot_observations",
     "profile_preferences",
     "imports",
@@ -450,6 +451,7 @@ fn validate_snapshot(store: &SqliteStore) -> Result<()> {
         }
     }
     for key in keys.values() {
+        store.read_progression(key, None)?;
         store.preferences(key)?;
         store.reminder_state(key)?;
         for id in store.session_ids(key)? {

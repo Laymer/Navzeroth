@@ -38,6 +38,7 @@ const manifest = readJson("fixtures/contracts/v1/manifest.json") as { fixtures: 
 
 const envelopeDefs: Record<Exchange["kind"], string> = {
   character_snapshot: "CharacterSnapshotEnvelope",
+  progression_snapshot: "ProgressionSnapshotEnvelope",
   party_snapshot: "PartySnapshotEnvelope",
   route_plan: "RoutePlanEnvelope",
   evidence_bundle: "EvidenceBundleEnvelope",
@@ -146,6 +147,11 @@ function summarize(doc: Exchange): string {
       const categories = new Set(snapshotCategories(doc.payload));
       return `${label} snapshot: ${[...categories].sort().join(",")}`;
     }
+    case "progression_snapshot": {
+      check(doc.payload.payload_version === 1, "progression payload version");
+      if (doc.payload.money.status === "known") check(copperIsCanonical(doc.payload.money.value), "progression copper stays a canonical string");
+      return `${label} progression for ${doc.payload.binding.snapshot}: bags ${category(doc.payload.bags)}, bank ${category(doc.payload.bank)}`;
+    }
     case "party_snapshot": {
       const times = doc.payload.participants.map((p) => p.capture.observed_at_utc_ms ?? null);
       check(new Set(times).size === times.length, "participants keep individual capture times");
@@ -248,3 +254,18 @@ if (failures > 0) {
   process.exit(1);
 }
 console.log(`OK: ${manifest.fixtures.length} fixtures checked against schema and TypeScript handling`);
+
+
+// Application progression DTOs are generated from Rust independently of exchange v1.
+const progressionSchema = readJson("schemas/v1/progression-api.schema.json") as object;
+const progressionAjv = new Ajv2020({ allErrors: true });
+progressionAjv.addSchema(progressionSchema, "progression-api");
+const manualValidator = progressionAjv.compile({ $ref: "progression-api#/$defs/ManualProgressionRequest" });
+const companion = readJson("fixtures/contracts/v1/progression-snapshot.json") as {payload:{binding:unknown}};
+const unknown = { status:"unknown" };
+const manualInput = { profile_id:"synthetic-profile", expected:companion.payload.binding, id:"manual-one", spells:unknown, money:{status:"known",value:"0"}, talents:unknown, available_talent_points:{status:"known",value:0}, professions:unknown, recipes:{status:"known",value:{completeness:"partial",entries:{recipe:false}}}, bags:unknown, bank:unknown, equipment_enhancements:{} };
+check(manualValidator(manualInput), "generated manual progression schema accepts zero/false/unknown");
+check(!manualValidator({...manualInput,money:{status:"known",value:"0",source:"addon_snapshot"}}), "manual provenance cannot be supplied");
+check(!manualValidator({...manualInput,money:{status:"unknown",value:"0"}}), "unknown manual value cannot carry a value");
+check(!manualValidator({...manualInput,spells:{status:"known",value:{entries:{}}}}), "manual enumeration needs completeness");
+console.log("OK: generated progression API input constraints checked");

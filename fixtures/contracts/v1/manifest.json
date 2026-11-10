@@ -466,6 +466,12 @@
       "expect": "semantic_invalid",
       "error_code": "INVALID_INPUT",
       "note": "A chain that leads into a two-map cycle is a cycle regardless of record order"
+    },
+    {
+      "file": "progression-snapshot.json",
+      "kind": "progression_snapshot",
+      "expect": "valid",
+      "note": "Synthetic companion, partial/complete-empty, false and zero; predecessor hash pins character fixture file bytes, not game data."
     }
   ]
 }

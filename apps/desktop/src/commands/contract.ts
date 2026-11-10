@@ -275,6 +275,9 @@ export interface PlanningReport {
 
 /** Every command the UI may call. Each maps to one narrowly scoped Rust command. */
 export interface CommandMap {
+  get_progression_view: { input: { profile_id: string }; output: import("../../../../schemas/v1/progression-api").ProgressionView };
+  import_progression_text: { input: { text: string }; output: import("../../../../schemas/v1/progression-api").ProgressionReceipt };
+  save_manual_progression: { input: { text: string }; output: import("../../../../schemas/v1/progression-api").ProgressionReceipt };
   prepare_research_delivery:{input:{catalog:string;locale:string;bindings?:import("./localData").LocalDeliveryChoices};output:string};
   get_research_delivery_page:{input:{revision:string;domain:string;offset:number;limit:number};output:import("./localData").ResearchDeliveryPage};
   get_research_delivery_activation:{input:{revision:string};output:import("./localData").ResearchDeliveryActivation};

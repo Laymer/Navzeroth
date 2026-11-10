@@ -234,6 +234,9 @@ fn summarize(exchange: AnyExchange, options: &ImportOptions) -> ImportResult {
             }
             facts(envelope)
         }
+        // A companion is not a replacement character snapshot. Do not promote
+        // it through the legacy character/party freshness summary.
+        AnyExchange::ProgressionSnapshot(envelope) => facts(&***envelope),
         AnyExchange::RoutePlan(envelope) => facts(&***envelope),
         AnyExchange::EvidenceBundle(envelope) => facts(&***envelope),
         AnyExchange::ReferenceDataset(envelope) => facts(&***envelope),

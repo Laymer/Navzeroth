@@ -1,5 +1,41 @@
 # Project status
 
+Updated: 2026-11-10.
+
+## Current program: 1.1.0 guided progression
+
+The approved [ADR 0011](decisions/0011-v110-guided-progression.md) supersedes
+unpublished 1.0.0 preparation and requires all four usable progression workflows.
+Owner and sole implementation writer: Codex `/root`, baseline `aaa73b94`, isolated
+worktree `/tmp/navzeroth-v1.1-guided-progression`. Original checkout is preserved.
+V110.1 records the contract. V110.9a adds explicit 1.1.0 website asset validation;
+V110.4a adds tested pure progression collection/binding primitives. See the
+[state handoff](handoffs/2026-11-10-v110-progression-state.md) and
+[validator handoff](handoffs/2026-11-10-v110-site-version.md). Installed metadata
+confirms active wowf 1.60.1.70862; interface evidence is pending. Exchange/storage/UI,
+content refresh and all 1.1.0 release evidence remain pending. V110.4b adds the
+[versioned companion exchange](handoffs/2026-11-10-v110-progression-exchange.md),
+bounded opt-in decoding and generated contracts. V110.4c adds
+[immutable companion storage](handoffs/2026-11-10-v110-progression-storage.md) with
+manual/import separation and full-history recovery validation (190 storage tests pass).
+V110.4d adds [application commands and generated DTOs](handoffs/2026-11-10-v110-progression-application.md).
+V110.4e adds [desktop companion/manual inputs](handoffs/2026-11-10-v110-progression-inputs.md)
+with guarded bindings, separate origins and explicit unknown fields. Catalog-backed
+manual editors, addon capture and saved workflow plans follow.
+V110.9b isolates [reviewed evidence by release version](handoffs/2026-11-10-v110-evidence-version.md).
+Current d823b0df Windows packaging attempt stopped at obsolete 1.0.0 signed-content
+binding; installer acceptance did not run. Fresh closure follows feature freeze.
+Windows Rust coverage collection on that head stopped at the same bundle assembly
+binding check; its per-file verdict is unavailable, not passed.
+V110.9c records the approved [unsigned 1.1.0 policy](handoffs/2026-11-10-v110-unsigned-policy.md)
+in artifact-policy.json; downstream readiness remains mandatory.
+See [tracker](../TODO.md), [claim](claims/2026-11-10-v110-contract.md) and
+[handoff](handoffs/2026-11-10-v110-contract.md). No 1.1.0 readiness is claimed.
+
+## Historical 1.0.0 preparation status
+
+### Project status
+
 Updated: 2026-10-24.
 
 **V22 continuation:** Codex independently reviewed PR #286's application-data
@@ -80,7 +116,7 @@ acceptance. No main merge, stable tag or publication at this checkpoint.
 [Actual engineering probe](handoffs/2026-10-23-recovery-probe-b040-result.md).
 [Current source and checks](handoffs/2026-10-23-cargo-completion-source-v20.md).
 
-2026-10-23: V19 attempt1 cancelled; attempt2 recovery1200s timeout, four hosted
+2026-10-23: V19 attempt 1 cancelled; attempt2 recovery1200s timeout, four hosted
 passes and three later cases unrun. Exact attempt evidence preserved/verified.
 Approved schema5 replaces mandatory owner smoke with independently reviewed
 automated exact downloaded-draft UI/native acceptance. Bounds unchanged. Actual

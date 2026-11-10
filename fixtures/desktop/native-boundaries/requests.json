@@ -104,7 +104,9 @@
     "command": "activate_content_set",
     "args": {
       "profile_id": "invalid",
-      "revisions": ["synthetic-missing-revision"],
+      "revisions": [
+        "synthetic-missing-revision"
+      ],
       "accept_inferred_travel": true
     }
   },
@@ -764,6 +766,24 @@
       "expected": 1,
       "mode": "later",
       "completed": true
+    }
+  },
+  {
+    "command": "get_progression_view",
+    "args": {
+      "profile_id": "invalid"
+    }
+  },
+  {
+    "command": "import_progression_text",
+    "args": {
+      "text": "{}"
+    }
+  },
+  {
+    "command": "save_manual_progression",
+    "args": {
+      "text": "{}"
     }
   }
 ]

@@ -186,6 +186,9 @@ export const demoAdapter: CommandAdapter = {
         case "accept_party_plan":
         case "set_session_calibration":
         case "get_calibration":
+        case "get_progression_view":
+        case "import_progression_text":
+        case "save_manual_progression":
         case "reminder_view":
         case "mutate_reminders":
         case "get_gear_catalog":

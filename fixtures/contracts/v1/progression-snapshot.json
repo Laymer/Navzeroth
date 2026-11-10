@@ -1,0 +1,113 @@
+{
+  "format": "azeroth-navigator",
+  "schema_version": 1,
+  "fixture": true,
+  "producer": {
+    "component": "test_fixture",
+    "version": "0.1.0",
+    "session_id": "demo-session-001",
+    "sequence": 12
+  },
+  "game": {
+    "edition": "wow_forever",
+    "build": "UNVERIFIED_DEMO",
+    "interface": "UNVERIFIED_DEMO",
+    "locale": "enGB"
+  },
+  "namespace": "demo",
+  "provenance": {
+    "source": "synthetic_fixture",
+    "clock_trust": "uncertain",
+    "created_at_utc_ms": 1791792000000
+  },
+  "kind": "progression_snapshot",
+  "payload": {
+    "payload_version": 1,
+    "id": "demo-progression-001",
+    "binding": {
+      "snapshot": "demo-snapshot-001",
+      "character": "demo-character-paladin",
+      "context": {
+        "build": {
+          "edition": "wow_forever",
+          "build": "UNVERIFIED_DEMO",
+          "interface": "UNVERIFIED_DEMO"
+        },
+        "namespace": "demo"
+      },
+      "source_revision": "demo-r1",
+      "capture": {
+        "source": "synthetic_fixture",
+        "clock_trust": "trusted",
+        "observed_at_utc_ms": 1791791990000,
+        "session_id": "demo-session-001",
+        "sequence": 12
+      },
+      "snapshot_sha256": "d972d7ca3f48cf357cd1afc64794107eee5f397aa6c57d265ffc010fd5b3a29a"
+    },
+    "capture": {
+      "source": "synthetic_fixture",
+      "clock_trust": "trusted",
+      "observed_at_utc_ms": 1791791990000,
+      "session_id": "demo-session-001",
+      "sequence": 12
+    },
+    "spells": {
+      "status": "unknown"
+    },
+    "money": {
+      "status": "known",
+      "value": "0"
+    },
+    "talents": {
+      "status": "unknown"
+    },
+    "available_talent_points": {
+      "status": "known",
+      "value": 0
+    },
+    "professions": {
+      "status": "unknown"
+    },
+    "recipes": {
+      "status": "known",
+      "value": {
+        "completeness": "partial",
+        "entries": {
+          "synthetic-recipe": {
+            "status": "known",
+            "value": false
+          }
+        }
+      }
+    },
+    "bags": {
+      "status": "known",
+      "value": {
+        "completeness": "complete",
+        "entries": {}
+      }
+    },
+    "bank": {
+      "status": "unsupported"
+    },
+    "equipment_enhancements": {}
+  },
+  "dependencies": {
+    "dataset_revision": "demo-r1",
+    "snapshots": [
+      {
+        "id": "demo-snapshot-001",
+        "character": "demo-character-paladin",
+        "context": {
+          "build": {
+            "edition": "wow_forever",
+            "build": "UNVERIFIED_DEMO",
+            "interface": "UNVERIFIED_DEMO"
+          },
+          "namespace": "demo"
+        }
+      }
+    ]
+  }
+}

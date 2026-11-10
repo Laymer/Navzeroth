@@ -5,6 +5,7 @@ import type { FileInputFormat, HistoryEntry, ImportReceipt, StoredSnapshot, Watc
 import { describeAge } from "../atlas/describe";
 import { describeObservation } from "../observation";
 import { Button, Field, Panel } from "../ui";
+import { ProgressionInputs } from "./progression/ProgressionInputs";
 
 const WATCH_LABELS: Record<WatchStatus, string> = {
   waiting_for_stable_file: "Waiting for a complete, stable save.", imported: "The saved snapshot was imported.",
@@ -192,5 +193,5 @@ export function ImportScreen({ client, onChanged }: { client: CommandClient; onC
     </section>}
     {history.length === 0 ? <p>No stored snapshot history.</p> : <ul>{history.map((entry) => <li key={entry.snapshot_id}>{entry.snapshot_id}{entry.is_current ? " (current)" : " (history only)"}: {describeAge(entry.freshness)} {!entry.is_current && <Button disabled={busy} onClick={() => void previewPromotion(entry.snapshot_id)}>Preview {entry.snapshot_id}</Button>}</li>)}</ul>}
     <Button disabled={busy} onClick={() => { setError(null); void refresh().then(onChanged); }}>Refresh stored state</Button>
-  </Panel></div>;
+  </Panel>{current !== null && current.profile_id === selected && <ProgressionInputs client={client} profileId={selected} snapshotId={current.envelope.payload.id} disabled={busy} />}</div>;
 }
