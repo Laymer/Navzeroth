@@ -6,6 +6,7 @@
  * Azeroth Navigator exchange envelopes, schema version 1. Structural only: Rust validation enforces semantic invariants, and structural validity never establishes in-game truth.
  */
 export type AzerothNavigatorExchangeV1 =
+  | ProgressionSnapshotEnvelope
   | CharacterSnapshotEnvelope
   | PartySnapshotEnvelope
   | RoutePlanEnvelope
@@ -22,10 +23,415 @@ export type InterfaceId = string;
 export type DatasetNamespace = "demo" | "reference";
 export type SnapshotId = string;
 export type Locale = string;
+export type ObservationUint16 =
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "known";
+      value: number;
+    }
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "unknown" | "unsupported" | "restricted" | "not_applicable";
+      value?: never;
+    };
 export type UtcMillis = number;
 export type Sequence = number;
 export type Millis = number;
 export type SessionId = string;
+export type Completeness = "complete" | "partial";
+export type ItemId = string;
+export type VariantId = string;
+export type Observation_Enumeration4 =
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "known";
+      value: Enumeration4;
+    }
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "unknown" | "unsupported" | "restricted" | "not_applicable";
+      value?: never;
+    };
+export type Sha256Hex = string;
+export type Observation_EquipmentEnhancements =
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "known";
+      value: EquipmentEnhancements;
+    }
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "unknown" | "unsupported" | "restricted" | "not_applicable";
+      value?: never;
+    };
+export type Observation_Enumeration5 =
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "known";
+      value: Enumeration5;
+    }
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "unknown" | "unsupported" | "restricted" | "not_applicable";
+      value?: never;
+    };
+export type Observation_EnhancementDuration =
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "known";
+      value: EnhancementDuration;
+    }
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "unknown" | "unsupported" | "restricted" | "not_applicable";
+      value?: never;
+    };
+export type EnhancementDuration = "permanent" | "temporary";
+export type Observation_Copper =
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "known";
+      value: Copper;
+    }
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "unknown" | "unsupported" | "restricted" | "not_applicable";
+      value?: never;
+    };
+/**
+ * Unsigned integer copper as a canonical base-10 string (Rust also rejects values above u64)
+ */
+export type Copper = string;
+export type SchemaVersion = 1;
+export type Observation_Enumeration2 =
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "known";
+      value: Enumeration2;
+    }
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "unknown" | "unsupported" | "restricted" | "not_applicable";
+      value?: never;
+    };
+export type Observation_SourceId =
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "known";
+      value: SourceId;
+    }
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "unknown" | "unsupported" | "restricted" | "not_applicable";
+      value?: never;
+    };
+export type SourceId = string;
+export type Observation_Enumeration3 =
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "known";
+      value: Enumeration3;
+    }
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "unknown" | "unsupported" | "restricted" | "not_applicable";
+      value?: never;
+    };
+export type ObservationBoolean =
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "known";
+      value: boolean;
+    }
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "unknown" | "unsupported" | "restricted" | "not_applicable";
+      value?: never;
+    };
+export type Observation_Enumeration =
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "known";
+      value: Enumeration;
+    }
+  | {
+      clock_trust?: "trusted" | "uncertain";
+      observed_at_utc_ms?: UtcMillis | null;
+      received_at_utc_ms?: UtcMillis | null;
+      sequence?: Sequence | null;
+      session_elapsed_ms?: Millis | null;
+      session_id?: SessionId | null;
+      source?:
+        | "unrecorded"
+        | "addon_snapshot"
+        | "manual_entry"
+        | "official_api"
+        | "reference_data"
+        | "synthetic_fixture";
+      status: "unknown" | "unsupported" | "restricted" | "not_applicable";
+      value?: never;
+    };
+export type ProducerComponent = "addon" | "desktop" | "cli" | "test_fixture";
+export type ClockTrust = "trusted" | "uncertain";
+export type StateSource =
+  | "unrecorded"
+  | "addon_snapshot"
+  | "manual_entry"
+  | "official_api"
+  | "reference_data"
+  | "synthetic_fixture";
 export type Observation_EquipmentSlot =
   | {
       clock_trust?: "trusted" | "uncertain";
@@ -105,7 +511,6 @@ export type Observation_InstanceId =
       value?: never;
     };
 export type InstanceId = string;
-export type ItemId = string;
 export type Observation_RecordMap_AttributeId_FiniteNumber =
   | {
       clock_trust?: "trusted" | "uncertain";
@@ -179,7 +584,6 @@ export type Observation_VariantId =
       status: "unknown" | "unsupported" | "restricted" | "not_applicable";
       value?: never;
     };
-export type VariantId = string;
 export type Observation_Level =
   | {
       clock_trust?: "trusted" | "uncertain";
@@ -254,41 +658,6 @@ export type Observation_Position =
 export type FloorId = string;
 export type MapId = string;
 export type Normalized = number;
-export type ObservationBoolean =
-  | {
-      clock_trust?: "trusted" | "uncertain";
-      observed_at_utc_ms?: UtcMillis | null;
-      received_at_utc_ms?: UtcMillis | null;
-      sequence?: Sequence | null;
-      session_elapsed_ms?: Millis | null;
-      session_id?: SessionId | null;
-      source?:
-        | "unrecorded"
-        | "addon_snapshot"
-        | "manual_entry"
-        | "official_api"
-        | "reference_data"
-        | "synthetic_fixture";
-      status: "known";
-      value: boolean;
-    }
-  | {
-      clock_trust?: "trusted" | "uncertain";
-      observed_at_utc_ms?: UtcMillis | null;
-      received_at_utc_ms?: UtcMillis | null;
-      sequence?: Sequence | null;
-      session_elapsed_ms?: Millis | null;
-      session_id?: SessionId | null;
-      source?:
-        | "unrecorded"
-        | "addon_snapshot"
-        | "manual_entry"
-        | "official_api"
-        | "reference_data"
-        | "synthetic_fixture";
-      status: "unknown" | "unsupported" | "restricted" | "not_applicable";
-      value?: never;
-    };
 export type QuestId = string;
 export type Observation_RoleId =
   | {
@@ -326,16 +695,6 @@ export type Observation_RoleId =
       value?: never;
     };
 export type RoleId = string;
-export type SchemaVersion = 1;
-export type ProducerComponent = "addon" | "desktop" | "cli" | "test_fixture";
-export type ClockTrust = "trusted" | "uncertain";
-export type StateSource =
-  | "unrecorded"
-  | "addon_snapshot"
-  | "manual_entry"
-  | "official_api"
-  | "reference_data"
-  | "synthetic_fixture";
 export type PartyId = string;
 export type CapabilityStatus =
   "verified_available" | "verified_unavailable" | "restricted" | "failed" | "untested";
@@ -567,10 +926,6 @@ export type Scalar =
       value: Text;
     };
 export type SafeInteger = number;
-/**
- * Unsigned integer copper as a canonical base-10 string (Rust also rejects values above u64)
- */
-export type Copper = string;
 export type SlotId = string;
 export type NodeId = string;
 export type Confidence =
@@ -685,7 +1040,6 @@ export type Observation_BuildId =
       status: "unknown" | "unsupported" | "restricted" | "not_applicable";
       value?: never;
     };
-export type SourceId = string;
 export type Observation_RecordMap_CapabilityId_CapabilityCheck =
   | {
       clock_trust?: "trusted" | "uncertain";
@@ -725,41 +1079,6 @@ export type Observation_RecordMap_CapabilityId_CapabilityCheck =
     };
 export type ProviderId = string;
 export type ProviderStatus = "available" | "unavailable" | "unverified" | "restricted";
-export type Observation_Copper =
-  | {
-      clock_trust?: "trusted" | "uncertain";
-      observed_at_utc_ms?: UtcMillis | null;
-      received_at_utc_ms?: UtcMillis | null;
-      sequence?: Sequence | null;
-      session_elapsed_ms?: Millis | null;
-      session_id?: SessionId | null;
-      source?:
-        | "unrecorded"
-        | "addon_snapshot"
-        | "manual_entry"
-        | "official_api"
-        | "reference_data"
-        | "synthetic_fixture";
-      status: "known";
-      value: Copper;
-    }
-  | {
-      clock_trust?: "trusted" | "uncertain";
-      observed_at_utc_ms?: UtcMillis | null;
-      received_at_utc_ms?: UtcMillis | null;
-      sequence?: Sequence | null;
-      session_elapsed_ms?: Millis | null;
-      session_id?: SessionId | null;
-      source?:
-        | "unrecorded"
-        | "addon_snapshot"
-        | "manual_entry"
-        | "official_api"
-        | "reference_data"
-        | "synthetic_fixture";
-      status: "unknown" | "unsupported" | "restricted" | "not_applicable";
-      value?: never;
-    };
 export type AcquisitionId = string;
 export type AcquisitionKind = "quest" | "vendor" | "dungeon" | "crafting" | "other";
 export type Observation_Normalized =
@@ -841,7 +1160,6 @@ export type ImageId = string;
 export type LayerId = string;
 export type ImageLayerKind =
   ("terrain" | "other") | "roads_traced" | "flight_reference" | "overview";
-export type Sha256Hex = string;
 export type PinKind =
   | {
       access: FlightAccess[];
@@ -1096,7 +1414,7 @@ export type Ranking = "theoretical" | "obtainable" | "practical";
  * Deserialization is hand-written (see below) so unknown members are size
  * checked as raw text before parsing, instead of buffering the whole envelope.
  */
-export interface CharacterSnapshotEnvelope {
+export interface ProgressionSnapshotEnvelope {
   dependencies?: Dependencies;
   /**
    * True for synthetic engineering data. Production planning rejects it.
@@ -1104,9 +1422,9 @@ export interface CharacterSnapshotEnvelope {
   fixture: boolean;
   format: "azeroth-navigator";
   game: GameContext;
-  kind: "character_snapshot";
+  kind: "progression_snapshot";
   namespace: DatasetNamespace;
-  payload: CharacterSnapshot;
+  payload: ProgressionSnapshot;
   producer: Producer;
   provenance: Provenance;
   schema_version: SchemaVersion;
@@ -1141,6 +1459,307 @@ export interface GameContext {
   interface: InterfaceId;
   locale: Locale;
 }
+export interface ProgressionSnapshot {
+  available_talent_points: ObservationUint16;
+  /**
+   * Bags and bank are separate enumerations and never silently combined.
+   */
+  bags:
+    | {
+        clock_trust?: "trusted" | "uncertain";
+        observed_at_utc_ms?: UtcMillis | null;
+        received_at_utc_ms?: UtcMillis | null;
+        sequence?: Sequence | null;
+        session_elapsed_ms?: Millis | null;
+        session_id?: SessionId | null;
+        source?:
+          | "unrecorded"
+          | "addon_snapshot"
+          | "manual_entry"
+          | "official_api"
+          | "reference_data"
+          | "synthetic_fixture";
+        status: "known";
+        value: Enumeration4;
+      }
+    | {
+        clock_trust?: "trusted" | "uncertain";
+        observed_at_utc_ms?: UtcMillis | null;
+        received_at_utc_ms?: UtcMillis | null;
+        sequence?: Sequence | null;
+        session_elapsed_ms?: Millis | null;
+        session_id?: SessionId | null;
+        source?:
+          | "unrecorded"
+          | "addon_snapshot"
+          | "manual_entry"
+          | "official_api"
+          | "reference_data"
+          | "synthetic_fixture";
+        status: "unknown" | "unsupported" | "restricted" | "not_applicable";
+        value?: never;
+      };
+  bank: Observation_Enumeration4;
+  binding: SnapshotBinding;
+  capture: ObservationMetadata;
+  equipment_enhancements: {
+    [k: string]: Observation_EquipmentEnhancements | undefined;
+  };
+  id: SnapshotId;
+  money: Observation_Copper;
+  payload_version: SchemaVersion;
+  professions: Observation_Enumeration2;
+  recipes: Observation_Enumeration3;
+  /**
+   * Keys identify exact source spell records; unknown rank is not rank zero.
+   */
+  spells:
+    | {
+        clock_trust?: "trusted" | "uncertain";
+        observed_at_utc_ms?: UtcMillis | null;
+        received_at_utc_ms?: UtcMillis | null;
+        sequence?: Sequence | null;
+        session_elapsed_ms?: Millis | null;
+        session_id?: SessionId | null;
+        source?:
+          | "unrecorded"
+          | "addon_snapshot"
+          | "manual_entry"
+          | "official_api"
+          | "reference_data"
+          | "synthetic_fixture";
+        status: "known";
+        value: Enumeration;
+      }
+    | {
+        clock_trust?: "trusted" | "uncertain";
+        observed_at_utc_ms?: UtcMillis | null;
+        received_at_utc_ms?: UtcMillis | null;
+        sequence?: Sequence | null;
+        session_elapsed_ms?: Millis | null;
+        session_id?: SessionId | null;
+        source?:
+          | "unrecorded"
+          | "addon_snapshot"
+          | "manual_entry"
+          | "official_api"
+          | "reference_data"
+          | "synthetic_fixture";
+        status: "unknown" | "unsupported" | "restricted" | "not_applicable";
+        value?: never;
+      };
+  talents: Observation_Enumeration;
+}
+/**
+ * Availability and capture metadata live on the enclosing Observation. An
+ * unavailable enumeration is never represented as an empty complete map.
+ */
+export interface Enumeration4 {
+  completeness: Completeness;
+  entries: {
+    [k: string]: InventoryQuantity | undefined;
+  };
+}
+export interface InventoryQuantity {
+  item: ItemKey;
+  /**
+   * Aggregated quantity within this one explicit scope. Never a bag index.
+   */
+  quantity:
+    | {
+        clock_trust?: "trusted" | "uncertain";
+        observed_at_utc_ms?: UtcMillis | null;
+        received_at_utc_ms?: UtcMillis | null;
+        sequence?: Sequence | null;
+        session_elapsed_ms?: Millis | null;
+        session_id?: SessionId | null;
+        source?:
+          | "unrecorded"
+          | "addon_snapshot"
+          | "manual_entry"
+          | "official_api"
+          | "reference_data"
+          | "synthetic_fixture";
+        status: "known";
+        value: number;
+      }
+    | {
+        clock_trust?: "trusted" | "uncertain";
+        observed_at_utc_ms?: UtcMillis | null;
+        received_at_utc_ms?: UtcMillis | null;
+        sequence?: Sequence | null;
+        session_elapsed_ms?: Millis | null;
+        session_id?: SessionId | null;
+        source?:
+          | "unrecorded"
+          | "addon_snapshot"
+          | "manual_entry"
+          | "official_api"
+          | "reference_data"
+          | "synthetic_fixture";
+        status: "unknown" | "unsupported" | "restricted" | "not_applicable";
+        value?: never;
+      };
+}
+export interface ItemKey {
+  context: DataContext;
+  item_id: ItemId;
+  variant: VariantId;
+}
+/**
+ * Exact predecessor identity for progression companions and saved advice.
+ * The I/O layer supplies the persisted snapshot hash; this module does not hash
+ * or normalize imported bytes and never accepts a nearest-build substitution.
+ */
+export interface SnapshotBinding {
+  capture: ObservationMetadata;
+  character: CharacterId;
+  context: DataContext;
+  snapshot: SnapshotId;
+  snapshot_sha256: Sha256Hex;
+  source_revision: DatasetRevision;
+}
+export interface ObservationMetadata {
+  clock_trust?: "trusted" | "uncertain";
+  observed_at_utc_ms?: UtcMillis | null;
+  received_at_utc_ms?: UtcMillis | null;
+  sequence?: Sequence | null;
+  session_elapsed_ms?: Millis | null;
+  session_id?: SessionId | null;
+  source?:
+    | "unrecorded"
+    | "addon_snapshot"
+    | "manual_entry"
+    | "official_api"
+    | "reference_data"
+    | "synthetic_fixture";
+}
+export interface EquipmentEnhancements {
+  enhancements: Observation_Enumeration5;
+  item: ItemKey;
+}
+/**
+ * Availability and capture metadata live on the enclosing Observation. An
+ * unavailable enumeration is never represented as an empty complete map.
+ */
+export interface Enumeration5 {
+  completeness: Completeness;
+  entries: {
+    [k: string]: ObservedEnhancement | undefined;
+  };
+}
+export interface ObservedEnhancement {
+  duration: Observation_EnhancementDuration;
+  /**
+   * Unreadable expiry remains unknown/restricted; no inferred duration.
+   */
+  expires_at_utc_ms:
+    | {
+        clock_trust?: "trusted" | "uncertain";
+        observed_at_utc_ms?: UtcMillis | null;
+        received_at_utc_ms?: UtcMillis | null;
+        sequence?: Sequence | null;
+        session_elapsed_ms?: Millis | null;
+        session_id?: SessionId | null;
+        source?:
+          | "unrecorded"
+          | "addon_snapshot"
+          | "manual_entry"
+          | "official_api"
+          | "reference_data"
+          | "synthetic_fixture";
+        status: "known";
+        value: UtcMillis;
+      }
+    | {
+        clock_trust?: "trusted" | "uncertain";
+        observed_at_utc_ms?: UtcMillis | null;
+        received_at_utc_ms?: UtcMillis | null;
+        sequence?: Sequence | null;
+        session_elapsed_ms?: Millis | null;
+        session_id?: SessionId | null;
+        source?:
+          | "unrecorded"
+          | "addon_snapshot"
+          | "manual_entry"
+          | "official_api"
+          | "reference_data"
+          | "synthetic_fixture";
+        status: "unknown" | "unsupported" | "restricted" | "not_applicable";
+        value?: never;
+      };
+}
+/**
+ * Availability and capture metadata live on the enclosing Observation. An
+ * unavailable enumeration is never represented as an empty complete map.
+ */
+export interface Enumeration2 {
+  completeness: Completeness;
+  entries: {
+    [k: string]: ProfessionState | undefined;
+  };
+}
+export interface ProfessionState {
+  maximum_skill: ObservationUint16;
+  rank: Observation_SourceId;
+  skill: ObservationUint16;
+}
+/**
+ * Availability and capture metadata live on the enclosing Observation. An
+ * unavailable enumeration is never represented as an empty complete map.
+ */
+export interface Enumeration3 {
+  completeness: Completeness;
+  entries: {
+    [k: string]: ObservationBoolean | undefined;
+  };
+}
+/**
+ * Availability and capture metadata live on the enclosing Observation. An
+ * unavailable enumeration is never represented as an empty complete map.
+ */
+export interface Enumeration {
+  completeness: Completeness;
+  entries: {
+    [k: string]: ObservationUint16 | undefined;
+  };
+}
+export interface Producer {
+  component: ProducerComponent;
+  sequence?: Sequence | null;
+  session_id?: SessionId | null;
+  /**
+   * Producer application version; independent of schema and dataset versions.
+   */
+  version: string;
+}
+export interface Provenance {
+  clock_trust: ClockTrust;
+  /**
+   * Absent means the producer recorded no creation time.
+   */
+  created_at_utc_ms?: UtcMillis | null;
+  source: StateSource;
+}
+/**
+ * Deserialization is hand-written (see below) so unknown members are size
+ * checked as raw text before parsing, instead of buffering the whole envelope.
+ */
+export interface CharacterSnapshotEnvelope {
+  dependencies?: Dependencies;
+  /**
+   * True for synthetic engineering data. Production planning rejects it.
+   */
+  fixture: boolean;
+  format: "azeroth-navigator";
+  game: GameContext;
+  kind: "character_snapshot";
+  namespace: DatasetNamespace;
+  payload: CharacterSnapshot;
+  producer: Producer;
+  provenance: Provenance;
+  schema_version: SchemaVersion;
+}
 export interface CharacterSnapshot {
   capture: ObservationMetadata;
   character: CharacterId;
@@ -1163,21 +1782,6 @@ export interface CharacterSnapshot {
   role: Observation_RoleId;
   schema_version: SchemaVersion;
   source_revision: DatasetRevision;
-}
-export interface ObservationMetadata {
-  clock_trust?: "trusted" | "uncertain";
-  observed_at_utc_ms?: UtcMillis | null;
-  received_at_utc_ms?: UtcMillis | null;
-  sequence?: Sequence | null;
-  session_elapsed_ms?: Millis | null;
-  session_id?: SessionId | null;
-  source?:
-    | "unrecorded"
-    | "addon_snapshot"
-    | "manual_entry"
-    | "official_api"
-    | "reference_data"
-    | "synthetic_fixture";
 }
 export interface EquippedItem {
   context: DataContext;
@@ -1214,23 +1818,6 @@ export interface QuestProgress {
   };
   quest: QuestId;
   turned_in: ObservationBoolean;
-}
-export interface Producer {
-  component: ProducerComponent;
-  sequence?: Sequence | null;
-  session_id?: SessionId | null;
-  /**
-   * Producer application version; independent of schema and dataset versions.
-   */
-  version: string;
-}
-export interface Provenance {
-  clock_trust: ClockTrust;
-  /**
-   * Absent means the producer recorded no creation time.
-   */
-  created_at_utc_ms?: UtcMillis | null;
-  source: StateSource;
 }
 /**
  * Deserialization is hand-written (see below) so unknown members are size
@@ -1313,11 +1900,6 @@ export interface PlanStep {
 export interface DurationRange {
   max_ms: Millis;
   min_ms: Millis;
-}
-export interface ItemKey {
-  context: DataContext;
-  item_id: ItemId;
-  variant: VariantId;
 }
 export interface SupportedArea {
   bounds?: Bounds | null;

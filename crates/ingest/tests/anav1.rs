@@ -34,7 +34,7 @@ fn encode_and_decode_round_trip_every_contract_kind() {
         assert_eq!(again, exchange);
         assert_eq!(encode_text(&again).unwrap(), text, "encoding is stable");
     }
-    assert_eq!(kinds.len(), 6);
+    assert_eq!(kinds.len(), azeroth_core::contract::ContractKind::ALL.len());
 }
 
 #[test]

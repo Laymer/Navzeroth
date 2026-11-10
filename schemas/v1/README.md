@@ -2,7 +2,7 @@
 
 These files describe the documents Azeroth Navigator components exchange:
 character and party snapshots, route plans, evidence bundles, reference datasets
-and gear recommendation sets. The Rust definitions in `crates/core/src/contract/`
+gear recommendation sets and progression companions. The Rust definitions in `crates/core/src/contract/`
 are the source of truth. Structural validity never establishes in-game truth.
 
 | File | Origin |
@@ -27,7 +27,7 @@ Every document is one JSON object with these members:
 | Member | Required | Meaning |
 | --- | --- | --- |
 | `format` | yes | Always `"azeroth-navigator"`. |
-| `kind` | yes | `character_snapshot`, `party_snapshot`, `route_plan`, `evidence_bundle`, `reference_dataset` or `gear_recommendations`. Must match the payload. |
+| `kind` | yes | `character_snapshot`, `party_snapshot`, `route_plan`, `evidence_bundle`, `reference_dataset` `gear_recommendations` or `progression_snapshot`. Must match the payload. |
 | `schema_version` | yes | `1`. Any other unsigned integer is rejected as `UNSUPPORTED_SCHEMA` before the payload is read. |
 | `fixture` | yes | `true` for synthetic engineering data. Production planning must reject fixture documents. |
 | `producer` | yes | `component` (`addon`, `desktop`, `cli`, `test_fixture`) and `version`, the producer application's version. Optional `session_id`; optional `sequence`, which requires `session_id`. |
@@ -38,8 +38,8 @@ Every document is one JSON object with these members:
 | `payload` | yes | The kind's record (below). |
 | any other member | no | An **extension**: retained and re-serialized in key order. At most 64; keys are 1–256 bytes without control characters and never a reserved member name; each value at most 16 KiB of JSON text and 64 KiB in total, checked before parsing; numbers within ±(2^53 − 1). |
 
-Unknown members *inside* the payload are accepted and dropped, matching the M1.2
-domain records. Consumers must not rely on them surviving a round trip.
+Unknown members *inside* legacy payloads are accepted and dropped, matching the M1.2
+domain records. New progression payload records reject unknown fields. Consumers must not rely on them surviving a round trip.
 
 Schema, dataset revision, ruleset, score-model and application versions are
 independent. Timestamps are integer UTC milliseconds (`*_utc_ms`) everywhere.
@@ -253,3 +253,46 @@ and narrows valid fixtures through exhaustive switches. Rust tests check the
 same manifest, including error codes and round trips. No Lua addon exists yet,
 so Lua decoding and evaluation parity remain deferred to M2. Shared field names
 alone do not establish parity.
+
+
+## Progression companion (V110.4b)
+
+`progression_snapshot` uses envelope schema 1 and required `payload_version: 1`.
+This new kind does not change character-snapshot or route-plan v1 semantics.
+Older decoders explicitly refuse the unknown kind. Default snapshot import still
+accepts only character/party snapshots; a progression caller must explicitly opt in.
+A companion never appears as a replacement character in legacy import summaries.
+
+The required binding names the exact predecessor snapshot, character, build/interface,
+namespace, source revision, capture metadata and persisted SHA-256. Envelope
+`dependencies` must contain exactly that snapshot reference and source revision,
+with no ruleset or score-model dependency. The companion has its own ID/capture;
+producer session/sequence must equal that capture, not the predecessor capture.
+Application/storage must compare the binding with the actual selected persisted
+snapshot and hash before using the companion. A structurally valid self-declared
+hash is not proof of identity. Changing the predecessor invalidates advice.
+
+Required observation fields cover spells/ranks, money, talents/ranks, available
+points, profession skills/maxima/ranks, known recipes, bags and bank. Values of
+`unknown`, `unsupported`, `restricted` and `not_applicable` carry no value.
+Enumeration values contain explicit `complete` or `partial` completeness and a
+bounded map of source IDs. Missing partial entries are unknown; complete-empty is
+only evidence of absence for that enumeration's exact scope/time. Inner rank,
+recipe and quantity observations retain their own status/freshness. Consumers must
+check both collection and inner observation freshness before definitive advice.
+Money stays a decimal copper string; quantities are integers 0..4294967295.
+
+Bag and bank quantities are independently aggregated by exact ItemKey, including
+variant and context. Duplicate item identities within a scope are refused; the
+same item in bags and bank is valid. Neither scope includes equipped items.
+Equipment enhancement slots carry exact ItemKey and a separate observed effect
+collection. Before advice, compare each item to the bound predecessor slot;
+structural validation does not prove the player wore that item. Missing slots mean
+unknown. Permanent effects cannot carry a known expiry; temporary unknown expiry
+remains unknown and must not be guessed. Manual provenance remains distinct and
+will be stored separately by the application, not used to overwrite addon state.
+
+All maps retain the 1024-entry ceiling; documents retain the 4 MiB byte and 32-level
+nesting ceilings. No captured state or live build admission is established by the
+synthetic progression fixture. Its predecessor hash pins the character fixture's
+file bytes for illustration; runtime bindings use the actual persisted identity.

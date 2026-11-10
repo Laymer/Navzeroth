@@ -14,6 +14,7 @@ mod dataset;
 mod evidence;
 mod gear;
 mod plan;
+mod progression;
 pub mod schema;
 mod snapshot;
 pub use dataset::*;
@@ -35,6 +36,7 @@ pub const MAX_EXTENSIONS: usize = 64;
 #[serde(rename_all = "snake_case")]
 pub enum ContractKind {
     CharacterSnapshot,
+    ProgressionSnapshot,
     PartySnapshot,
     RoutePlan,
     EvidenceBundle,
@@ -42,8 +44,9 @@ pub enum ContractKind {
     GearRecommendations,
 }
 impl ContractKind {
-    pub const ALL: [Self; 6] = [
+    pub const ALL: [Self; 7] = [
         Self::CharacterSnapshot,
+        Self::ProgressionSnapshot,
         Self::PartySnapshot,
         Self::RoutePlan,
         Self::EvidenceBundle,
@@ -53,6 +56,7 @@ impl ContractKind {
     pub fn as_str(self) -> &'static str {
         match self {
             Self::CharacterSnapshot => "character_snapshot",
+            Self::ProgressionSnapshot => "progression_snapshot",
             Self::PartySnapshot => "party_snapshot",
             Self::RoutePlan => "route_plan",
             Self::EvidenceBundle => "evidence_bundle",
@@ -70,9 +74,10 @@ impl ContractKind {
     /// parser's recursion limit and the rule limits of their records.
     pub fn max_json_depth(self) -> Option<usize> {
         match self {
-            Self::CharacterSnapshot | Self::PartySnapshot | Self::RoutePlan => {
-                Some(MAX_ADDON_JSON_DEPTH)
-            }
+            Self::CharacterSnapshot
+            | Self::ProgressionSnapshot
+            | Self::PartySnapshot
+            | Self::RoutePlan => Some(MAX_ADDON_JSON_DEPTH),
             _ => None,
         }
     }
@@ -577,6 +582,7 @@ fn decode_checked<P: Payload>(input: &str) -> Result<Envelope<P>> {
 #[derive(Clone, Debug, PartialEq, Serialize)]
 #[serde(untagged)]
 pub enum AnyExchange {
+    ProgressionSnapshot(Box<Envelope<crate::progression::ProgressionSnapshot>>),
     CharacterSnapshot(Box<Envelope<crate::entities::CharacterSnapshot>>),
     PartySnapshot(Box<Envelope<crate::entities::PartySnapshot>>),
     RoutePlan(Box<Envelope<crate::entities::RoutePlan>>),
@@ -587,6 +593,7 @@ pub enum AnyExchange {
 impl AnyExchange {
     pub fn kind(&self) -> ContractKind {
         match self {
+            Self::ProgressionSnapshot(_) => ContractKind::ProgressionSnapshot,
             Self::CharacterSnapshot(_) => ContractKind::CharacterSnapshot,
             Self::PartySnapshot(_) => ContractKind::PartySnapshot,
             Self::RoutePlan(_) => ContractKind::RoutePlan,
@@ -608,6 +615,9 @@ pub fn decode_any(input: &str) -> Result<AnyExchange> {
         ));
     }
     Ok(match kind {
+        ContractKind::ProgressionSnapshot => {
+            AnyExchange::ProgressionSnapshot(Box::new(decode_checked(input)?))
+        }
         ContractKind::CharacterSnapshot => {
             AnyExchange::CharacterSnapshot(Box::new(decode_checked(input)?))
         }

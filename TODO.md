@@ -9,7 +9,8 @@ below do not establish 1.1.0 readiness.
 - [ ] V110.2 Verify installed tuple/interface and exact-build compatibility.
 - [ ] V110.3 Regenerate/review content; version gameplay facts and enforce coverage.
 - [ ] V110.4 Progression exchange, explicit addon/manual capture and persistence.
-  V110.4a pure collection/binding foundation implemented and checked; integration pending.
+  V110.4a collection/binding and V110.4b versioned exchange implemented and checked;
+  storage/application/addon integration pending.
 - [ ] V110.5 Trainer spell service, saved plans and rendered workflow.
 - [ ] V110.6 Authored editable talents, validation and next-point workflow.
 - [ ] V110.7 Profession/crafting quantities, materials and acquisition workflow.

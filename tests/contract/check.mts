@@ -38,6 +38,7 @@ const manifest = readJson("fixtures/contracts/v1/manifest.json") as { fixtures: 
 
 const envelopeDefs: Record<Exchange["kind"], string> = {
   character_snapshot: "CharacterSnapshotEnvelope",
+  progression_snapshot: "ProgressionSnapshotEnvelope",
   party_snapshot: "PartySnapshotEnvelope",
   route_plan: "RoutePlanEnvelope",
   evidence_bundle: "EvidenceBundleEnvelope",
@@ -145,6 +146,11 @@ function summarize(doc: Exchange): string {
     case "character_snapshot": {
       const categories = new Set(snapshotCategories(doc.payload));
       return `${label} snapshot: ${[...categories].sort().join(",")}`;
+    }
+    case "progression_snapshot": {
+      check(doc.payload.payload_version === 1, "progression payload version");
+      if (doc.payload.money.status === "known") check(copperIsCanonical(doc.payload.money.value), "progression copper stays a canonical string");
+      return `${label} progression for ${doc.payload.binding.snapshot}: bags ${category(doc.payload.bags)}, bank ${category(doc.payload.bank)}`;
     }
     case "party_snapshot": {
       const times = doc.payload.participants.map((p) => p.capture.observed_at_utc_ms ?? null);
