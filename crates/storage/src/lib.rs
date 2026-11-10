@@ -56,3 +56,5 @@ pub mod local_submissions;
 pub mod today;
 
 pub mod local_data;
+
+pub mod progression;

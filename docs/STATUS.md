@@ -15,7 +15,10 @@ V110.4a adds tested pure progression collection/binding primitives. See the
 confirms active wowf 1.60.1.70862; interface evidence is pending. Exchange/storage/UI,
 content refresh and all 1.1.0 release evidence remain pending. V110.4b adds the
 [versioned companion exchange](handoffs/2026-11-10-v110-progression-exchange.md),
-bounded opt-in decoding and generated contracts; storage/application integration follows.
+bounded opt-in decoding and generated contracts. V110.4c adds
+[immutable companion storage](handoffs/2026-11-10-v110-progression-storage.md) with
+manual/import separation and full-history recovery validation (190 storage tests pass).
+Application/UI integration and saved workflow plans follow.
 See [tracker](../TODO.md), [claim](claims/2026-11-10-v110-contract.md) and
 [handoff](handoffs/2026-11-10-v110-contract.md). No 1.1.0 readiness is claimed.
 

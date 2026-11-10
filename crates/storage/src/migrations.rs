@@ -91,6 +91,11 @@ pub const MIGRATIONS: &[Migration] = &[
         name: "durable content travel choices and versioned bundle defaults",
         sql: include_str!("schema_v13.sql"),
     },
+    Migration {
+        version: 14,
+        name: "snapshot-bound progression companions",
+        sql: include_str!("schema_v14.sql"),
+    },
 ];
 
 /// The newest version in `MIGRATIONS`.
