@@ -16,6 +16,7 @@ pub mod observation;
 pub mod origin_policy;
 pub mod planner;
 pub mod predicate;
+pub mod progression;
 pub mod release;
 pub mod reminders;
 pub mod selection_path;

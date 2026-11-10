@@ -8,8 +8,12 @@ The approved [ADR 0011](decisions/0011-v110-guided-progression.md) supersedes
 unpublished 1.0.0 preparation and requires all four usable progression workflows.
 Owner and sole implementation writer: Codex `/root`, baseline `aaa73b94`, isolated
 worktree `/tmp/navzeroth-v1.1-guided-progression`. Original checkout is preserved.
-V110.1 records the contract; runtime implementation, current client/interface
-verification, content refresh and all 1.1.0 release evidence remain pending.
+V110.1 records the contract. V110.9a adds explicit 1.1.0 website asset validation;
+V110.4a adds tested pure progression collection/binding primitives. See the
+[state handoff](handoffs/2026-11-10-v110-progression-state.md) and
+[validator handoff](handoffs/2026-11-10-v110-site-version.md). Installed metadata
+confirms active wowf 1.60.1.70862; interface evidence is pending. Exchange/storage/UI,
+content refresh and all 1.1.0 release evidence remain pending.
 See [tracker](../TODO.md), [claim](claims/2026-11-10-v110-contract.md) and
 [handoff](handoffs/2026-11-10-v110-contract.md). No 1.1.0 readiness is claimed.
 
