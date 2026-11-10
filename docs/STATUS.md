@@ -1,5 +1,22 @@
 # Project status
 
+Updated: 2026-11-10.
+
+## Current program: 1.1.0 guided progression
+
+The approved [ADR 0011](decisions/0011-v110-guided-progression.md) supersedes
+unpublished 1.0.0 preparation and requires all four usable progression workflows.
+Owner and sole implementation writer: Codex `/root`, baseline `aaa73b94`, isolated
+worktree `/tmp/navzeroth-v1.1-guided-progression`. Original checkout is preserved.
+V110.1 records the contract; runtime implementation, current client/interface
+verification, content refresh and all 1.1.0 release evidence remain pending.
+See [tracker](../TODO.md), [claim](claims/2026-11-10-v110-contract.md) and
+[handoff](handoffs/2026-11-10-v110-contract.md). No 1.1.0 readiness is claimed.
+
+## Historical 1.0.0 preparation status
+
+### Project status
+
 Updated: 2026-10-24.
 
 **V22 continuation:** Codex independently reviewed PR #286's application-data

@@ -1,3 +1,18 @@
+# Release contract
+
+## Current 1.1.0 requirements
+
+[ADR 0011](../../docs/decisions/0011-v110-guided-progression.md) supersedes the
+unpublished 1.0.0 preparation below. The unsigned installer exception and schema 5
+nine-observation automated acceptance policy apply to 1.1.0. Signed content receipts,
+all four usable guided workflows, exact-build compatibility, declared level 1–60
+coverage, independent review, per-file 90% coverage and fresh release evidence are
+mandatory. Existing manifests/receipts are historical 1.0.0 inputs until explicitly
+regenerated; this documentation does not promote them or change the target tuple.
+Follow the ADR's preparation, draft, external-overlay and publication order.
+
+## Superseded 1.0.0 contract
+
 # Forever release requirements (manifest versions 1–5)
 
 ## Governing stable 1.0.0 authority

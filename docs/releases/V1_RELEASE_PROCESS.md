@@ -1,4 +1,21 @@
-# Full-content v1.0.0 release process
+# Full-content release process
+
+## Governing stable 1.1.0 contract
+
+[ADR 0011](../decisions/0011-v110-guided-progression.md) supersedes unpublished
+1.0.0 preparation. Use version 1.1.0 only after version-aware tooling and the four
+feature journeys are implemented and verified. Keep schema 5 and its nine rows,
+unsigned binary disclosure and fresh signed content receipts. RC1 remains the
+mandatory upgrade baseline. All protected-main, coverage, source-parity, stability,
+independent review and exact downloaded-draft UI/native gates remain required.
+Publish without another permission request only after zero blockers, stable readiness
+and publication allowed; verify public assets before website updates.
+No existing 1.0.0 evidence satisfies the new release. The detailed ADR controls where
+the historical procedure below differs.
+
+## Superseded 1.0.0 process
+
+### Full-content v1.0.0 release process
 
 ## Governing stable 1.0.0 contract
 

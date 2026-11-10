@@ -1,4 +1,26 @@
-# 1.0.0 program tracker
+# 1.1.0 program tracker
+
+Governing decision: [ADR 0011](docs/decisions/0011-v110-guided-progression.md).
+Owner: Codex `/root`; baseline `aaa73b94`; isolated branch `feat/v1.1-guided-progression`.
+This program supersedes unpublished 1.0.0 preparation. Historical completed rows
+below do not establish 1.1.0 readiness.
+
+- [x] V110.1 Record contract, unsigned exception and automated acceptance policy.
+- [ ] V110.2 Verify installed tuple/interface and exact-build compatibility.
+- [ ] V110.3 Regenerate/review content; version gameplay facts and enforce coverage.
+- [ ] V110.4 Progression exchange, explicit addon/manual capture and persistence.
+- [ ] V110.5 Trainer spell service, saved plans and rendered workflow.
+- [ ] V110.6 Authored editable talents, validation and next-point workflow.
+- [ ] V110.7 Profession/crafting quantities, materials and acquisition workflow.
+- [ ] V110.8 Equipment enhancement advice and integrations.
+- [ ] V110.9 Version-aware release tooling and four-feature acceptance journeys.
+- [ ] V110.10 Full checks/reviews, version freeze, inventory and fresh signed closure.
+- [ ] V110.11 Protected-main integration, stability, tag and eight-case packaging.
+- [ ] V110.12 Independent downloaded-draft UI acceptance, publication and receipt.
+
+## Superseded 1.0.0 tracker
+
+### 1.0.0 program tracker
 
 Governing decision: [ADR 0006](docs/decisions/0006-v1-program.md) (2026-10-17).
 Target: the first stable live WoW Forever build after the 4 Nov 2026 launch
