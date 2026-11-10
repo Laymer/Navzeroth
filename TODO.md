@@ -12,7 +12,8 @@ below do not establish 1.1.0 readiness.
   V110.4a collection/binding and V110.4b versioned exchange implemented and checked;
   V110.4c companion persistence implemented and checked;
   V110.4d application/native commands implemented and checked;
-  UI/addon integration and saved workflow plans pending.
+  V110.4e Imports companion/manual money and point inputs implemented and checked;
+  catalog-backed manual editors, addon capture and saved workflow plans pending.
 - [ ] V110.5 Trainer spell service, saved plans and rendered workflow.
 - [ ] V110.6 Authored editable talents, validation and next-point workflow.
 - [ ] V110.7 Profession/crafting quantities, materials and acquisition workflow.

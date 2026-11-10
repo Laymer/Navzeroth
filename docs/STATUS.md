@@ -19,7 +19,9 @@ bounded opt-in decoding and generated contracts. V110.4c adds
 [immutable companion storage](handoffs/2026-11-10-v110-progression-storage.md) with
 manual/import separation and full-history recovery validation (190 storage tests pass).
 V110.4d adds [application commands and generated DTOs](handoffs/2026-11-10-v110-progression-application.md).
-UI integration and saved workflow plans follow.
+V110.4e adds [desktop companion/manual inputs](handoffs/2026-11-10-v110-progression-inputs.md)
+with guarded bindings, separate origins and explicit unknown fields. Catalog-backed
+manual editors, addon capture and saved workflow plans follow.
 See [tracker](../TODO.md), [claim](claims/2026-11-10-v110-contract.md) and
 [handoff](handoffs/2026-11-10-v110-contract.md). No 1.1.0 readiness is claimed.
 
